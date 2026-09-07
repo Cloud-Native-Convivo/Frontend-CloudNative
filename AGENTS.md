@@ -407,6 +407,35 @@ git checkout develop && git pull origin develop
 
 "No hay panaceas": elegir con el contexto propio a la vista. Leída esa advertencia, **este proyecto se queda con Git Flow full a sabiendas**. El deploy a GitHub Pages es continuo desde `main`, lo que empujaría hacia GitHub Flow, pero se versiona con semver y `release/*` es el punto de freeze donde ocurren el bump y el CHANGELOG. El costo asumido es mantener dos ramas permanentes sincronizadas a mano. Si el versionado deja de existir, la decisión correcta es migrar a GitHub Flow y reemplazar esta subsección entera, no aplicar Git Flow a medias.
 
+### 11.4 Convención de Tags Semánticos e Informativos
+
+Los tags en `main` marcan releases de producción y deben ser **anotados e informativos**. Nunca crear tags livianos (lightweight) ni mensajes tautológicos tipo `-m "v1.2.0"`.
+
+**Reglas de etiquetado:**
+1. **Tags anotados obligatorios (`git tag -a`)**: Preservan autor, fecha y mensaje estructurado.
+2. **Formato del identificador**: `v<MAJOR>.<MINOR>.<PATCH>` (ej. `v1.2.0`).
+3. **Estructura del mensaje**:
+   - **Línea 1 (Título)**: `vX.Y.Z: Resumen conciso del release en español` (≤72 caracteres).
+   - **Línea 2**: Línea en blanco.
+   - **Cuerpo (Changelog sintético)**: Viñetas con los hitos destacados del release clasificados por Gitmoji / Conventional Commits (`feat`, `fix`, `ui`, `ci`, `deps`, `breaking`).
+   - **Referencias**: Enlaces a PRs o issues asociados.
+
+**Ejemplo de creación:**
+```bash
+git tag -a v1.2.0 -m "v1.2.0: Portal de residentes con autenticación Cognito y Google
+
+- :sparkles: feat(auth): integracion oauth2 y cognito hosted ui con google
+- :art: style(ui): rediseño de dashboard de espacios comunes
+- :construction_worker: ci: workflow de despliegue a github pages
+- Refs: PR #15"
+```
+
+**Lectura y auditoría:**
+```bash
+git show v1.2.0          # Muestra el mensaje completo y metadatos del tag
+git tag -n9              # Lista tags con hasta 9 líneas de su anotación
+```
+
 ## 12. Límites del agente
 
 **Siempre** (sin pedir permiso): editar código, tests, docs dentro del repo; crear commits locales.

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
+import { listarEspacios, type BackendEspacio } from "../services/espaciosApi";
 
 interface Espacio {
   id: number;
@@ -431,9 +432,71 @@ function EspacioCard({ espacio, onVerDetalle, isAdmin }: EspacioCardProps) {
   );
 }
 
+const IMAGENES_CATEGORIA: Record<string, string> = {
+  Quincho: "https://images.unsplash.com/photo-1622714384717-3f60c04d7c73?w=600&h=400&fit=crop",
+  Piscina: "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=600&h=400&fit=crop",
+  Sala: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop",
+  Gimnasio: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop",
+  Cancha: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=400&fit=crop",
+};
+
+function inferirCategoria(nombre: string): string {
+  const n = nombre.toLowerCase();
+  if (n.includes("quincho") || n.includes("parrilla") || n.includes("asador")) return "Quincho";
+  if (n.includes("piscina") || n.includes("alberca")) return "Piscina";
+  if (n.includes("gimnasio") || n.includes("gym")) return "Gimnasio";
+  if (n.includes("cancha") || n.includes("padel") || n.includes("tenis") || n.includes("futbol")) return "Cancha";
+  return "Sala";
+}
+
+function mapearBackendEspacio(b: BackendEspacio): Espacio {
+  const categoria = inferirCategoria(b.nombre);
+  return {
+    id: b.id,
+    nombre: b.nombre,
+    categoria,
+    capacidad: b.capacidad,
+    tarifa: b.tarifa_hora,
+    disponibleHoy: b.estado === "activo",
+    imagen: IMAGENES_CATEGORIA[categoria] || IMAGENES_CATEGORIA.Sala,
+    descripcion: b.descripcion || "Espacio común disponible para reserva de residentes.",
+    horario: "Lunes a domingo, 09:00 – 22:00 hrs",
+    reglas: [
+      `Capacidad máxima: ${b.capacidad} personas.`,
+      "Dejar el espacio limpio y ordenado al finalizar la reserva.",
+      "Respetar el reglamento interno de copropiedad.",
+    ],
+    deposito: b.tarifa_hora > 0 ? b.tarifa_hora * 2 : 0,
+  };
+}
+
 export default function EspaciosComunes() {
   const { role } = useAuth();
   const isAdmin = role === "admin";
+
+  const [espacios, setEspacios] = useState<Espacio[]>(ESPACIOS);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    async function fetchEspacios() {
+      try {
+        setLoading(true);
+        const data = await listarEspacios();
+        if (active && Array.isArray(data) && data.length > 0) {
+          setEspacios(data.map(mapearBackendEspacio));
+        }
+      } catch {
+        // Fallback elegante al catálogo local si el backend no está disponible
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+    void fetchEspacios();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const [filtros, setFiltros] = useState<Filtros>({
     busqueda: "",
@@ -443,7 +506,7 @@ export default function EspaciosComunes() {
   });
   const [espacioDetalle, setEspacioDetalle] = useState<Espacio | null>(null);
 
-  const espaciosFiltrados = ESPACIOS.filter((e) => {
+  const espaciosFiltrados = espacios.filter((e) => {
     if (filtros.busqueda && !e.nombre.toLowerCase().includes(filtros.busqueda.toLowerCase()))
       return false;
     if (filtros.categoria !== "Todos" && e.categoria !== filtros.categoria) return false;
@@ -461,7 +524,9 @@ export default function EspaciosComunes() {
       {/* Page header */}
       <header className="bg-text px-6 py-8">
         <h1 className="font-display text-3xl text-white">Espacios Comunes</h1>
-        <p className="text-slate-300 text-sm mt-1">7 espacios disponibles en Torres del Parque</p>
+        <p className="text-slate-300 text-sm mt-1">
+          {espacios.length} espacios disponibles en Torres del Parque {loading ? "(cargando...)" : ""}
+        </p>
       </header>
 
       {/* Filter bar */}

@@ -55,6 +55,11 @@ const NAV_LINKS_BY_ROLE: Record<
       icon: <IconHome className="w-[15px] h-[15px]" />,
     },
     {
+      label: "Espacios",
+      path: "/espacios",
+      icon: <IconHome className="w-[15px] h-[15px]" />,
+    },
+    {
       label: "Reservas",
       path: "/reservas",
       icon: <IconCalendar className="w-[15px] h-[15px]" />,
@@ -64,52 +69,22 @@ const NAV_LINKS_BY_ROLE: Record<
       path: "/gastos",
       icon: <IconDollar className="w-[15px] h-[15px]" />,
     },
-    {
-      label: "Visitas",
-      path: "/visitas",
-      icon: <IconShield className="w-[15px] h-[15px]" />,
-    },
-    {
-      label: "Incidentes",
-      path: "/incidentes",
-      icon: <IconAlertTriangle className="w-[15px] h-[15px]" />,
-    },
-    {
-      label: "Tablón",
-      path: "/tablon",
-      icon: <IconMessage className="w-[15px] h-[15px]" />,
-    },
-    {
-      label: "Canales",
-      path: "/canales",
-      icon: <IconPhone className="w-[15px] h-[15px]" />,
-    },
   ],
   conserje: [
     {
-      label: "Visitas",
-      path: "/visitas",
-      icon: <IconShield className="w-[15px] h-[15px]" />,
+      label: "Espacios",
+      path: "/espacios",
+      icon: <IconHome className="w-[15px] h-[15px]" />,
     },
     {
-      label: "Incidentes",
-      path: "/incidentes",
-      icon: <IconAlertTriangle className="w-[15px] h-[15px]" />,
+      label: "Reservas",
+      path: "/reservas",
+      icon: <IconCalendar className="w-[15px] h-[15px]" />,
     },
     {
-      label: "Tablón",
-      path: "/tablon",
-      icon: <IconMessage className="w-[15px] h-[15px]" />,
-    },
-    {
-      label: "Registro",
-      path: "/registro",
-      icon: <IconCamera className="w-[15px] h-[15px]" />,
-    },
-    {
-      label: "Canales",
-      path: "/canales",
-      icon: <IconPhone className="w-[15px] h-[15px]" />,
+      label: "Gastos",
+      path: "/gastos",
+      icon: <IconDollar className="w-[15px] h-[15px]" />,
     },
   ],
   admin: [
@@ -119,61 +94,36 @@ const NAV_LINKS_BY_ROLE: Record<
       icon: <IconTrendingUp className="w-[15px] h-[15px]" />,
     },
     {
-      label: "Visitas",
-      path: "/visitas",
-      icon: <IconShield className="w-[15px] h-[15px]" />,
+      label: "Espacios",
+      path: "/espacios",
+      icon: <IconHome className="w-[15px] h-[15px]" />,
     },
     {
-      label: "Incidentes",
-      path: "/incidentes",
-      icon: <IconAlertTriangle className="w-[15px] h-[15px]" />,
+      label: "Reservas",
+      path: "/reservas",
+      icon: <IconCalendar className="w-[15px] h-[15px]" />,
     },
-    {
-      label: "Registro",
-      path: "/registro",
-      icon: <IconCamera className="w-[15px] h-[15px]" />,
-    },
-    {
-      label: "Tablón",
-      path: "/tablon",
-      icon: <IconMessage className="w-[15px] h-[15px]" />,
-    },
-    {
-      label: "Canales",
-      path: "/canales",
-      icon: <IconPhone className="w-[15px] h-[15px]" />,
-    },
-    {
-      label: "Precios",
-      path: "/precios",
-      icon: <IconDollar className="w-[15px] h-[15px]" />,
-    },
-  ],
-  comite: [
     {
       label: "Gastos",
       path: "/gastos",
       icon: <IconDollar className="w-[15px] h-[15px]" />,
     },
-    {
-      label: "Tablón",
-      path: "/tablon",
-      icon: <IconMessage className="w-[15px] h-[15px]" />,
-    },
+  ],
+  comite: [
     {
       label: "Espacios",
       path: "/espacios",
       icon: <IconHome className="w-[15px] h-[15px]" />,
     },
     {
-      label: "Incidentes",
-      path: "/incidentes",
-      icon: <IconAlertTriangle className="w-[15px] h-[15px]" />,
+      label: "Reservas",
+      path: "/reservas",
+      icon: <IconCalendar className="w-[15px] h-[15px]" />,
     },
     {
-      label: "Canales",
-      path: "/canales",
-      icon: <IconPhone className="w-[15px] h-[15px]" />,
+      label: "Gastos",
+      path: "/gastos",
+      icon: <IconDollar className="w-[15px] h-[15px]" />,
     },
   ],
 };
@@ -192,20 +142,6 @@ const FLOATING_SIDEBAR_ITEMS = [
     label: "Mis gastos",
     path: "/gastos",
     bg: "#005047",
-  },
-  {
-    id: "emergencia",
-    icon: <IconPhone className="w-[17px] h-[17px]" />,
-    label: "Emergencia",
-    path: "/canales",
-    bg: "#E11D48",
-  },
-  {
-    id: "tablon",
-    icon: <IconMessage className="w-[17px] h-[17px]" />,
-    label: "Tablón",
-    path: "/tablon",
-    bg: "#0D9488",
   },
 ];
 

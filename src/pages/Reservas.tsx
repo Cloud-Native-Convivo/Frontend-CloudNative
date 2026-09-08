@@ -1,6 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
+import { sileo } from "sileo";
+import {
+  listarMisReservas,
+  crearReserva,
+  type BackendReserva,
+} from "../services/espaciosApi";
 
 interface Reserva {
   id: string;
@@ -249,7 +255,10 @@ function ReservaCard({ reserva, onCancel, onBlock }: ReservaCardProps) {
 
 interface CreateModalProps {
   onClose: () => void;
-  onConfirm: (reserva: Omit<Reserva, "id" | "codigo">) => void;
+  onConfirm: (
+    reserva: Omit<Reserva, "id" | "codigo">,
+    payload?: { espacioId: number; fechaInicio: string; fechaFin: string },
+  ) => void;
 }
 
 function CreateModal({ onClose, onConfirm }: CreateModalProps) {
@@ -284,17 +293,38 @@ function CreateModal({ onClose, onConfirm }: CreateModalProps) {
     ];
     const fechaDisplay = `${dayNames[fechaDate.getDay()]} ${fechaDate.getDate()} ${monthNames[fechaDate.getMonth()]} ${fechaDate.getFullYear()}`;
 
-    onConfirm({
-      espacio: espacio.nombre,
-      categoria: espacio.nombre.split(" ")[0],
-      imagen: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&h=200&fit=crop",
-      fecha: form.fecha,
-      fechaDisplay,
-      hora: form.hora,
-      duracionHrs: form.duracion,
-      precio: espacio.tarifaHr,
-      estado: "pendiente",
-    });
+    const [hStr, mStr] = form.hora.split(":");
+    const startH = parseInt(hStr, 10);
+    const startM = parseInt(mStr || "0", 10);
+    const [y, m, d] = form.fecha.split("-").map(Number);
+    const start = new Date(y, m - 1, d, startH, startM, 0);
+    const end = new Date(start.getTime() + form.duracion * 3600 * 1000);
+
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const toIsoNaive = (dt: Date) =>
+      `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}:00`;
+
+    const fechaInicio = toIsoNaive(start);
+    const fechaFin = toIsoNaive(end);
+
+    onConfirm(
+      {
+        espacio: espacio.nombre,
+        categoria: espacio.nombre.split(" ")[0],
+        imagen: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&h=200&fit=crop",
+        fecha: form.fecha,
+        fechaDisplay,
+        hora: form.hora,
+        duracionHrs: form.duracion,
+        precio: espacio.tarifaHr,
+        estado: "pendiente",
+      },
+      {
+        espacioId: form.espacioIdx + 1,
+        fechaInicio,
+        fechaFin,
+      },
+    );
   }
 
   return (
@@ -454,6 +484,60 @@ const TABS: { key: FilterTab; label: string }[] = [
   { key: "cancelada", label: "Canceladas" },
 ];
 
+function mapearBackendReserva(b: BackendReserva): Reserva {
+  const fInicio = new Date(b.fecha_inicio);
+  const fFin = new Date(b.fecha_fin);
+  const duracionHrs = Math.max(
+    1,
+    Math.round((fFin.getTime() - fInicio.getTime()) / (1000 * 60 * 60)),
+  );
+  const dayNames = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  const monthNames = [
+    "ene",
+    "feb",
+    "mar",
+    "abr",
+    "may",
+    "jun",
+    "jul",
+    "ago",
+    "sep",
+    "oct",
+    "nov",
+    "dic",
+  ];
+  const yyyy = fInicio.getFullYear();
+  const mm = String(fInicio.getMonth() + 1).padStart(2, "0");
+  const dd = String(fInicio.getDate()).padStart(2, "0");
+  const fechaIso = `${yyyy}-${mm}-${dd}`;
+  const fechaDisplay = `${dayNames[fInicio.getDay()]} ${fInicio.getDate()} ${monthNames[fInicio.getMonth()]} ${yyyy}`;
+  const hora = `${String(fInicio.getHours()).padStart(2, "0")}:${String(fInicio.getMinutes()).padStart(2, "0")}`;
+
+  const espacioOpcion =
+    ESPACIOS[(b.espacio_id - 1) % ESPACIOS.length] ?? ESPACIOS[0];
+  const estadoMap: Record<string, "confirmada" | "pendiente" | "cancelada"> = {
+    confirmada: "confirmada",
+    pendiente_pago: "pendiente",
+    pendiente: "pendiente",
+    cancelada: "cancelada",
+    expirada: "cancelada",
+  };
+
+  return {
+    id: `R${String(b.id).padStart(3, "0")}`,
+    espacio: espacioOpcion.nombre,
+    categoria: espacioOpcion.nombre.split(" ")[0],
+    imagen: "https://images.unsplash.com/photo-1622714384717-3f60c04d7c73?w=300&h=200&fit=crop",
+    fecha: fechaIso,
+    fechaDisplay,
+    hora,
+    duracionHrs,
+    precio: duracionHrs > 0 ? Math.round(b.monto_total / duracionHrs) : b.monto_total,
+    estado: estadoMap[b.estado.toLowerCase()] ?? "pendiente",
+    codigo: `CONV-2026-R${String(b.id).padStart(3, "0")}`,
+  };
+}
+
 export default function Reservas() {
   const { role } = useAuth();
   const isAdmin = role === "admin";
@@ -464,19 +548,74 @@ export default function Reservas() {
   const [cancelTarget, setCancelTarget] = useState<string | null>(null);
   const [blockTarget, setBlockTarget] = useState<string | null>(null);
 
+  useEffect(() => {
+    let active = true;
+    async function cargarReservas() {
+      const idToken =
+        typeof window !== "undefined"
+          ? localStorage.getItem("id_token") ?? undefined
+          : undefined;
+      try {
+        const data = await listarMisReservas(idToken);
+        if (active && Array.isArray(data)) {
+          setReservas(data.map(mapearBackendReserva));
+        }
+      } catch {
+        // Fallback local si backend no está disponible
+      }
+    }
+    void cargarReservas();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const filtered =
     activeTab === "todas" ? reservas : reservas.filter((r) => r.estado === activeTab);
   const cancelTargetReserva = cancelTarget
     ? (reservas.find((r) => r.id === cancelTarget) ?? null)
     : null;
 
-  function handleCreateConfirm(data: Omit<Reserva, "id" | "codigo">) {
-    const newId = `R${String(reservas.length + 1).padStart(3, "0")}`;
-    const newReserva: Reserva = {
-      ...data,
-      id: newId,
-      codigo: `CONV-2026-${newId}`,
-    };
+  async function handleCreateConfirm(
+    data: Omit<Reserva, "id" | "codigo">,
+    payload?: { espacioId: number; fechaInicio: string; fechaFin: string },
+  ) {
+    const idToken =
+      typeof window !== "undefined"
+        ? localStorage.getItem("id_token") ?? undefined
+        : undefined;
+    let newReserva: Reserva;
+
+    if (payload) {
+      try {
+        const backendResult = await crearReserva(idToken, {
+          espacio_id: payload.espacioId,
+          fecha_inicio: payload.fechaInicio,
+          fecha_fin: payload.fechaFin,
+        });
+        newReserva = mapearBackendReserva(backendResult);
+        sileo.success({ title: "Reserva creada exitosamente en el servidor" });
+      } catch (err) {
+        const newId = `R${String(reservas.length + 1).padStart(3, "0")}`;
+        newReserva = {
+          ...data,
+          id: newId,
+          codigo: `CONV-2026-${newId}`,
+        };
+        sileo.warning({
+          title: "Reserva guardada localmente (modo offline)",
+          description: err instanceof Error ? err.message : undefined,
+        });
+      }
+    } else {
+      const newId = `R${String(reservas.length + 1).padStart(3, "0")}`;
+      newReserva = {
+        ...data,
+        id: newId,
+        codigo: `CONV-2026-${newId}`,
+      };
+    }
+
     setReservas([newReserva, ...reservas]);
     setShowCreate(false);
   }

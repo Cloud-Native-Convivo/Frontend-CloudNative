@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { decodeIdToken, exchangeCodeForTokens } from "../lib/cognitoAuth";
 import { sileo } from "sileo";
+import type { User } from "../types";
 
 export default function AuthCallback() {
   const navigate = useNavigate();
@@ -34,14 +35,22 @@ export default function AuthCallback() {
       }
 
       try {
-        const { id_token } = await exchangeCodeForTokens(code);
-        const claims = decodeIdToken(id_token);
-        setUser({
+        const tokens = await exchangeCodeForTokens(code);
+        const claims = decodeIdToken(tokens.id_token);
+        const usuario: User = {
           nombre: claims.name ?? claims.given_name ?? claims.email?.split("@")[0] ?? "Residente",
           unidad: claims["custom:unidad"] ?? "Sin unidad asignada",
           role: "residente",
           avatar: claims.picture,
-        });
+        };
+        localStorage.setItem("convivo_user", JSON.stringify(usuario));
+        if (tokens.id_token) {
+          localStorage.setItem("id_token", tokens.id_token);
+        }
+        if (tokens.access_token) {
+          localStorage.setItem("access_token", tokens.access_token);
+        }
+        setUser(usuario);
         sileo.success({ title: "Sesión iniciada correctamente" });
         navigate("/mi-dashboard", { replace: true });
       } catch (err) {

@@ -1,4 +1,4 @@
-import { useState, useMemo, type ReactNode } from "react";
+import { useState, useMemo, useCallback, type ReactNode } from "react";
 import { AuthContext, USERS } from "./useAuth";
 import type { Role, User } from "../types";
 
@@ -8,13 +8,10 @@ function getStoredUser(): User {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      const parsed = JSON.parse(raw) as User;
-      if (parsed && typeof parsed.nombre === "string" && typeof parsed.role === "string") {
-        return parsed;
-      }
+      return JSON.parse(raw);
     }
   } catch {
-    // fallback al mock si localStorage falla
+    // ignore
   }
   return USERS.residente;
 }
@@ -22,17 +19,17 @@ function getStoredUser(): User {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUserState] = useState<User>(getStoredUser);
 
-  const setUser = (u: User) => {
+  const setUser = useCallback((u: User) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
     } catch {
       // ignore
     }
     setUserState(u);
-  };
+  }, []);
 
   const role = user.role;
-  const setRole = (r: Role) => setUser(USERS[r]);
-  const value = useMemo(() => ({ user, role, setRole, setUser }), [user, role]);
+  const setRole = useCallback((r: Role) => setUser(USERS[r]), [setUser]);
+  const value = useMemo(() => ({ user, role, setRole, setUser }), [user, role, setRole, setUser]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

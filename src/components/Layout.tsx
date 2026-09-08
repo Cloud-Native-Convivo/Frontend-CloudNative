@@ -1,19 +1,7 @@
 /* eslint-disable react/forbid-dom-props */
 import React, { useState, useEffect, useRef } from "react";
 import { Outlet, NavLink, useLocation, Link } from "react-router";
-import {
-  IconHome,
-  IconDollar,
-  IconMessage,
-  IconCamera,
-  IconShield,
-  IconCalendar,
-  IconMenu,
-  IconX,
-  IconTrendingUp,
-  IconPhone,
-  IconAlertTriangle,
-} from "./icons/Icons";
+import { IconHome, IconDollar, IconCalendar, IconMenu, IconX, IconTrendingUp } from "./icons/Icons";
 import { useAuth } from "../hooks/useAuth";
 import type { Role } from "../types";
 

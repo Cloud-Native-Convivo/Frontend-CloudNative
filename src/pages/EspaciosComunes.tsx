@@ -445,7 +445,8 @@ function inferirCategoria(nombre: string): string {
   if (n.includes("quincho") || n.includes("parrilla") || n.includes("asador")) return "Quincho";
   if (n.includes("piscina") || n.includes("alberca")) return "Piscina";
   if (n.includes("gimnasio") || n.includes("gym")) return "Gimnasio";
-  if (n.includes("cancha") || n.includes("padel") || n.includes("tenis") || n.includes("futbol")) return "Cancha";
+  if (n.includes("cancha") || n.includes("padel") || n.includes("tenis") || n.includes("futbol"))
+    return "Cancha";
   return "Sala";
 }
 
@@ -525,7 +526,8 @@ export default function EspaciosComunes() {
       <header className="bg-text px-6 py-8">
         <h1 className="font-display text-3xl text-white">Espacios Comunes</h1>
         <p className="text-slate-300 text-sm mt-1">
-          {espacios.length} espacios disponibles en Torres del Parque {loading ? "(cargando...)" : ""}
+          {espacios.length} espacios disponibles en Torres del Parque{" "}
+          {loading ? "(cargando...)" : ""}
         </p>
       </header>
 

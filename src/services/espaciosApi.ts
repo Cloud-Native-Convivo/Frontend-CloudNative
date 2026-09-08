@@ -1,6 +1,6 @@
 const API_BASE_URL =
-  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_BFF_URL) ||
-  'http://localhost:3000/api/v1/espacios-comunes';
+  (typeof import.meta !== "undefined" && import.meta.env?.VITE_BFF_URL) ||
+  "http://localhost:3000/api/v1/espacios-comunes";
 
 export interface BackendEspacio {
   id: number;
@@ -34,11 +34,10 @@ export interface CrearReservaPayload {
 
 export async function listarEspacios(idToken?: string): Promise<BackendEspacio[]> {
   const token =
-    idToken ??
-    (typeof window !== 'undefined' ? localStorage.getItem('id_token') : null);
+    idToken ?? (typeof window !== "undefined" ? localStorage.getItem("id_token") : null);
   const headers: Record<string, string> = {};
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   const response = await fetch(`${API_BASE_URL}/espacios/`, { headers });
@@ -50,11 +49,10 @@ export async function listarEspacios(idToken?: string): Promise<BackendEspacio[]
 
 export async function listarMisReservas(idToken?: string): Promise<BackendReserva[]> {
   const token =
-    idToken ??
-    (typeof window !== 'undefined' ? localStorage.getItem('id_token') : null);
+    idToken ?? (typeof window !== "undefined" ? localStorage.getItem("id_token") : null);
   const headers: Record<string, string> = {};
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   const response = await fetch(`${API_BASE_URL}/reservas/`, { headers });
@@ -69,26 +67,23 @@ export async function crearReserva(
   datos: CrearReservaPayload,
 ): Promise<BackendReserva> {
   const token =
-    idToken ??
-    (typeof window !== 'undefined' ? localStorage.getItem('id_token') : null);
+    idToken ?? (typeof window !== "undefined" ? localStorage.getItem("id_token") : null);
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   };
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   const response = await fetch(`${API_BASE_URL}/reservas/`, {
-    method: 'POST',
+    method: "POST",
     headers,
     body: JSON.stringify(datos),
   });
 
   if (!response.ok) {
     const errBody = await response.text();
-    throw new Error(
-      `Error al crear reserva (HTTP ${response.status}): ${errBody}`,
-    );
+    throw new Error(`Error al crear reserva (HTTP ${response.status}): ${errBody}`);
   }
   return response.json();
 }

@@ -2,11 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { sileo } from "sileo";
-import {
-  listarMisReservas,
-  crearReserva,
-  type BackendReserva,
-} from "../services/espaciosApi";
+import { listarMisReservas, crearReserva, type BackendReserva } from "../services/espaciosApi";
 
 interface Reserva {
   id: string;
@@ -513,8 +509,7 @@ function mapearBackendReserva(b: BackendReserva): Reserva {
   const fechaDisplay = `${dayNames[fInicio.getDay()]} ${fInicio.getDate()} ${monthNames[fInicio.getMonth()]} ${yyyy}`;
   const hora = `${String(fInicio.getHours()).padStart(2, "0")}:${String(fInicio.getMinutes()).padStart(2, "0")}`;
 
-  const espacioOpcion =
-    ESPACIOS[(b.espacio_id - 1) % ESPACIOS.length] ?? ESPACIOS[0];
+  const espacioOpcion = ESPACIOS[(b.espacio_id - 1) % ESPACIOS.length] ?? ESPACIOS[0];
   const estadoMap: Record<string, "confirmada" | "pendiente" | "cancelada"> = {
     confirmada: "confirmada",
     pendiente_pago: "pendiente",
@@ -552,9 +547,7 @@ export default function Reservas() {
     let active = true;
     async function cargarReservas() {
       const idToken =
-        typeof window !== "undefined"
-          ? localStorage.getItem("id_token") ?? undefined
-          : undefined;
+        typeof window !== "undefined" ? (localStorage.getItem("id_token") ?? undefined) : undefined;
       try {
         const data = await listarMisReservas(idToken);
         if (active && Array.isArray(data)) {
@@ -581,9 +574,7 @@ export default function Reservas() {
     payload?: { espacioId: number; fechaInicio: string; fechaFin: string },
   ) {
     const idToken =
-      typeof window !== "undefined"
-        ? localStorage.getItem("id_token") ?? undefined
-        : undefined;
+      typeof window !== "undefined" ? (localStorage.getItem("id_token") ?? undefined) : undefined;
     let newReserva: Reserva;
 
     if (payload) {

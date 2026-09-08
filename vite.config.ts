@@ -11,7 +11,7 @@ const base = process.env.GITHUB_REPOSITORY
 
 export default defineConfig({
   base,
-  plugins: [react(), tailwindcss()],
+  plugins: [react({ compiler: true }), tailwindcss()],
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),

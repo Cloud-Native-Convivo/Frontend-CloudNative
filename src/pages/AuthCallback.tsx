@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
-import { decodeIdToken, exchangeCodeForTokens } from "../lib/cognitoAuth";
+import { decodeIdToken, exchangeCodeForTokens, roleFromClaims } from "../lib/cognitoAuth";
 import { sileo } from "sileo";
 import type { User } from "../types";
 import { setStoredUser, setStoredIdToken, setStoredAccessToken } from "../lib/authStorage";
@@ -41,7 +41,7 @@ export default function AuthCallback() {
         const usuario: User = {
           nombre: claims.name ?? claims.given_name ?? claims.email?.split("@")[0] ?? "Residente",
           unidad: claims["custom:unidad"] ?? "Sin unidad asignada",
-          role: "residente",
+          role: roleFromClaims(claims),
           avatar: claims.picture,
         };
         setStoredUser(usuario);

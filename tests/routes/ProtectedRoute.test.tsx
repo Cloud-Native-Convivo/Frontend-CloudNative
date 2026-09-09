@@ -5,11 +5,11 @@ import { AuthContext } from "@/hooks/useAuth";
 import type { Role } from "@/types";
 import ProtectedRoute from "@/routes/ProtectedRoute";
 
-function renderConRol(role: Role, allowedRoles: Role[]) {
+function renderConRol(role: Role | null, allowedRoles: Role[]) {
   return render(
     <AuthContext.Provider
       value={{
-        user: { nombre: "Test", unidad: "Unidad de prueba", role },
+        user: role ? { nombre: "Test", unidad: "Unidad de prueba", role } : null,
         role,
         setRole: () => {},
         setUser: () => {},
@@ -35,6 +35,14 @@ describe("ProtectedRoute", () => {
 
   it("redirige a la raíz cuando el rol no está permitido", () => {
     renderConRol("residente", ["admin"]);
+    expect(screen.queryByText("contenido protegido")).not.toBeInTheDocument();
+    expect(screen.getByText("inicio")).toBeInTheDocument();
+  });
+
+  it("redirige cuando no hay sesión (role null) aunque allowedRoles no esté vacío", () => {
+    // Regresión OWASP A01: sin este chequeo, un visitante sin loguearse
+    // pasaba igual si `role` caía en el mock por defecto.
+    renderConRol(null, ["residente", "admin", "conserje", "comite"]);
     expect(screen.queryByText("contenido protegido")).not.toBeInTheDocument();
     expect(screen.getByText("inicio")).toBeInTheDocument();
   });

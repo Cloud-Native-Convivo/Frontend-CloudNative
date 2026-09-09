@@ -98,12 +98,12 @@ const NAV_LINKS_BY_ROLE: Record<
 };
 
 export default function Layout() {
-  const { role, setRole, user } = useAuth();
+  const { role, setRole, user, setUser } = useAuth();
   const [ribbonVisible, setRibbonVisible] = useState(true);
   const location = useLocation();
   const isHome = location.pathname === "/";
 
-  const navLinks = NAV_LINKS_BY_ROLE[role];
+  const navLinks = role ? NAV_LINKS_BY_ROLE[role] : [];
   const RIBBON_H = ribbonVisible ? 32 : 0;
   const NAV_H = 64;
   const TOP_OFFSET = RIBBON_H + NAV_H;
@@ -125,6 +125,7 @@ export default function Layout() {
         role={role}
         setRole={setRole}
         user={user}
+        onLogout={() => setUser(null)}
       />
 
       {/* Page content */}

@@ -37,7 +37,7 @@ Convivo — SPA de gestión para condominios residenciales en Chile. Roles: resi
 - Gráficos: Recharts v3
 - Gestor de paquetes: npm
 - Tests: Vitest + @testing-library/react + jsdom
-- Linting: ESLint v10 + typescript-eslint
+- Linting: ESLint v10 + typescript-eslint. `eslint-plugin-react@7.37.5` (última publicada) declara peer `eslint@^3...^9.7`, sin soporte formal de v10 todavía (jsx-eslint/eslint-plugin-react#3977, abierto). El plugin funciona en la práctica con eslint 10 (`npm run lint` sin errores) — `.npmrc` con `legacy-peer-deps=true` evita que `npm install`/`npm ci` fallen por esto. No borrar el `.npmrc` sin antes confirmar que el plugin publicó soporte para eslint 10.
 - Formato: oxfmt
 
 ## 3. Estructura del proyecto
@@ -215,7 +215,7 @@ Alcance real en este proyecto — frontend demo sin backend ni DB, pero **con un
 
 - Aplican: **A02** (configuración del build y del deploy a GitHub Pages), **A03** (dependencias npm, lockfile committeado), **A08** (integridad del pipeline de GitHub Actions).
 - **A07 aplica parcialmente** desde que el login con Google es real: revisar el flujo OAuth en sí (redirect_uri exacto registrado en Cognito, manejo de `code`/`code_verifier`, expiración de `id_token`/`access_token`) en cualquier PR que toque `cognitoAuth.ts`/`AuthCallback.tsx`. No hay rate limiting ni gestión de sesión server-side propia (eso lo resuelve Cognito), así que el alcance real es "no romper el flujo PKCE", no "implementar autenticación".
-- **A01 sigue sin aplicar en la práctica, aunque el login sea real**: `useAuth`/`AuthProvider` asignan el rol desde un mapa mock (`USERS[role]`), no desde un claim/grupo de Cognito — `AuthCallback.tsx` hardcodea `role: "residente"` sin leer nada del token para eso. El día que el rol se derive de un claim real, A01 pasa a aplicar de lleno (ownership de recursos, roles no falsificables desde el cliente) — anotarlo ahí, no antes.
+- **A01 aplica para el rol `residente`**: `AuthCallback.tsx` deriva el rol del claim `cognito:groups` (`roleFromClaims()` en `cognitoAuth.ts`), no lo hardcodea. `AuthProvider` no cae a ningún usuario mock por defecto — sin sesión guardada, `user`/`role` son `null` y `ProtectedRoute` exige `role` no-nulo además de pertenecer a `allowedRoles`. El switcher demo de la nav (`NavHeader.tsx`) excluye "residente" a propósito: los otros 3 roles (conserje/admin/comite) siguen siendo simulables sin login porque no tienen backend real detrás — eso es demo declarado ("Demo · Cambiar rol" en la UI), no un bypass de auth.
 - **A04, A05, A06, A09, A10**: `(no aplica: sin backend ni DB — nada de crypto propia más allá de PKCE (S256, estándar), sin queries, sin threat model de features con DB, sin logging centralizado, sin manejo de excepciones server-side)`. Reevaluar cuando se conecte un backend real: ahí vuelven a aplicar todas.
 
 Antes de mergear cambios con superficie de seguridad (auth, input externo, permisos, deploy), correr `security-review` (skill) o el agente `auditor-seguridad` si están disponibles — no depender solo de revisión manual.

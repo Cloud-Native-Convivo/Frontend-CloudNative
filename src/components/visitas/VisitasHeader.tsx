@@ -1,7 +1,7 @@
 import type { Role } from "../../types";
 
 interface VisitasHeaderProps {
-  role: Role;
+  role: Role | null;
   showingResidente: boolean;
   onOpenPreRegistro: () => void;
 }

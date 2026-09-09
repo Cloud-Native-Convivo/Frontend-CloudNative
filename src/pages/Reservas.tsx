@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { sileo } from "sileo";
 import { listarMisReservas, crearReserva, type BackendReserva } from "../services/espaciosApi";
+import { getStoredIdToken } from "../lib/authStorage";
 
 interface Reserva {
   id: string;
@@ -546,8 +547,7 @@ export default function Reservas() {
   useEffect(() => {
     let active = true;
     async function cargarReservas() {
-      const idToken =
-        typeof window !== "undefined" ? (localStorage.getItem("id_token") ?? undefined) : undefined;
+      const idToken = getStoredIdToken() ?? undefined;
       try {
         const data = await listarMisReservas(idToken);
         if (active && Array.isArray(data)) {
@@ -573,8 +573,7 @@ export default function Reservas() {
     data: Omit<Reserva, "id" | "codigo">,
     payload?: { espacioId: number; fechaInicio: string; fechaFin: string },
   ) {
-    const idToken =
-      typeof window !== "undefined" ? (localStorage.getItem("id_token") ?? undefined) : undefined;
+    const idToken = getStoredIdToken() ?? undefined;
     let newReserva: Reserva;
 
     if (payload) {

@@ -795,8 +795,8 @@ export default function Incidentes() {
         <NuevoModal
           onClose={() => setShowNuevo(false)}
           onCreated={(inc) => setIncidentes((prev) => [inc, ...prev])}
-          reportadoPor={user.nombre}
-          unidad={user.unidad}
+          reportadoPor={user?.nombre ?? ""}
+          unidad={user?.unidad ?? ""}
         />
       )}
     </div>

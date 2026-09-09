@@ -354,9 +354,9 @@ export default function ResidenteDashboard() {
       <div className="bg-text px-6 py-10 md:px-10">
         <div className="mx-auto max-w-6xl">
           <h1 className="font-display text-3xl font-semibold text-white md:text-4xl">
-            Buenos días, {user.nombre.split(" ")[0]}
+            Buenos días, {user?.nombre.split(" ")[0] ?? "Residente"}
           </h1>
-          <p className="mt-1 font-body text-sm text-white/60">{user.unidad}</p>
+          <p className="mt-1 font-body text-sm text-white/60">{user?.unidad ?? ""}</p>
 
           {/* Quick actions */}
           <div className="mt-6 flex flex-wrap gap-3">

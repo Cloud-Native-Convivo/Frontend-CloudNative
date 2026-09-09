@@ -7,8 +7,8 @@ function TestConsumer() {
   const { user, setUser } = useAuth();
   return (
     <div>
-      <span data-testid="user-name">{user.nombre}</span>
-      <span data-testid="user-role">{user.role}</span>
+      <span data-testid="user-name">{user?.nombre ?? "(sin sesión)"}</span>
+      <span data-testid="user-role">{user?.role ?? "(sin sesión)"}</span>
       <button
         onClick={() =>
           setUser({
@@ -20,6 +20,7 @@ function TestConsumer() {
       >
         Actualizar
       </button>
+      <button onClick={() => setUser(null)}>Salir</button>
     </div>
   );
 }
@@ -30,15 +31,17 @@ describe("AuthProvider con authStorage (sessionStorage + versioned keys)", () =>
     localStorage.clear();
   });
 
-  it("inicializa con mock por defecto si storage está vacío", () => {
+  it("inicializa sin usuario si storage está vacío (sin fallback mock)", () => {
+    // Regresión OWASP A01: antes caía a USERS.residente como default
+    // silencioso, dejando entrar a cualquier visitante sin sesión real.
     render(
       <AuthProvider>
         <TestConsumer />
       </AuthProvider>,
     );
 
-    expect(screen.getByTestId("user-name")).toHaveTextContent("María González");
-    expect(screen.getByTestId("user-role")).toHaveTextContent("residente");
+    expect(screen.getByTestId("user-name")).toHaveTextContent("(sin sesión)");
+    expect(screen.getByTestId("user-role")).toHaveTextContent("(sin sesión)");
   });
 
   it("inicializa con datos de sessionStorage si convivo_user_v1 existe", () => {
@@ -93,5 +96,27 @@ describe("AuthProvider con authStorage (sessionStorage + versioned keys)", () =>
     expect(screen.getByTestId("user-name")).toHaveTextContent("Usuario Actualizado");
     const stored = JSON.parse(sessionStorage.getItem("convivo_user_v1")!);
     expect(stored.nombre).toBe("Usuario Actualizado");
+  });
+
+  it("setUser(null) cierra sesión de verdad: limpia el estado y el storage", () => {
+    sessionStorage.setItem(
+      "convivo_user_v1",
+      JSON.stringify({ nombre: "Con Sesión", unidad: "Torre A", role: "residente" }),
+    );
+
+    render(
+      <AuthProvider>
+        <TestConsumer />
+      </AuthProvider>,
+    );
+
+    expect(screen.getByTestId("user-name")).toHaveTextContent("Con Sesión");
+
+    act(() => {
+      screen.getByText("Salir").click();
+    });
+
+    expect(screen.getByTestId("user-name")).toHaveTextContent("(sin sesión)");
+    expect(sessionStorage.getItem("convivo_user_v1")).toBeNull();
   });
 });

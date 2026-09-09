@@ -1,3 +1,5 @@
+import { getStoredIdToken } from "../lib/authStorage";
+
 const API_BASE_URL =
   (typeof import.meta !== "undefined" && import.meta.env?.VITE_BFF_URL) ||
   "http://localhost:3000/api/v1/espacios-comunes";
@@ -33,8 +35,7 @@ export interface CrearReservaPayload {
 }
 
 export async function listarEspacios(idToken?: string): Promise<BackendEspacio[]> {
-  const token =
-    idToken ?? (typeof window !== "undefined" ? localStorage.getItem("id_token") : null);
+  const token = idToken ?? getStoredIdToken();
   const headers: Record<string, string> = {};
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
@@ -48,8 +49,7 @@ export async function listarEspacios(idToken?: string): Promise<BackendEspacio[]
 }
 
 export async function listarMisReservas(idToken?: string): Promise<BackendReserva[]> {
-  const token =
-    idToken ?? (typeof window !== "undefined" ? localStorage.getItem("id_token") : null);
+  const token = idToken ?? getStoredIdToken();
   const headers: Record<string, string> = {};
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
@@ -66,8 +66,7 @@ export async function crearReserva(
   idToken: string | null | undefined,
   datos: CrearReservaPayload,
 ): Promise<BackendReserva> {
-  const token =
-    idToken ?? (typeof window !== "undefined" ? localStorage.getItem("id_token") : null);
+  const token = idToken ?? getStoredIdToken();
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };

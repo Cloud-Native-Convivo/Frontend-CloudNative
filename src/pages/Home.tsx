@@ -398,7 +398,7 @@ function HeroSection() {
             <div className="cv-hero-ctas flex gap-3 flex-wrap mb-9">
               <Link
                 to="/crear-cuenta"
-                className="inline-flex items-center gap-2 bg-[#0D9488] text-white font-bold text-[14px] py-[13px] px-[26px] rounded-[10px] no-underline transition-all hover:bg-[#005047] hover:-translate-y-[1px]"
+                className="inline-flex items-center gap-2 bg-[#0D9488] text-white font-bold text-[14px] py-[13px] px-[26px] rounded-[10px] no-underline transition-[background-color,transform] hover:bg-[#005047] hover:-translate-y-[1px]"
               >
                 Crear cuenta <IconChevronRight className="w-[14px] h-[14px]" />
               </Link>
@@ -431,7 +431,7 @@ function HeroSection() {
             <div className="grid grid-cols-2 gap-2.5">
               {quickLinks.map((item) => (
                 <Link key={item.label} to={item.path} className="no-underline group">
-                  <div className="bg-white/5 rounded-xl py-[15px] px-[12px] border border-white/10 transition-all cursor-pointer group-hover:bg-white/15 group-hover:-translate-y-[1px]">
+                  <div className="bg-white/5 rounded-xl py-[15px] px-[12px] border border-white/10 transition-[background-color,transform] cursor-pointer group-hover:bg-white/15 group-hover:-translate-y-[1px]">
                     <div className="mb-2" style={{ color: item.color }}>
                       {item.icon}
                     </div>
@@ -680,7 +680,7 @@ function TestimonialsSection() {
           {TESTIMONIOS.map((t) => (
             <div
               key={t.nombre}
-              className="bg-white border border-[#E2E8F0] rounded-[18px] py-8 px-7 transition-all hover:shadow-[0_12px_40px_rgba(13,148,136,0.09)] hover:-translate-y-[3px]"
+              className="bg-white border border-[#E2E8F0] rounded-[18px] py-8 px-7 transition-[box-shadow,transform] hover:shadow-[0_12px_40px_rgba(13,148,136,0.09)] hover:-translate-y-[3px]"
             >
               <div className="text-[48px] text-[#CCFBF1] font-['Georgia',serif] leading-none mb-4">
                 "
@@ -792,7 +792,7 @@ function FinalCTA() {
         <div className="flex gap-3 justify-center flex-wrap">
           <Link
             to="/reservas"
-            className="bg-white text-[#005047] font-bold text-[15px] py-[14px] px-8 rounded-[10px] no-underline transition-all hover:-translate-y-[2px] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)]"
+            className="bg-white text-[#005047] font-bold text-[15px] py-[14px] px-8 rounded-[10px] no-underline transition-[box-shadow,transform] hover:-translate-y-[2px] hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)]"
           >
             Comenzar como residente
           </Link>

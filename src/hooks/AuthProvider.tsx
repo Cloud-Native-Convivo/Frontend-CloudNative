@@ -1,30 +1,17 @@
 import { useState, useMemo, useCallback, type ReactNode } from "react";
 import { AuthContext, USERS } from "./useAuth";
 import type { Role, User } from "../types";
+import { getStoredUser as loadUser, setStoredUser } from "../lib/authStorage";
 
-const STORAGE_KEY = "convivo_user";
-
-function getStoredUser(): User {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      return JSON.parse(raw);
-    }
-  } catch {
-    // ignore
-  }
-  return USERS.residente;
+function getInitialUser(): User {
+  return loadUser() ?? USERS.residente;
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUserState] = useState<User>(getStoredUser);
+  const [user, setUserState] = useState<User>(getInitialUser);
 
   const setUser = useCallback((u: User) => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
-    } catch {
-      // ignore
-    }
+    setStoredUser(u);
     setUserState(u);
   }, []);
 

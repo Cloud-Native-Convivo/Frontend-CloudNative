@@ -94,7 +94,7 @@ function RegistroCard({ registro, onOpen }: RegistroCardProps) {
   const [showBefore, setShowBefore] = useState(true);
 
   return (
-    <div className="group rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.09)] hover:-translate-y-[3px] transition-all duration-250 ease-out">
+    <div className="group rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.09)] hover:-translate-y-[3px] transition-[shadow,transform] duration-250 ease-out">
       <div className="relative h-[200px] bg-slate-200 overflow-hidden">
         <img
           src={showBefore ? registro.antes : registro.despues}
@@ -340,7 +340,7 @@ export default function Registro() {
           </Link>
           <Link
             to="/dashboard"
-            className="inline-flex items-center gap-2 bg-transparent text-white rounded-xl border border-white/30 px-8 py-4 text-[15px] font-bold no-underline transition-all duration-200 hover:border-white hover:bg-white/5"
+            className="inline-flex items-center gap-2 bg-transparent text-white rounded-xl border border-white/30 px-8 py-4 text-[15px] font-bold no-underline transition-[border-color,background-color] duration-200 hover:border-white hover:bg-white/5"
           >
             Dashboard <IconChevronRight className="w-[16px] h-[16px]" />
           </Link>

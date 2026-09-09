@@ -4,6 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 import { decodeIdToken, exchangeCodeForTokens } from "../lib/cognitoAuth";
 import { sileo } from "sileo";
 import type { User } from "../types";
+import { setStoredUser, setStoredIdToken, setStoredAccessToken } from "../lib/authStorage";
 
 export default function AuthCallback() {
   const navigate = useNavigate();
@@ -43,12 +44,12 @@ export default function AuthCallback() {
           role: "residente",
           avatar: claims.picture,
         };
-        localStorage.setItem("convivo_user", JSON.stringify(usuario));
+        setStoredUser(usuario);
         if (tokens.id_token) {
-          localStorage.setItem("id_token", tokens.id_token);
+          setStoredIdToken(tokens.id_token);
         }
         if (tokens.access_token) {
-          localStorage.setItem("access_token", tokens.access_token);
+          setStoredAccessToken(tokens.access_token);
         }
         setUser(usuario);
         sileo.success({ title: "Sesión iniciada correctamente" });

@@ -1,52 +1,19 @@
 import { getStoredIdToken } from "../lib/authStorage";
+import type { BackendReserva } from "./espaciosApi";
 
 const API_BASE_URL =
   (typeof import.meta !== "undefined" && import.meta.env?.VITE_BFF_URL) || "http://localhost:3000/api/v1";
 
-export interface BackendPanelKpi {
-  icon: string;
-  title: string;
-  value: string;
-  subtitle: string;
-  badge_label: string;
-  badge_variant: "green" | "yellow" | "blue";
-  spark?: number[];
-  spark_color?: string;
-}
-
-export interface BackendPanelNotice {
-  id: number;
-  title: string;
-  date: string;
-  category: string;
-  excerpt: string;
-}
-
-export interface BackendPanelVisit {
-  id: number;
-  nombre: string;
-  fecha: string;
-  estado: "Confirmada" | "Pendiente QR";
-}
-
-export interface BackendPanelActivity {
-  id: number;
-  icon: string;
-  description: string;
-  timestamp: string;
-  color: string;
-}
-
+// Contrato real de GET /api/v1/panel (TD-26, bff PR #3): agrega reservas
+// (ms-espacios-comunes) y gastos (ms-gastos-comunes). ms-gastos-comunes no
+// existe todavia -- `gastos` viene null y el motivo queda en `errores`, sin
+// que el endpoint completo falle.
 export interface BackendPanelResponse {
-  unread_count: number;
-  kpis: BackendPanelKpi[];
-  notices: BackendPanelNotice[];
-  visits: BackendPanelVisit[];
-  activity: BackendPanelActivity[];
+  reservas: BackendReserva[] | null;
+  gastos: unknown;
+  errores: string[];
 }
 
-// Contrato asumido de TD-26 (BFF sin desplegar aun) -- ajustar los tipos de
-// arriba si el endpoint real termina con otra forma.
 export async function obtenerPanel(idToken?: string): Promise<BackendPanelResponse> {
   const token = idToken ?? getStoredIdToken();
   const headers: Record<string, string> = {};

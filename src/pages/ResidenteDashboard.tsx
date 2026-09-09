@@ -173,7 +173,7 @@ const DEFAULT_KPIS: KpiCardProps[] = [
 
 const DEFAULT_UNREAD_COUNT = 3;
 
-const DEFAULT_NOTICES: NoticeCard[] = [
+const notices: NoticeCard[] = [
   {
     id: 1,
     title: "Corte de agua programado — Torre A",
@@ -200,7 +200,7 @@ const DEFAULT_NOTICES: NoticeCard[] = [
   },
 ];
 
-const DEFAULT_VISITS: Visit[] = [
+const visits: Visit[] = [
   {
     id: 1,
     nombre: "Carlos Fuentes",
@@ -260,7 +260,7 @@ const quickLinks: QuickLink[] = [
   },
 ];
 
-const DEFAULT_ACTIVITY: ActivityItem[] = [
+const activity: ActivityItem[] = [
   {
     id: 1,
     icon: "✓",
@@ -296,38 +296,50 @@ const DEFAULT_ACTIVITY: ActivityItem[] = [
 export default function ResidenteDashboard() {
   const { user } = useAuth();
   const [notifDismissed, setNotifDismissed] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(DEFAULT_UNREAD_COUNT);
+  const unreadCount = DEFAULT_UNREAD_COUNT;
   const [kpis, setKpis] = useState<KpiCardProps[]>(DEFAULT_KPIS);
-  const [notices, setNotices] = useState<NoticeCard[]>(DEFAULT_NOTICES);
-  const [visits, setVisits] = useState<Visit[]>(DEFAULT_VISITS);
-  const [activity, setActivity] = useState<ActivityItem[]>(DEFAULT_ACTIVITY);
 
+  // GET /api/v1/panel (TD-26) solo agrega reservas y gastos -- no cubre
+  // notices/visits/activity ni las otras 3 KPIs, esas siguen siendo datos
+  // de demo hasta que existan endpoints propios. Acá solo se actualiza la
+  // KPI "Próxima reserva" con la reserva futura más cercana.
   useEffect(() => {
     let active = true;
     async function fetchPanel() {
       try {
         const data = await obtenerPanel();
-        if (!active) return;
-        if (Array.isArray(data.kpis) && data.kpis.length > 0) {
-          setKpis(
-            data.kpis.map((k, i) => ({
-              id: `${i}-${k.title}`,
-              icon: k.icon,
-              title: k.title,
-              value: k.value,
-              subtitle: k.subtitle,
-              badge: { label: k.badge_label, variant: k.badge_variant },
-              spark: k.spark?.map((v) => ({ v })),
-              sparkColor: k.spark_color,
-            })),
-          );
-        }
-        if (Array.isArray(data.notices) && data.notices.length > 0) setNotices(data.notices);
-        if (Array.isArray(data.visits) && data.visits.length > 0) setVisits(data.visits);
-        if (Array.isArray(data.activity) && data.activity.length > 0) setActivity(data.activity);
-        if (typeof data.unread_count === "number") setUnreadCount(data.unread_count);
+        if (!active || !Array.isArray(data.reservas)) return;
+
+        const ahora = Date.now();
+        const proxima = data.reservas
+          .filter((r) => r.estado !== "cancelada" && new Date(r.fecha_inicio).getTime() >= ahora)
+          .sort((a, b) => new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime())[0];
+        if (!proxima) return;
+
+        const fecha = new Date(proxima.fecha_inicio);
+        const subtitle = fecha.toLocaleDateString("es-CL", {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+        }) + `, ${fecha.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })} hrs`;
+
+        setKpis((prev) =>
+          prev.map((k) =>
+            k.id === "proxima-reserva"
+              ? {
+                  ...k,
+                  value: `Espacio #${proxima.espacio_id}`,
+                  subtitle,
+                  badge: {
+                    label: proxima.estado === "confirmada" ? "Confirmada" : "Pendiente",
+                    variant: proxima.estado === "confirmada" ? "green" : "yellow",
+                  },
+                }
+              : k,
+          ),
+        );
       } catch {
-        // Fallback elegante a los datos de demo si el BFF no está disponible (TD-26 aún sin desplegar)
+        // Fallback elegante a los datos de demo si el BFF no está disponible
       }
     }
     void fetchPanel();

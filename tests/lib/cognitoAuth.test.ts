@@ -5,6 +5,7 @@ import {
   buildGoogleAuthorizeUrl,
   decodeIdToken,
   exchangeCodeForTokens,
+  roleFromClaims,
 } from "@/lib/cognitoAuth";
 
 beforeEach(() => {
@@ -57,6 +58,21 @@ describe("decodeIdToken", () => {
     const fakeJwt = `${base64url(JSON.stringify({ alg: "RS256" }))}.${base64url(JSON.stringify(payload))}.signature`;
 
     expect(decodeIdToken(fakeJwt)).toEqual(payload);
+  });
+});
+
+describe("roleFromClaims", () => {
+  it("usa el primer grupo cognito:groups reconocido", () => {
+    expect(roleFromClaims({ sub: "1", "cognito:groups": ["admin"] })).toBe("admin");
+    expect(roleFromClaims({ sub: "1", "cognito:groups": ["Conserje"] })).toBe("conserje");
+  });
+
+  it("cae a residente si el grupo no es un rol válido", () => {
+    expect(roleFromClaims({ sub: "1", "cognito:groups": ["otro-grupo"] })).toBe("residente");
+  });
+
+  it("cae a residente si no hay claim de grupos (Cognito sin grupos configurados)", () => {
+    expect(roleFromClaims({ sub: "1" })).toBe("residente");
   });
 });
 

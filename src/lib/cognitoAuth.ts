@@ -74,7 +74,10 @@ export async function exchangeCodeForTokens(code: string): Promise<CognitoTokens
   sessionStorage.removeItem(PKCE_VERIFIER_KEY);
   return response.json();
 }
-/* TODO: configurar el teme del Roles dentro del cognitio para el tema de Autenticacion con Google  */
+// El User Pool agrega "cognito:groups" (array de nombres de grupo) al
+// id_token para usuarios que pertenecen a algún grupo. terraform/cognito.tf
+// todavía no define esos grupos (ver mvp.md) — hasta que se desplieguen,
+// este claim viene vacío/ausente y roleFromClaims() cae al fallback.
 export interface CognitoIdTokenClaims {
   sub: string;
   email?: string;
@@ -84,7 +87,19 @@ export interface CognitoIdTokenClaims {
   "custom:unidad"?: string;
   "custom:torre"?: string;
   "custom:piso"?: string;
+  "cognito:groups"?: string[];
   [key: string]: unknown;
+}
+
+const VALID_ROLES = ["residente", "conserje", "admin", "comite"] as const;
+
+// Deriva el Role desde el primer grupo Cognito reconocido del claim
+// "cognito:groups". Sin grupos configurados en el User Pool (hoy: sin
+// desplegar, ver comentario arriba), siempre cae a "residente".
+export function roleFromClaims(claims: CognitoIdTokenClaims): (typeof VALID_ROLES)[number] {
+  const groups = claims["cognito:groups"] ?? [];
+  const match = groups.map((g) => g.toLowerCase()).find((g) => (VALID_ROLES as readonly string[]).includes(g));
+  return (match as (typeof VALID_ROLES)[number]) ?? "residente";
 }
 
 // No verifica firma — la verificación real (RS256 contra el JWKS de Cognito)

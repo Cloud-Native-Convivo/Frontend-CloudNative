@@ -1,6 +1,7 @@
-import { useState, lazy, Suspense } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
+import { obtenerPanel } from "../services/panelApi";
 
 const SparkAreaChart = lazy(() => import("../components/charts/SparkAreaChart"));
 
@@ -11,6 +12,7 @@ interface SparkPoint {
 }
 
 interface KpiCardProps {
+  id: string;
   icon: string;
   title: string;
   value: string;
@@ -124,7 +126,52 @@ function NoticeTile({ notice }: { notice: NoticeCard }) {
   );
 }
 
-// ── Static data ───────────────────────────────────────────────────────────────
+// ── Static data (fallback si GET /api/v1/panel no responde) ────────────────────
+
+const DEFAULT_KPIS: KpiCardProps[] = [
+  {
+    id: "proxima-reserva",
+    icon: "📅",
+    title: "Próxima reserva",
+    value: "Quincho Los Aromos",
+    subtitle: "Sáb 23 ago, 18:00 hrs",
+    badge: { label: "Confirmada", variant: "green" },
+    spark: [{ v: 1 }, { v: 2 }, { v: 1 }, { v: 3 }, { v: 2 }, { v: 4 }, { v: 3 }, { v: 5 }],
+    sparkColor: "#0D9488",
+  },
+  {
+    id: "gastos-pendientes",
+    icon: "💰",
+    title: "Gastos pendientes",
+    value: "$65.000 CLP",
+    subtitle: "Vence en 5 días",
+    badge: { label: "Pendiente", variant: "yellow" },
+    spark: [{ v: 3 }, { v: 4 }, { v: 3 }, { v: 5 }, { v: 4 }, { v: 6 }, { v: 5 }, { v: 7 }],
+    sparkColor: "#005047",
+  },
+  {
+    id: "incidentes-abiertos",
+    icon: "⚠",
+    title: "Incidentes abiertos",
+    value: "1 incidente",
+    subtitle: "Filtr. desde plomería",
+    badge: { label: "En revisión", variant: "yellow" },
+    spark: [{ v: 0 }, { v: 1 }, { v: 0 }, { v: 1 }, { v: 2 }, { v: 1 }, { v: 1 }, { v: 1 }],
+    sparkColor: "#EAB308",
+  },
+  {
+    id: "correspondencia",
+    icon: "📬",
+    title: "Correspondencia",
+    value: "2 paquetes",
+    subtitle: "Esperando retiro",
+    badge: { label: "Pendiente retiro", variant: "yellow" },
+    spark: [{ v: 1 }, { v: 0 }, { v: 2 }, { v: 1 }, { v: 3 }, { v: 2 }, { v: 2 }, { v: 2 }],
+    sparkColor: "#0D9488",
+  },
+];
+
+const DEFAULT_UNREAD_COUNT = 3;
 
 const notices: NoticeCard[] = [
   {
@@ -249,7 +296,57 @@ const activity: ActivityItem[] = [
 export default function ResidenteDashboard() {
   const { user } = useAuth();
   const [notifDismissed, setNotifDismissed] = useState(false);
-  const unreadCount = 3;
+  const unreadCount = DEFAULT_UNREAD_COUNT;
+  const [kpis, setKpis] = useState<KpiCardProps[]>(DEFAULT_KPIS);
+
+  // GET /api/v1/panel (TD-26) solo agrega reservas y gastos -- no cubre
+  // notices/visits/activity ni las otras 3 KPIs, esas siguen siendo datos
+  // de demo hasta que existan endpoints propios. Acá solo se actualiza la
+  // KPI "Próxima reserva" con la reserva futura más cercana.
+  useEffect(() => {
+    let active = true;
+    async function fetchPanel() {
+      try {
+        const data = await obtenerPanel();
+        if (!active || !Array.isArray(data.reservas)) return;
+
+        const ahora = Date.now();
+        const proxima = data.reservas
+          .filter((r) => r.estado !== "cancelada" && new Date(r.fecha_inicio).getTime() >= ahora)
+          .sort((a, b) => new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime())[0];
+        if (!proxima) return;
+
+        const fecha = new Date(proxima.fecha_inicio);
+        const subtitle = fecha.toLocaleDateString("es-CL", {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+        }) + `, ${fecha.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })} hrs`;
+
+        setKpis((prev) =>
+          prev.map((k) =>
+            k.id === "proxima-reserva"
+              ? {
+                  ...k,
+                  value: `Espacio #${proxima.espacio_id}`,
+                  subtitle,
+                  badge: {
+                    label: proxima.estado === "confirmada" ? "Confirmada" : "Pendiente",
+                    variant: proxima.estado === "confirmada" ? "green" : "yellow",
+                  },
+                }
+              : k,
+          ),
+        );
+      } catch {
+        // Fallback elegante a los datos de demo si el BFF no está disponible
+      }
+    }
+    void fetchPanel();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <div className="flex flex-col gap-0 font-body">
@@ -319,78 +416,9 @@ export default function ResidenteDashboard() {
 
           {/* ── KPI cards ── */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <KpiCard
-              icon="📅"
-              title="Próxima reserva"
-              value="Quincho Los Aromos"
-              subtitle="Sáb 23 ago, 18:00 hrs"
-              badge={{ label: "Confirmada", variant: "green" }}
-              spark={[
-                { v: 1 },
-                { v: 2 },
-                { v: 1 },
-                { v: 3 },
-                { v: 2 },
-                { v: 4 },
-                { v: 3 },
-                { v: 5 },
-              ]}
-              sparkColor="#0D9488"
-            />
-            <KpiCard
-              icon="💰"
-              title="Gastos pendientes"
-              value="$65.000 CLP"
-              subtitle="Vence en 5 días"
-              badge={{ label: "Pendiente", variant: "yellow" }}
-              spark={[
-                { v: 3 },
-                { v: 4 },
-                { v: 3 },
-                { v: 5 },
-                { v: 4 },
-                { v: 6 },
-                { v: 5 },
-                { v: 7 },
-              ]}
-              sparkColor="#005047"
-            />
-            <KpiCard
-              icon="⚠"
-              title="Incidentes abiertos"
-              value="1 incidente"
-              subtitle="Filtr. desde plomería"
-              badge={{ label: "En revisión", variant: "yellow" }}
-              spark={[
-                { v: 0 },
-                { v: 1 },
-                { v: 0 },
-                { v: 1 },
-                { v: 2 },
-                { v: 1 },
-                { v: 1 },
-                { v: 1 },
-              ]}
-              sparkColor="#EAB308"
-            />
-            <KpiCard
-              icon="📬"
-              title="Correspondencia"
-              value="2 paquetes"
-              subtitle="Esperando retiro"
-              badge={{ label: "Pendiente retiro", variant: "yellow" }}
-              spark={[
-                { v: 1 },
-                { v: 0 },
-                { v: 2 },
-                { v: 1 },
-                { v: 3 },
-                { v: 2 },
-                { v: 2 },
-                { v: 2 },
-              ]}
-              sparkColor="#0D9488"
-            />
+            {kpis.map((kpi) => (
+              <KpiCard key={kpi.id} {...kpi} />
+            ))}
           </div>
 
           {/* ── Main content grid ── */}

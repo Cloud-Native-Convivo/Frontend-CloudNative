@@ -5,6 +5,35 @@ Todas las modificaciones notables de este proyecto se documentan en este archivo
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/),
 y este proyecto sigue [Versionado Semántico](https://semver.org/lang/es/).
 
+## [0.4.0] - 2026-09-09
+
+### Added
+
+- Integración de `ResidenteDashboard` con `GET /api/v1/panel` del BFF
+  (TD-26): la KPI "Próxima reserva" ahora refleja la reserva real más
+  cercana; notices/visits/activity y las demás KPIs siguen siendo demo
+  hasta que existan endpoints propios (#25).
+
+### Changed
+
+- Dependencias actualizadas: React 19.3, Vite 8.2.2, Vitest 5.0.0 (#22).
+
+### Fixed
+
+- El rol de usuario se deriva del claim `cognito:groups` del id_token de
+  Cognito en vez de hardcodearse a `"residente"` (#24).
+- Conflicto de peer dependencies entre `eslint@10` y `eslint-plugin-react`
+  (issue upstream sin resolver) que rompía `npm ci`/`npm install` (#23).
+
+### Security
+
+- Corregido bypass de control de acceso (OWASP A01): sin sesión guardada,
+  el contexto de auth caía a un usuario mock por defecto y `ProtectedRoute`
+  solo validaba el rol, no si había sesión real — cualquier visitante sin
+  loguearse entraba a `/mi-dashboard`. `user`/`role` ahora son nulos sin
+  sesión, `ProtectedRoute` exige sesión real, y el switcher demo de la nav
+  excluye `"residente"` (único rol con login real) (#26).
+
 ## [0.3.0] - 2026-09-03
 
 ### Added

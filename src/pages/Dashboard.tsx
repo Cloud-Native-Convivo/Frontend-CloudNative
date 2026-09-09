@@ -1,17 +1,9 @@
 /* eslint-disable react/forbid-dom-props */
-import { useState } from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-} from "recharts";
+import { useState, lazy, Suspense } from "react";
 import { gastos } from "../lib/data";
 import { IconDownload, IconTrendingUp, IconEye, IconTag } from "../components/icons/Icons";
+
+const GastosBarChart = lazy(() => import("../components/charts/GastosBarChart"));
 
 const evolucionMensual = [
   { mes: "Ene", gasto: 540 },
@@ -23,25 +15,6 @@ const evolucionMensual = [
   { mes: "Jul", gasto: 595 },
   { mes: "Ago", gasto: 600 },
 ];
-
-interface TooltipPayload {
-  value: number;
-}
-interface CustomTooltipProps {
-  active?: boolean;
-  payload?: TooltipPayload[];
-  label?: string;
-}
-
-function ChartTooltip({ active, payload, label }: CustomTooltipProps) {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="bg-[#00201B] rounded-lg py-2 px-3 text-xs font-sans text-white shadow-[0_4px_16px_rgba(0,0,0,0.18)]">
-      <div className="text-white/55 mb-0.5">{label} 2026</div>
-      <div className="font-bold text-[#5EEAD4]">${payload[0].value.toLocaleString("es-CL")} k</div>
-    </div>
-  );
-}
 
 const registros = [
   {
@@ -194,44 +167,11 @@ export default function Dashboard() {
               </h3>
               <span className="text-[12px] text-[#94A3B8]">2026 · miles CLP</span>
             </div>
-            <ResponsiveContainer width="100%" height={180}>
-              <BarChart
-                data={evolucionMensual}
-                barCategoryGap="28%"
-                margin={{ top: 4, right: 4, left: -24, bottom: 0 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                <XAxis
-                  dataKey="mes"
-                  tick={{
-                    fontSize: 11,
-                    fontFamily: "Inter, system-ui, sans-serif",
-                    fill: "#94A3B8",
-                  }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <YAxis
-                  tick={{
-                    fontSize: 10,
-                    fontFamily: "Inter, system-ui, sans-serif",
-                    fill: "#94A3B8",
-                  }}
-                  axisLine={false}
-                  tickLine={false}
-                  domain={[500, 620]}
-                />
-                <Tooltip content={<ChartTooltip />} cursor={{ fill: "#F0FDFA" }} />
-                <Bar dataKey="gasto" radius={[5, 5, 0, 0]}>
-                  {evolucionMensual.map((m, i) => (
-                    <Cell
-                      key={m.mes}
-                      fill={i === evolucionMensual.length - 1 ? "#0D9488" : "#CCFBF1"}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            <Suspense
+              fallback={<div className="h-[180px] w-full animate-pulse rounded bg-slate-100" />}
+            >
+              <GastosBarChart data={evolucionMensual} />
+            </Suspense>
           </div>
 
           {/* Desglose por categoría */}

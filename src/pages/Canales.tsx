@@ -157,7 +157,7 @@ export default function Canales() {
             return (
               <div
                 key={c.area}
-                className="bg-white border border-[#E2E8F0] hover:border-[#CBD5E1] rounded-[16px] py-[24px] px-[28px] grid grid-cols-[56px_1fr_auto] gap-5 items-center transition-all duration-200 hover:shadow-[0_6px_24px_rgba(0,0,0,0.07)]"
+                className="bg-white border border-[#E2E8F0] hover:border-[#CBD5E1] rounded-[16px] py-[24px] px-[28px] grid grid-cols-[56px_1fr_auto] gap-5 items-center transition-[border-color,box-shadow] duration-200 hover:shadow-[0_6px_24px_rgba(0,0,0,0.07)]"
               >
                 <div
                   className={`w-[52px] h-[52px] rounded-[14px] flex items-center justify-center shrink-0 ${
@@ -337,7 +337,7 @@ export default function Canales() {
           </Link>
           <Link
             to="/dashboard"
-            className="inline-flex items-center gap-2 bg-transparent hover:bg-white/5 text-white rounded-xl border border-white/30 hover:border-white py-4 px-8 text-[15px] font-bold no-underline transition-all duration-200"
+            className="inline-flex items-center gap-2 bg-transparent hover:bg-white/5 text-white rounded-xl border border-white/30 hover:border-white py-4 px-8 text-[15px] font-bold no-underline transition-[border-color,background-color] duration-200"
           >
             Dashboard <IconChevronRight className="w-[16px] h-[16px]" />
           </Link>

@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { Link } from "react-router";
-import { AreaChart, Area, ResponsiveContainer, Tooltip } from "recharts";
 import { useAuth } from "../hooks/useAuth";
+
+const SparkAreaChart = lazy(() => import("../components/charts/SparkAreaChart"));
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -99,34 +100,9 @@ function KpiCard({
       </div>
       {spark && (
         <div className="h-10 -mx-5 -mb-5 mt-1">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={spark} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id={`sg-${title}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={sparkColor} stopOpacity={0.18} />
-                  <stop offset="95%" stopColor={sparkColor} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <Tooltip
-                content={({ active, payload }) =>
-                  active && payload?.length ? (
-                    <span className="text-[11px] font-body bg-[#00201B] text-white px-2 py-1 rounded-md">
-                      {payload[0].value}
-                    </span>
-                  ) : null
-                }
-              />
-              <Area
-                type="monotone"
-                dataKey="v"
-                stroke={sparkColor}
-                strokeWidth={1.5}
-                fill={`url(#sg-${title})`}
-                dot={false}
-                isAnimationActive={false}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          <Suspense fallback={<div className="h-full w-full bg-slate-50" />}>
+            <SparkAreaChart data={spark} title={title} sparkColor={sparkColor} />
+          </Suspense>
         </div>
       )}
     </div>

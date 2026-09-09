@@ -510,7 +510,7 @@ export default function Precios() {
         <p className="text-[16px] text-white/70 m-0 mb-8">
           Nuestro equipo te ayuda a elegir el plan ideal para tu condominio — sin compromiso.
         </p>
-        <button className="bg-white text-[#005047] font-bold text-[15px] py-3.5 px-9 rounded-[10px] border-none cursor-pointer transition-all duration-150 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)]">
+        <button className="bg-white text-[#005047] font-bold text-[15px] py-3.5 px-9 rounded-[10px] border-none cursor-pointer transition-[transform,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)]">
           Hablar con ventas
         </button>
       </section>

@@ -2,10 +2,10 @@ import { createContext, useContext } from "react";
 import type { Role, User } from "../types";
 
 export interface AuthContextValue {
-  user: User;
-  role: Role;
+  user: User | null;
+  role: Role | null;
   setRole: (r: Role) => void;
-  setUser: (u: User) => void;
+  setUser: (u: User | null) => void;
 }
 
 export const USERS: Record<Role, User> = {

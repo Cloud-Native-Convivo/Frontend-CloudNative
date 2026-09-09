@@ -313,15 +313,18 @@ export default function ResidenteDashboard() {
         const ahora = Date.now();
         const proxima = data.reservas
           .filter((r) => r.estado !== "cancelada" && new Date(r.fecha_inicio).getTime() >= ahora)
-          .sort((a, b) => new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime())[0];
+          .sort(
+            (a, b) => new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime(),
+          )[0];
         if (!proxima) return;
 
         const fecha = new Date(proxima.fecha_inicio);
-        const subtitle = fecha.toLocaleDateString("es-CL", {
-          weekday: "short",
-          day: "numeric",
-          month: "short",
-        }) + `, ${fecha.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })} hrs`;
+        const subtitle =
+          fecha.toLocaleDateString("es-CL", {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+          }) + `, ${fecha.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })} hrs`;
 
         setKpis((prev) =>
           prev.map((k) =>
@@ -354,9 +357,9 @@ export default function ResidenteDashboard() {
       <div className="bg-text px-6 py-10 md:px-10">
         <div className="mx-auto max-w-6xl">
           <h1 className="font-display text-3xl font-semibold text-white md:text-4xl">
-            Buenos días, {user.nombre.split(" ")[0]}
+            Buenos días, {user?.nombre.split(" ")[0] ?? "Residente"}
           </h1>
-          <p className="mt-1 font-body text-sm text-white/60">{user.unidad}</p>
+          <p className="mt-1 font-body text-sm text-white/60">{user?.unidad ?? ""}</p>
 
           {/* Quick actions */}
           <div className="mt-6 flex flex-wrap gap-3">

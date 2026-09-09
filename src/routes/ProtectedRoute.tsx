@@ -9,6 +9,6 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ allowedRoles, redirectTo = "/" }: ProtectedRouteProps) {
   const { role } = useAuth();
-  if (!allowedRoles.includes(role)) return <Navigate to={redirectTo} replace />;
+  if (!role || !allowedRoles.includes(role)) return <Navigate to={redirectTo} replace />;
   return <Outlet />;
 }

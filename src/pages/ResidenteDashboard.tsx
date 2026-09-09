@@ -313,15 +313,18 @@ export default function ResidenteDashboard() {
         const ahora = Date.now();
         const proxima = data.reservas
           .filter((r) => r.estado !== "cancelada" && new Date(r.fecha_inicio).getTime() >= ahora)
-          .sort((a, b) => new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime())[0];
+          .sort(
+            (a, b) => new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime(),
+          )[0];
         if (!proxima) return;
 
         const fecha = new Date(proxima.fecha_inicio);
-        const subtitle = fecha.toLocaleDateString("es-CL", {
-          weekday: "short",
-          day: "numeric",
-          month: "short",
-        }) + `, ${fecha.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })} hrs`;
+        const subtitle =
+          fecha.toLocaleDateString("es-CL", {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+          }) + `, ${fecha.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })} hrs`;
 
         setKpis((prev) =>
           prev.map((k) =>

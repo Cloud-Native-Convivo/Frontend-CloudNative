@@ -37,7 +37,15 @@ interface NavHeaderProps {
 // debe poder simularse sin loguearse de verdad.
 const DEMO_ROLES: Role[] = ["conserje", "admin", "comite"];
 
-export function NavHeader({ ribbonH, navH, navLinks, role, setRole, user, onLogout }: NavHeaderProps) {
+export function NavHeader({
+  ribbonH,
+  navH,
+  navLinks,
+  role,
+  setRole,
+  user,
+  onLogout,
+}: NavHeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [roleSwitcherOpen, setRoleSwitcherOpen] = useState(false);

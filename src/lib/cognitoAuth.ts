@@ -98,7 +98,9 @@ const VALID_ROLES = ["residente", "conserje", "admin", "comite"] as const;
 // desplegar, ver comentario arriba), siempre cae a "residente".
 export function roleFromClaims(claims: CognitoIdTokenClaims): (typeof VALID_ROLES)[number] {
   const groups = claims["cognito:groups"] ?? [];
-  const match = groups.map((g) => g.toLowerCase()).find((g) => (VALID_ROLES as readonly string[]).includes(g));
+  const match = groups
+    .map((g) => g.toLowerCase())
+    .find((g) => (VALID_ROLES as readonly string[]).includes(g));
   return (match as (typeof VALID_ROLES)[number]) ?? "residente";
 }
 

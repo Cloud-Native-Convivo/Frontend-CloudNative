@@ -37,7 +37,7 @@ Convivo — SPA de gestión para condominios residenciales en Chile. Roles: resi
 - Gráficos: Recharts v3
 - Gestor de paquetes: npm
 - Tests: Vitest + @testing-library/react + jsdom
-- Linting: ESLint v10 + typescript-eslint
+- Linting: ESLint v10 + typescript-eslint. `eslint-plugin-react@7.37.5` (última publicada) declara peer `eslint@^3...^9.7`, sin soporte formal de v10 todavía (jsx-eslint/eslint-plugin-react#3977, abierto). El plugin funciona en la práctica con eslint 10 (`npm run lint` sin errores) — `.npmrc` con `legacy-peer-deps=true` evita que `npm install`/`npm ci` fallen por esto. No borrar el `.npmrc` sin antes confirmar que el plugin publicó soporte para eslint 10.
 - Formato: oxfmt
 
 ## 3. Estructura del proyecto

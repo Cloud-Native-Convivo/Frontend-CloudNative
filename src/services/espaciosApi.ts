@@ -1,8 +1,11 @@
 import { getStoredIdToken } from "../lib/authStorage";
 
-const API_BASE_URL =
+const rawBffUrl =
   (typeof import.meta !== "undefined" && import.meta.env?.VITE_BFF_URL) ||
   "http://localhost:3000/api/v1/espacios-comunes";
+const API_BASE_URL = rawBffUrl.endsWith("/espacios-comunes")
+  ? rawBffUrl
+  : `${rawBffUrl.replace(/\/+$/, "")}/espacios-comunes`;
 
 export interface BackendEspacio {
   id: number;

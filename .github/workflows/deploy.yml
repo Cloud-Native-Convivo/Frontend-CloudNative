@@ -36,6 +36,7 @@ jobs:
           VITE_COGNITO_DOMAIN: ${{ vars.VITE_COGNITO_DOMAIN }}
           VITE_COGNITO_CLIENT_ID: ${{ vars.VITE_COGNITO_CLIENT_ID }}
           VITE_COGNITO_REDIRECT_URI: ${{ vars.VITE_COGNITO_REDIRECT_URI }}
+          VITE_BFF_URL: ${{ secrets.VITE_BFF_URL }}
         run: npm run build
 
       - uses: actions/upload-pages-artifact@v5

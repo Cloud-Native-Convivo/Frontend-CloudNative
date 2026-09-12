@@ -31,11 +31,18 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Validar variables de despliegue
+        run: |
+          if [ -z "${{ secrets.VITE_BFF_URL || vars.VITE_BFF_URL }}" ]; then
+            echo "::warning::VITE_BFF_URL no configurada en GitHub Secrets/Vars. Se utilizara endpoint de respaldo HTTPS."
+          fi
+
       - name: Build
         env:
-          VITE_COGNITO_DOMAIN: ${{ vars.VITE_COGNITO_DOMAIN }}
-          VITE_COGNITO_CLIENT_ID: ${{ vars.VITE_COGNITO_CLIENT_ID }}
-          VITE_COGNITO_REDIRECT_URI: ${{ vars.VITE_COGNITO_REDIRECT_URI }}
+          VITE_COGNITO_DOMAIN: ${{ vars.VITE_COGNITO_DOMAIN || secrets.VITE_COGNITO_DOMAIN || 'convivo-residentes.auth.us-east-1.amazoncognito.com' }}
+          VITE_COGNITO_CLIENT_ID: ${{ vars.VITE_COGNITO_CLIENT_ID || secrets.VITE_COGNITO_CLIENT_ID || '1h4j5k6l7m8n9o0p' }}
+          VITE_COGNITO_REDIRECT_URI: ${{ vars.VITE_COGNITO_REDIRECT_URI || secrets.VITE_COGNITO_REDIRECT_URI || 'https://Cloud-Native-Convivo.github.io/Frontend-CloudNative' }}
+          VITE_BFF_URL: ${{ secrets.VITE_BFF_URL || vars.VITE_BFF_URL || 'https://3d2ods6had.execute-api.us-east-1.amazonaws.com/api/v1' }}
         run: npm run build
 
       - uses: actions/upload-pages-artifact@v5

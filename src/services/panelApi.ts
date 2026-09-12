@@ -1,9 +1,10 @@
 import { getStoredIdToken } from "../lib/authStorage";
 import type { BackendReserva } from "./espaciosApi";
 
-const API_BASE_URL =
+const rawBffUrl =
   (typeof import.meta !== "undefined" && import.meta.env?.VITE_BFF_URL) ||
   "http://localhost:3000/api/v1";
+const API_BASE_URL = rawBffUrl.replace(/\/espacios-comunes\/?$/, "").replace(/\/+$/, "");
 
 // Contrato real de GET /api/v1/panel (TD-26, bff PR #3): agrega reservas
 // (ms-espacios-comunes) y gastos (ms-gastos-comunes). ms-gastos-comunes no

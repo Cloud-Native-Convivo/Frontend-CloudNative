@@ -5,6 +5,20 @@ Todas las modificaciones notables de este proyecto se documentan en este archivo
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/),
 y este proyecto sigue [Versionado Semántico](https://semver.org/lang/es/).
 
+## [0.5.0] - 2026-09-12
+
+### Added
+
+- Conexión completa de `EspaciosComunes`, `Reservas`, `Gastos` y `ResidenteDashboard` con la API en vivo del BFF y API Gateway en AWS.
+- Servicio `src/services/gastosApi.ts` para consulta de deudas, saldo pendiente, cuotas y estado al día del residente autenticado.
+- Carga dinámica y resolución de IDs reales en el catálogo y modal de creación de reservas (`Reservas.tsx`).
+- Indicadores visuales de carga (spinners) y estados vacíos descriptivos en espacios comunes y reservas.
+- Pruebas unitarias para el servicio de gastos en `tests/services/gastosApi.test.ts` (21 tests en verde).
+
+### Changed
+
+- Actualizada configuración de `.env.example` y fallback de endpoints API al API Gateway desplegado.
+
 ## [0.4.0] - 2026-09-09
 
 ### Added

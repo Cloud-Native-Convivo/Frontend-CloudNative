@@ -2,6 +2,8 @@ import { useState, useEffect, lazy, Suspense } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { obtenerPanel } from "../services/panelApi";
+import { listarEspacios } from "../services/espaciosApi";
+import { obtenerResumenGastos } from "../services/gastosApi";
 
 const SparkAreaChart = lazy(() => import("../components/charts/SparkAreaChart"));
 
@@ -300,52 +302,88 @@ export default function ResidenteDashboard() {
   const [kpis, setKpis] = useState<KpiCardProps[]>(DEFAULT_KPIS);
 
   // GET /api/v1/panel (TD-26) solo agrega reservas y gastos -- no cubre
-  // notices/visits/activity ni las otras 3 KPIs, esas siguen siendo datos
-  // de demo hasta que existan endpoints propios. Acá solo se actualiza la
-  // KPI "Próxima reserva" con la reserva futura más cercana.
+  // Actualiza "Próxima reserva" y "Gastos pendientes" con datos reales del BFF/API
   useEffect(() => {
     let active = true;
-    async function fetchPanel() {
+    async function fetchDashboardData() {
       try {
-        const data = await obtenerPanel();
-        if (!active || !Array.isArray(data.reservas)) return;
+        const [panelData, espaciosData, gastosResumen] = await Promise.all([
+          obtenerPanel().catch(() => null),
+          listarEspacios().catch(() => []),
+          obtenerResumenGastos().catch(() => null),
+        ]);
 
-        const ahora = Date.now();
-        const proxima = data.reservas
-          .filter((r) => r.estado !== "cancelada" && new Date(r.fecha_inicio).getTime() >= ahora)
-          .sort(
-            (a, b) => new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime(),
-          )[0];
-        if (!proxima) return;
+        if (!active) return;
 
-        const fecha = new Date(proxima.fecha_inicio);
-        const subtitle =
-          fecha.toLocaleDateString("es-CL", {
-            weekday: "short",
-            day: "numeric",
-            month: "short",
-          }) + `, ${fecha.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })} hrs`;
+        const espaciosMap = new Map<number, string>();
+        if (Array.isArray(espaciosData)) {
+          espaciosData.forEach((e) => espaciosMap.set(e.id, e.nombre));
+        }
 
         setKpis((prev) =>
-          prev.map((k) =>
-            k.id === "proxima-reserva"
-              ? {
+          prev.map((k) => {
+            if (k.id === "proxima-reserva" && panelData && Array.isArray(panelData.reservas)) {
+              const ahora = Date.now();
+              const proxima = panelData.reservas
+                .filter(
+                  (r) => r.estado !== "cancelada" && new Date(r.fecha_inicio).getTime() >= ahora,
+                )
+                .sort(
+                  (a, b) =>
+                    new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime(),
+                )[0];
+
+              if (proxima) {
+                const fecha = new Date(proxima.fecha_inicio);
+                const subtitle =
+                  fecha.toLocaleDateString("es-CL", {
+                    weekday: "short",
+                    day: "numeric",
+                    month: "short",
+                  }) +
+                  `, ${fecha.toLocaleTimeString("es-CL", { hour: "2-digit", minute: "2-digit" })} hrs`;
+                const nombreEspacio =
+                  espaciosMap.get(proxima.espacio_id) ?? `Espacio #${proxima.espacio_id}`;
+
+                return {
                   ...k,
-                  value: `Espacio #${proxima.espacio_id}`,
+                  value: nombreEspacio,
                   subtitle,
                   badge: {
                     label: proxima.estado === "confirmada" ? "Confirmada" : "Pendiente",
                     variant: proxima.estado === "confirmada" ? "green" : "yellow",
                   },
-                }
-              : k,
-          ),
+                };
+              }
+            }
+
+            if (k.id === "gastos-pendientes" && gastosResumen) {
+              if (gastosResumen.alDia) {
+                return {
+                  ...k,
+                  value: "$0 CLP",
+                  subtitle: "Al día — Sin deuda",
+                  badge: { label: "Al día", variant: "green" },
+                };
+              }
+              return {
+                ...k,
+                value: `$${gastosResumen.totalPendiente.toLocaleString("es-CL")} CLP`,
+                subtitle: gastosResumen.proximoVencimiento
+                  ? `Vence ${gastosResumen.proximoVencimiento}`
+                  : "Pendiente de pago",
+                badge: { label: "Pendiente", variant: "yellow" },
+              };
+            }
+
+            return k;
+          }),
         );
       } catch {
         // Fallback elegante a los datos de demo si el BFF no está disponible
       }
     }
-    void fetchPanel();
+    void fetchDashboardData();
     return () => {
       active = false;
     };

@@ -440,8 +440,8 @@ const IMAGENES_CATEGORIA: Record<string, string> = {
   Cancha: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=400&fit=crop",
 };
 
-function inferirCategoria(nombre: string): string {
-  const n = nombre.toLowerCase();
+function inferirCategoria(nombre: string, ubicacion?: string | null): string {
+  const n = `${nombre} ${ubicacion || ""}`.toLowerCase();
   if (n.includes("quincho") || n.includes("parrilla") || n.includes("asador")) return "Quincho";
   if (n.includes("piscina") || n.includes("alberca")) return "Piscina";
   if (n.includes("gimnasio") || n.includes("gym")) return "Gimnasio";
@@ -451,7 +451,7 @@ function inferirCategoria(nombre: string): string {
 }
 
 function mapearBackendEspacio(b: BackendEspacio): Espacio {
-  const categoria = inferirCategoria(b.nombre);
+  const categoria = inferirCategoria(b.nombre, b.ubicacion);
   return {
     id: b.id,
     nombre: b.nombre,
@@ -460,7 +460,9 @@ function mapearBackendEspacio(b: BackendEspacio): Espacio {
     tarifa: b.tarifa_hora,
     disponibleHoy: b.estado === "activo",
     imagen: IMAGENES_CATEGORIA[categoria] || IMAGENES_CATEGORIA.Sala,
-    descripcion: b.descripcion || "Espacio común disponible para reserva de residentes.",
+    descripcion:
+      b.descripcion ||
+      `Espacio común disponible para reserva de residentes${b.ubicacion ? ` en sector ${b.ubicacion}` : ""}.`,
     horario: "Lunes a domingo, 09:00 – 22:00 hrs",
     reglas: [
       `Capacidad máxima: ${b.capacidad} personas.`,
@@ -475,7 +477,7 @@ export default function EspaciosComunes() {
   const { role } = useAuth();
   const isAdmin = role === "admin";
 
-  const [espacios, setEspacios] = useState<Espacio[]>(ESPACIOS);
+  const [espacios, setEspacios] = useState<Espacio[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -484,11 +486,18 @@ export default function EspaciosComunes() {
       try {
         setLoading(true);
         const data = await listarEspacios();
-        if (active && Array.isArray(data) && data.length > 0) {
-          setEspacios(data.map(mapearBackendEspacio));
+        if (active) {
+          if (Array.isArray(data)) {
+            setEspacios(data.map(mapearBackendEspacio));
+          } else {
+            setEspacios([]);
+          }
         }
       } catch {
         // Fallback elegante al catálogo local si el backend no está disponible
+        if (active) {
+          setEspacios(ESPACIOS);
+        }
       } finally {
         if (active) setLoading(false);
       }
@@ -611,7 +620,12 @@ export default function EspaciosComunes() {
 
       {/* Cards grid */}
       <main className="px-6 py-6">
-        {espaciosFiltrados.length === 0 ? (
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center gap-4">
+            <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            <p className="font-display text-lg text-text">Cargando espacios comunes desde el servidor...</p>
+          </div>
+        ) : espaciosFiltrados.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center gap-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -630,25 +644,31 @@ export default function EspaciosComunes() {
             </svg>
             <div>
               <p className="font-display text-xl text-text">
-                No hay espacios que coincidan con tus filtros
+                {espacios.length === 0
+                  ? "No hay espacios comunes disponibles actualmente"
+                  : "No hay espacios que coincidan con tus filtros"}
               </p>
               <p className="text-muted text-sm mt-1">
-                Intenta ajustar los filtros para ver más resultados.
+                {espacios.length === 0
+                  ? "Vuelve a consultar más tarde o contacta a la administración."
+                  : "Intenta ajustar los filtros para ver más resultados."}
               </p>
             </div>
-            <button
-              onClick={() =>
-                setFiltros({
-                  busqueda: "",
-                  categoria: "Todos",
-                  capacidad: "Todos",
-                  soloDisponibles: false,
-                })
-              }
-              className="mt-2 text-primary text-sm font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-primary rounded"
-            >
-              Limpiar filtros
-            </button>
+            {espacios.length > 0 && (
+              <button
+                onClick={() =>
+                  setFiltros({
+                    busqueda: "",
+                    categoria: "Todos",
+                    capacidad: "Todos",
+                    soloDisponibles: false,
+                  })
+                }
+                className="mt-2 text-primary text-sm font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-primary rounded"
+              >
+                Limpiar filtros
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">

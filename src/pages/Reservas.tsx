@@ -2,7 +2,12 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { sileo } from "sileo";
-import { listarMisReservas, crearReserva, type BackendReserva } from "../services/espaciosApi";
+import {
+  listarMisReservas,
+  crearReserva,
+  listarEspacios,
+  type BackendReserva,
+} from "../services/espaciosApi";
 import { getStoredIdToken } from "../lib/authStorage";
 
 interface Reserva {
@@ -20,25 +25,28 @@ interface Reserva {
 }
 
 interface EspacioOpcion {
+  id: number;
   nombre: string;
   tarifaHr: number;
+  imagen?: string;
+  categoria?: string;
 }
 
 interface CreateForm {
-  espacioIdx: number;
+  espacioId: number;
   fecha: string;
   hora: string;
   duracion: number;
 }
 
-const ESPACIOS: EspacioOpcion[] = [
-  { nombre: "Quincho Los Aromos", tarifaHr: 25000 },
-  { nombre: "Quincho Bajo", tarifaHr: 18000 },
-  { nombre: "Piscina", tarifaHr: 0 },
-  { nombre: "Sala Multiuso", tarifaHr: 8000 },
-  { nombre: "Sala de Juegos", tarifaHr: 5000 },
-  { nombre: "Gimnasio", tarifaHr: 0 },
-  { nombre: "Cancha Multicancha", tarifaHr: 12000 },
+const ESPACIOS_FALLBACK: EspacioOpcion[] = [
+  { id: 1, nombre: "Quincho Los Aromos", tarifaHr: 25000, categoria: "Quincho" },
+  { id: 2, nombre: "Quincho Bajo", tarifaHr: 18000, categoria: "Quincho" },
+  { id: 3, nombre: "Piscina", tarifaHr: 0, categoria: "Piscina" },
+  { id: 4, nombre: "Sala Multiuso", tarifaHr: 8000, categoria: "Sala" },
+  { id: 5, nombre: "Sala de Juegos", tarifaHr: 5000, categoria: "Sala" },
+  { id: 6, nombre: "Gimnasio", tarifaHr: 0, categoria: "Gimnasio" },
+  { id: 7, nombre: "Cancha Multicancha", tarifaHr: 12000, categoria: "Cancha" },
 ];
 
 const HORAS = [
@@ -251,6 +259,7 @@ function ReservaCard({ reserva, onCancel, onBlock }: ReservaCardProps) {
 }
 
 interface CreateModalProps {
+  espacios: EspacioOpcion[];
   onClose: () => void;
   onConfirm: (
     reserva: Omit<Reserva, "id" | "codigo">,
@@ -258,16 +267,17 @@ interface CreateModalProps {
   ) => void;
 }
 
-function CreateModal({ onClose, onConfirm }: CreateModalProps) {
+function CreateModal({ espacios, onClose, onConfirm }: CreateModalProps) {
   const today = new Date().toISOString().split("T")[0];
+  const defaultEspacio = espacios[0] ?? ESPACIOS_FALLBACK[0];
   const [form, setForm] = useState<CreateForm>({
-    espacioIdx: 0,
+    espacioId: defaultEspacio.id,
     fecha: today,
     hora: "10:00",
     duracion: 1,
   });
 
-  const espacio = ESPACIOS[form.espacioIdx];
+  const espacio = espacios.find((e) => e.id === form.espacioId) ?? defaultEspacio;
   const total = espacio.tarifaHr * form.duracion;
 
   function handleSubmit(e: React.FormEvent) {
@@ -307,8 +317,10 @@ function CreateModal({ onClose, onConfirm }: CreateModalProps) {
     onConfirm(
       {
         espacio: espacio.nombre,
-        categoria: espacio.nombre.split(" ")[0],
-        imagen: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&h=200&fit=crop",
+        categoria: espacio.categoria || espacio.nombre.split(" ")[0],
+        imagen:
+          espacio.imagen ||
+          "https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&h=200&fit=crop",
         fecha: form.fecha,
         fechaDisplay,
         hora: form.hora,
@@ -317,7 +329,7 @@ function CreateModal({ onClose, onConfirm }: CreateModalProps) {
         estado: "pendiente",
       },
       {
-        espacioId: form.espacioIdx + 1,
+        espacioId: espacio.id,
         fechaInicio,
         fechaFin,
       },
@@ -336,12 +348,12 @@ function CreateModal({ onClose, onConfirm }: CreateModalProps) {
             </label>
             <select
               id="espacio"
-              value={form.espacioIdx}
-              onChange={(e) => setForm({ ...form, espacioIdx: Number(e.target.value) })}
+              value={form.espacioId}
+              onChange={(e) => setForm({ ...form, espacioId: Number(e.target.value) })}
               className="border border-border rounded-lg px-3 py-2 text-text bg-white focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              {ESPACIOS.map((esp, idx) => (
-                <option key={esp.nombre} value={idx}>
+              {espacios.map((esp) => (
+                <option key={esp.id} value={esp.id}>
                   {esp.nombre} —{" "}
                   {esp.tarifaHr === 0 ? "Gratis" : `$${esp.tarifaHr.toLocaleString("es-CL")}/hr`}
                 </option>
@@ -481,7 +493,10 @@ const TABS: { key: FilterTab; label: string }[] = [
   { key: "cancelada", label: "Canceladas" },
 ];
 
-function mapearBackendReserva(b: BackendReserva): Reserva {
+function mapearBackendReserva(
+  b: BackendReserva,
+  espaciosMap?: Map<number, EspacioOpcion>,
+): Reserva {
   const fInicio = new Date(b.fecha_inicio);
   const fFin = new Date(b.fecha_fin);
   const duracionHrs = Math.max(
@@ -510,7 +525,12 @@ function mapearBackendReserva(b: BackendReserva): Reserva {
   const fechaDisplay = `${dayNames[fInicio.getDay()]} ${fInicio.getDate()} ${monthNames[fInicio.getMonth()]} ${yyyy}`;
   const hora = `${String(fInicio.getHours()).padStart(2, "0")}:${String(fInicio.getMinutes()).padStart(2, "0")}`;
 
-  const espacioOpcion = ESPACIOS[(b.espacio_id - 1) % ESPACIOS.length] ?? ESPACIOS[0];
+  const espacioOpcion = espaciosMap?.get(b.espacio_id) ?? {
+    id: b.espacio_id,
+    nombre: `Espacio #${b.espacio_id}`,
+    tarifaHr: 0,
+    categoria: "Espacio",
+  };
   const estadoMap: Record<string, "confirmada" | "pendiente" | "cancelada"> = {
     confirmada: "confirmada",
     pendiente_pago: "pendiente",
@@ -522,8 +542,10 @@ function mapearBackendReserva(b: BackendReserva): Reserva {
   return {
     id: `R${String(b.id).padStart(3, "0")}`,
     espacio: espacioOpcion.nombre,
-    categoria: espacioOpcion.nombre.split(" ")[0],
-    imagen: "https://images.unsplash.com/photo-1622714384717-3f60c04d7c73?w=300&h=200&fit=crop",
+    categoria: espacioOpcion.categoria || espacioOpcion.nombre.split(" ")[0],
+    imagen:
+      espacioOpcion.imagen ||
+      "https://images.unsplash.com/photo-1622714384717-3f60c04d7c73?w=300&h=200&fit=crop",
     fecha: fechaIso,
     fechaDisplay,
     hora,
@@ -538,7 +560,9 @@ export default function Reservas() {
   const { role } = useAuth();
   const isAdmin = role === "admin";
 
-  const [reservas, setReservas] = useState<Reserva[]>(INITIAL_RESERVAS);
+  const [espaciosDisponibles, setEspaciosDisponibles] = useState<EspacioOpcion[]>([]);
+  const [reservas, setReservas] = useState<Reserva[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<FilterTab>("todas");
   const [showCreate, setShowCreate] = useState(false);
   const [cancelTarget, setCancelTarget] = useState<string | null>(null);
@@ -546,18 +570,48 @@ export default function Reservas() {
 
   useEffect(() => {
     let active = true;
-    async function cargarReservas() {
+    async function cargarDatos() {
       const idToken = getStoredIdToken() ?? undefined;
       try {
-        const data = await listarMisReservas(idToken);
-        if (active && Array.isArray(data)) {
-          setReservas(data.map(mapearBackendReserva));
+        setLoading(true);
+        const [espaciosData, reservasData] = await Promise.all([
+          listarEspacios(idToken).catch(() => []),
+          listarMisReservas(idToken).catch(() => []),
+        ]);
+
+        if (!active) return;
+
+        let listaEspacios: EspacioOpcion[] = [];
+        if (Array.isArray(espaciosData) && espaciosData.length > 0) {
+          listaEspacios = espaciosData.map((e) => ({
+            id: e.id,
+            nombre: e.nombre,
+            tarifaHr: e.tarifa_hora,
+            categoria: e.nombre.split(" ")[0],
+          }));
+        } else {
+          listaEspacios = ESPACIOS_FALLBACK;
+        }
+        setEspaciosDisponibles(listaEspacios);
+
+        const map = new Map<number, EspacioOpcion>();
+        listaEspacios.forEach((esp) => map.set(esp.id, esp));
+
+        if (Array.isArray(reservasData)) {
+          setReservas(reservasData.map((r) => mapearBackendReserva(r, map)));
+        } else {
+          setReservas([]);
         }
       } catch {
-        // Fallback local si backend no está disponible
+        if (active) {
+          setReservas(INITIAL_RESERVAS);
+          setEspaciosDisponibles(ESPACIOS_FALLBACK);
+        }
+      } finally {
+        if (active) setLoading(false);
       }
     }
-    void cargarReservas();
+    void cargarDatos();
     return () => {
       active = false;
     };
@@ -583,7 +637,11 @@ export default function Reservas() {
           fecha_inicio: payload.fechaInicio,
           fecha_fin: payload.fechaFin,
         });
-        newReserva = mapearBackendReserva(backendResult);
+        const map = new Map<number, EspacioOpcion>();
+        (espaciosDisponibles.length > 0 ? espaciosDisponibles : ESPACIOS_FALLBACK).forEach((e) =>
+          map.set(e.id, e),
+        );
+        newReserva = mapearBackendReserva(backendResult, map);
         sileo.success({ title: "Reserva creada exitosamente en el servidor" });
       } catch (err) {
         const newId = `R${String(reservas.length + 1).padStart(3, "0")}`;
@@ -666,7 +724,12 @@ export default function Reservas() {
 
         {/* Reservations list */}
         <div className="flex flex-col gap-4">
-          {filtered.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-16 text-muted">
+              <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+              <p className="font-medium text-text">Cargando reservas desde el servidor...</p>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="text-center py-16 text-muted">
               <p className="text-4xl mb-3">📅</p>
               <p className="font-medium text-text">No hay reservas en esta categoría</p>
@@ -700,7 +763,11 @@ export default function Reservas() {
 
       {/* Modals */}
       {showCreate && (
-        <CreateModal onClose={() => setShowCreate(false)} onConfirm={handleCreateConfirm} />
+        <CreateModal
+          espacios={espaciosDisponibles.length > 0 ? espaciosDisponibles : ESPACIOS_FALLBACK}
+          onClose={() => setShowCreate(false)}
+          onConfirm={handleCreateConfirm}
+        />
       )}
       {cancelTargetReserva && (
         <CancelModal

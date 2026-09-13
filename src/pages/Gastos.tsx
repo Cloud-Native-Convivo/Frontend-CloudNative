@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { gastos } from "../lib/data";
 import { useAuth } from "../hooks/useAuth";
+import { obtenerResumenGastos, type GastosResumen } from "../services/gastosApi";
 import {
   IconDownload,
   IconDollar,
@@ -141,12 +142,36 @@ const alternatingSections = [
 ];
 
 export default function Gastos() {
-  const { role } = useAuth();
+  const { role, user } = useAuth();
   const isAdmin = role === "admin";
 
   const [selectedMes, setSelectedMes] = useState("Agosto");
   const [showPayModal, setShowPayModal] = useState(false);
   const [paid, setPaid] = useState(false);
+  const [resumen, setResumen] = useState<GastosResumen | null>(null);
+  const [gastosEstado, setGastosEstado] = useState<"cargando" | "error" | "listo">("cargando");
+
+  useEffect(() => {
+    let active = true;
+    async function cargarGastos() {
+      try {
+        const data = await obtenerResumenGastos();
+        if (!active) return;
+        setResumen(data);
+        if (data.alDia) {
+          setPaid(true);
+        }
+        setGastosEstado("listo");
+      } catch {
+        // No mostrar un saldo/fecha inventados: si no se pudo cargar, decirlo.
+        if (active) setGastosEstado("error");
+      }
+    }
+    void cargarGastos();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#F8FAFB]">
@@ -167,7 +192,16 @@ export default function Gastos() {
       </div>
 
       <div className="max-w-[1280px] mx-auto p-[40px_24px_80px]">
-        {!isAdmin && <SituacionResidenteCard paid={paid} onPay={() => setShowPayModal(true)} />}
+        {!isAdmin && (
+          <SituacionResidenteCard
+            estado={gastosEstado}
+            paid={paid}
+            onPay={() => setShowPayModal(true)}
+            unidad={user?.unidad ? `Unidad ${user.unidad}` : undefined}
+            monto={resumen ? resumen.totalPendiente : undefined}
+            vencimiento={resumen?.proximoVencimiento}
+          />
+        )}
 
         <div className="grid grid-cols-2 gap-6 mb-7">
           <DesgloseMensualCard

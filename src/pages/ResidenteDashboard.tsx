@@ -329,8 +329,7 @@ export default function ResidenteDashboard() {
                   (r) => r.estado !== "cancelada" && new Date(r.fecha_inicio).getTime() >= ahora,
                 )
                 .sort(
-                  (a, b) =>
-                    new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime(),
+                  (a, b) => new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime(),
                 )[0];
 
               if (proxima) {

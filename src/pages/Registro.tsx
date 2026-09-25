@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { registroFotos } from "../lib/data";
+import { registroFotos } from "../data";
 import { FlipCard } from "../components/FlipCard";
 import {
   IconCamera,

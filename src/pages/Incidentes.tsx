@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
+import { notify } from "../utils/notify";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -670,11 +671,21 @@ export default function Incidentes() {
     cerrado: incidentes.filter((i) => i.estado === "cerrado").length,
   };
 
-  const handleAsignar = (id: string, responsable: string) =>
+  const handleAsignar = (id: string, responsable: string) => {
     setIncidentes((prev) => prev.map((i) => (i.id === id ? { ...i, responsable } : i)));
+    notify.info({
+      title: "Responsable asignado",
+      description: `Incidente #${id} asignado a ${responsable}.`,
+    });
+  };
 
-  const handleCambiarEstado = (id: string, estado: EstadoIncidente) =>
+  const handleCambiarEstado = (id: string, estado: EstadoIncidente) => {
     setIncidentes((prev) => prev.map((i) => (i.id === id ? { ...i, estado } : i)));
+    notify.info({
+      title: "Estado actualizado",
+      description: `Incidente #${id} marcado como '${estado.replace("_", " ")}'.`,
+    });
+  };
 
   const FILTER_TABS: { key: EstadoIncidente | "todos"; label: string }[] = [
     { key: "todos", label: `Todos (${counts.todos})` },
@@ -794,7 +805,13 @@ export default function Incidentes() {
       {showNuevo && (
         <NuevoModal
           onClose={() => setShowNuevo(false)}
-          onCreated={(inc) => setIncidentes((prev) => [inc, ...prev])}
+          onCreated={(inc) => {
+            setIncidentes((prev) => [inc, ...prev]);
+            notify.success({
+              title: "Incidente reportado",
+              description: "Tu reporte ha sido ingresado y notificado al equipo.",
+            });
+          }}
           reportadoPor={user?.nombre ?? ""}
           unidad={user?.unidad ?? ""}
         />

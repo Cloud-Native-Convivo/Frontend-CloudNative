@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
-import { sileo } from "sileo";
+import { notify } from "../utils/notify";
 import {
   listarMisReservas,
   crearReserva,
   listarEspacios,
   type BackendReserva,
 } from "../services/espaciosApi";
-import { getStoredIdToken } from "../lib/authStorage";
+import { getStoredIdToken } from "../utils/authStorage";
 
 interface Reserva {
   id: string;
@@ -570,28 +570,23 @@ export default function Reservas() {
 
   useEffect(() => {
     let active = true;
-    async function cargarDatos() {
-      const idToken = getStoredIdToken() ?? undefined;
-      try {
-        setLoading(true);
-        const [espaciosData, reservasData] = await Promise.all([
-          listarEspacios(idToken).catch(() => []),
-          listarMisReservas(idToken).catch(() => []),
-        ]);
-
+    const idToken = getStoredIdToken() ?? undefined;
+    Promise.all([
+      listarEspacios(idToken).catch(() => []),
+      listarMisReservas(idToken).catch(() => []),
+    ])
+      .then(([espaciosData, reservasData]) => {
         if (!active) return;
 
-        let listaEspacios: EspacioOpcion[] = [];
-        if (Array.isArray(espaciosData) && espaciosData.length > 0) {
-          listaEspacios = espaciosData.map((e) => ({
-            id: e.id,
-            nombre: e.nombre,
-            tarifaHr: e.tarifa_hora,
-            categoria: e.nombre.split(" ")[0],
-          }));
-        } else {
-          listaEspacios = ESPACIOS_FALLBACK;
-        }
+        const listaEspacios: EspacioOpcion[] =
+          Array.isArray(espaciosData) && espaciosData.length > 0
+            ? espaciosData.map((e) => ({
+                id: e.id,
+                nombre: e.nombre,
+                tarifaHr: e.tarifa_hora,
+                categoria: e.nombre.split(" ")[0],
+              }))
+            : ESPACIOS_FALLBACK;
         setEspaciosDisponibles(listaEspacios);
 
         const map = new Map<number, EspacioOpcion>();
@@ -602,16 +597,16 @@ export default function Reservas() {
         } else {
           setReservas([]);
         }
-      } catch {
+      })
+      .catch(() => {
         if (active) {
           setReservas(INITIAL_RESERVAS);
           setEspaciosDisponibles(ESPACIOS_FALLBACK);
         }
-      } finally {
+      })
+      .finally(() => {
         if (active) setLoading(false);
-      }
-    }
-    void cargarDatos();
+      });
     return () => {
       active = false;
     };
@@ -642,7 +637,7 @@ export default function Reservas() {
           map.set(e.id, e),
         );
         newReserva = mapearBackendReserva(backendResult, map);
-        sileo.success({ title: "Reserva creada exitosamente en el servidor" });
+        notify.success({ title: "Reserva creada exitosamente en el servidor" });
       } catch (err) {
         const newId = `R${String(reservas.length + 1).padStart(3, "0")}`;
         newReserva = {
@@ -650,7 +645,7 @@ export default function Reservas() {
           id: newId,
           codigo: `CONV-2026-${newId}`,
         };
-        sileo.warning({
+        notify.warning({
           title: "Reserva guardada localmente (modo offline)",
           description: err instanceof Error ? err.message : undefined,
         });

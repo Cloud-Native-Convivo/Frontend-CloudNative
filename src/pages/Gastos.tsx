@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { gastos } from "../lib/data";
+import { gastos } from "../data";
 import { useAuth } from "../hooks/useAuth";
+import { notify } from "../utils/notify";
 import { obtenerResumenGastos, type GastosResumen } from "../services/gastosApi";
 import {
   IconDownload,
@@ -345,6 +346,10 @@ export default function Gastos() {
           onConfirm={() => {
             setPaid(true);
             setShowPayModal(false);
+            notify.success({
+              title: "Pago procesado exitosamente",
+              description: "Tu comprobante ha sido emitido y tu estado está al día.",
+            });
           }}
         />
       )}

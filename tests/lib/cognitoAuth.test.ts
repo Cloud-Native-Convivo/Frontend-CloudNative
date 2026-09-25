@@ -3,6 +3,8 @@ import {
   generateCodeVerifier,
   generateCodeChallenge,
   buildGoogleAuthorizeUrl,
+  isCognitoConfigured,
+  checkCognitoReachability,
   decodeIdToken,
   exchangeCodeForTokens,
   roleFromClaims,
@@ -31,6 +33,39 @@ describe("generateCodeChallenge", () => {
   });
 });
 
+describe("isCognitoConfigured", () => {
+  it("retorna true cuando las 3 variables de entorno están presentes", () => {
+    expect(isCognitoConfigured()).toBe(true);
+  });
+
+  it("retorna false si falta alguna variable de entorno", () => {
+    vi.stubEnv("VITE_COGNITO_DOMAIN", "");
+    expect(isCognitoConfigured()).toBe(false);
+  });
+});
+
+describe("checkCognitoReachability", () => {
+  it("retorna false si Cognito no está configurado", async () => {
+    vi.stubEnv("VITE_COGNITO_DOMAIN", "");
+    const reachable = await checkCognitoReachability();
+    expect(reachable).toBe(false);
+  });
+
+  it("retorna true si el probe HTTP resuelve", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ status: 200 }));
+    const reachable = await checkCognitoReachability();
+    expect(reachable).toBe(true);
+    vi.unstubAllGlobals();
+  });
+
+  it("retorna false si el probe HTTP rechaza (red caída o DNS no resuelto)", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+    const reachable = await checkCognitoReachability();
+    expect(reachable).toBe(false);
+    vi.unstubAllGlobals();
+  });
+});
+
 describe("buildGoogleAuthorizeUrl", () => {
   it("arma la URL de /oauth2/authorize con los parámetros esperados y guarda el verifier", async () => {
     const url = new URL(await buildGoogleAuthorizeUrl());
@@ -44,6 +79,13 @@ describe("buildGoogleAuthorizeUrl", () => {
     expect(url.searchParams.get("code_challenge_method")).toBe("S256");
     expect(url.searchParams.get("code_challenge")).toBeTruthy();
     expect(sessionStorage.getItem("convivo.pkce_verifier")).toBeTruthy();
+  });
+
+  it("lanza un error si la configuración de Cognito no está disponible", async () => {
+    vi.stubEnv("VITE_COGNITO_CLIENT_ID", "");
+    await expect(buildGoogleAuthorizeUrl()).rejects.toThrow(
+      "La configuración de AWS Cognito no está disponible en este entorno.",
+    );
   });
 });
 

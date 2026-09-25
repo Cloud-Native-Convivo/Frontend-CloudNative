@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router";
-import { channels } from "../lib/data";
+import { channels } from "../data";
 import { FlipCard } from "../components/FlipCard";
 import {
   IconPhone,

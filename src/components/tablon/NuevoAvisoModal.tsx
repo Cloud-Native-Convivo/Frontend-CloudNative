@@ -1,3 +1,5 @@
+import { notify } from "../../utils/notify";
+
 interface NuevoAvisoModalProps {
   canPublishDirect: boolean;
   onClose: () => void;
@@ -75,7 +77,20 @@ export function NuevoAvisoModal({ canPublishDirect, onClose }: NuevoAvisoModalPr
             Cancelar
           </button>
           <button
-            onClick={onClose}
+            onClick={() => {
+              if (canPublishDirect) {
+                notify.success({
+                  title: "Aviso publicado",
+                  description: "Tu comunicado ya es visible en el tablón.",
+                });
+              } else {
+                notify.info({
+                  title: "Solicitud enviada",
+                  description: "El comité revisará tu publicación a la brevedad.",
+                });
+              }
+              onClose();
+            }}
             className="flex-[2] p-3 text-[14px] font-bold rounded-[10px] border-none bg-[#0D9488] text-white cursor-pointer hover:bg-[#005047]"
           >
             {canPublishDirect ? "Publicar" : "Enviar solicitud"}

@@ -36,10 +36,12 @@ No bloquean el uso del proyecto. Resolver cuando el equipo tenga las decisiones.
 ## Resumen por prioridad
 
 **Alta (funcional):**
+
 - #15: comando de version bump
 - #16: dueño técnico del repo
 
 **Media (operacional):**
+
 - #1: navegadores target
 - #2: lint de tokens
 - #3-4: métricas de performance
@@ -47,6 +49,7 @@ No bloquean el uso del proyecto. Resolver cuando el equipo tenga las decisiones.
 - #18: post-mortems
 
 **Baja (normativa/certificación):**
+
 - #5-8: placeholders normativos ISO/IEEE
 - #9, #14, #17, #19-20:`(no aplica)` directo
 
@@ -62,4 +65,3 @@ No bloquean el uso del proyecto. Resolver cuando el equipo tenga las decisiones.
 - [x] Configurar las notificaciones a traves de [Sileo](https://sileo.aaryan.design/)
 
 - [ ] Fix: Workflows de CI/CD (deploy, ci-develop) fallan (posible problema con npm ci y --legacy-peer-deps). Arreglar.
-

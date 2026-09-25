@@ -11,6 +11,7 @@ import Registro from "../pages/Registro";
 import Precios from "../pages/Precios";
 import Login from "../pages/Login";
 import AuthCallback from "../pages/AuthCallback";
+import AuthError from "../pages/AuthError";
 import RegistroCuenta from "../pages/RegistroCuenta";
 import EspaciosComunes from "../pages/EspaciosComunes";
 import Visitas from "../pages/Visitas";
@@ -22,6 +23,7 @@ const router = createBrowserRouter(
     // Auth routes (no Layout wrapper)
     { path: "/login", Component: Login, errorElement: <RouteError /> },
     { path: "/auth/callback", Component: AuthCallback, errorElement: <RouteError /> },
+    { path: "/auth/error", Component: AuthError, errorElement: <RouteError /> },
     {
       path: "/crear-cuenta",
       Component: RegistroCuenta,

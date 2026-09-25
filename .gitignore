@@ -32,3 +32,13 @@ Thumbs.db
 
 # Coverage
 coverage/
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Python / Linters
+.ruff_cache/
+

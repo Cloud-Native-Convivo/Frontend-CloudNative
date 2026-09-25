@@ -1,15 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { decodeIdToken, exchangeCodeForTokens, roleFromClaims } from "../lib/cognitoAuth";
-import { sileo } from "sileo";
+import { notify } from "../utils/notify";
 import type { User } from "../types";
-import { setStoredUser, setStoredIdToken, setStoredAccessToken } from "../lib/authStorage";
+import { setStoredUser, setStoredIdToken, setStoredAccessToken } from "../utils/authStorage";
 
 export default function AuthCallback() {
   const navigate = useNavigate();
   const { setUser } = useAuth();
-  const [error, setError] = useState<string | null>(null);
   const ran = useRef(false);
 
   useEffect(() => {
@@ -27,11 +26,11 @@ export default function AuthCallback() {
       const code = params.get("code");
 
       if (errorParam) {
-        setError(`Google/Cognito rechazó el inicio de sesión: ${errorParam}`);
+        navigate("/auth/error?reason=oauth_error", { replace: true });
         return;
       }
       if (!code) {
-        setError("Falta el parámetro 'code' en la respuesta de Cognito.");
+        navigate("/auth/error?reason=exchange_failed", { replace: true });
         return;
       }
 
@@ -52,30 +51,16 @@ export default function AuthCallback() {
           setStoredAccessToken(tokens.access_token);
         }
         setUser(usuario);
-        sileo.success({ title: "Sesión iniciada correctamente" });
+        notify.success({ title: "Sesión iniciada correctamente" });
         navigate("/mi-dashboard", { replace: true });
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Error desconocido intercambiando el code.");
+      } catch {
+        navigate("/auth/error?reason=exchange_failed", { replace: true });
       }
     }
 
     void procesarCallback();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- guard `ran` evita doble-ejecución, deps intencionalmente vacías
   }, []);
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-6 text-center bg-surface">
-        <h1 className="font-display text-2xl text-text">No se pudo iniciar sesión</h1>
-        <p role="alert" className="text-alert-red max-w-md text-sm">
-          {error}
-        </p>
-        <a href="/login" className="text-primary font-semibold hover:underline">
-          Volver al login
-        </a>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface">

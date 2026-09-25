@@ -1,6 +1,6 @@
 /* eslint-disable react/forbid-dom-props */
 import { useState, lazy, Suspense } from "react";
-import { gastos } from "../lib/data";
+import { gastos } from "../data";
 import { IconDownload, IconTrendingUp, IconEye, IconTag } from "../components/icons/Icons";
 
 const GastosBarChart = lazy(() => import("../components/charts/GastosBarChart"));

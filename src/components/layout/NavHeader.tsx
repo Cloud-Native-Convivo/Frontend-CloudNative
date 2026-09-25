@@ -37,6 +37,154 @@ interface NavHeaderProps {
 // debe poder simularse sin loguearse de verdad.
 const DEMO_ROLES: Role[] = ["conserje", "admin", "comite"];
 
+function UserAvatar({ user }: { user: User }) {
+  if (user.avatar) {
+    return (
+      <img
+        src={user.avatar}
+        alt={user.nombre}
+        className="w-[32px] h-[32px] rounded-full object-cover border border-[#E2E8F0]"
+        referrerPolicy="no-referrer"
+      />
+    );
+  }
+  return (
+    <div
+      className="w-[32px] h-[32px] rounded-full bg-[#E2E8F0] text-[#64748B] flex items-center justify-center font-bold text-[12px]"
+      title={user.nombre}
+    >
+      {user.nombre.charAt(0).toUpperCase()}
+    </div>
+  );
+}
+
+function RoleSwitcherDropdown({
+  role,
+  setRole,
+  user,
+  isOpen,
+  onToggle,
+  onClose,
+}: {
+  role: Role | null;
+  setRole: (r: Role) => void;
+  user: User | null;
+  isOpen: boolean;
+  onToggle: () => void;
+  onClose: () => void;
+}) {
+  return (
+    <div className="relative">
+      <button
+        onClick={onToggle}
+        className="flex items-center gap-[6px] text-[12px] font-bold text-white px-[12px] py-[7px] rounded-[7px] border-none cursor-pointer transition-opacity duration-150 hover:opacity-85"
+        style={{ background: role ? ROLE_COLORS[role] : "#64748B" }}
+        title="Cambiar rol (demo)"
+      >
+        <span className="text-[10px] opacity-75 font-semibold">ROL:</span>
+        {role ? ROLE_LABELS[role] : "Elegir"}
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          className="w-[10px] h-[10px] opacity-70"
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+      {isOpen && (
+        <div className="absolute top-[calc(100%+6px)] right-0 bg-white border border-[#E2E8F0] rounded-[10px] shadow-[0_4px_20px_rgba(0,0,0,0.1)] p-1 z-[100] min-w-[160px]">
+          <div className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-[0.08em] px-[12px] pt-[6px] pb-[4px]">
+            Demo · Cambiar rol
+          </div>
+          {DEMO_ROLES.map((r) => (
+            <button
+              key={r}
+              onClick={() => {
+                setRole(r);
+                onClose();
+              }}
+              className="flex items-center gap-[8px] w-full px-[12px] py-[8px] border-none cursor-pointer rounded-[7px] text-[13px] transition-colors duration-150 hover:bg-[#F8FAFB]"
+              style={{
+                background: r === role ? "#F0FDFA" : "transparent",
+                fontWeight: r === role ? 700 : 500,
+                color: r === role ? ROLE_COLORS[r] : "#00201B",
+              }}
+            >
+              <span
+                className="w-[8px] h-[8px] rounded-full shrink-0"
+                style={{ background: ROLE_COLORS[r] }}
+              />
+              {ROLE_LABELS[r]}
+            </button>
+          ))}
+          {user && (
+            <div className="border-t border-[#F1F5F9] my-1 px-[12px] pt-[4px] pb-[6px]">
+              <p className="text-[11px] text-[#94A3B8] leading-[1.4] m-0">
+                {user.nombre}
+                <br />
+                {user.unidad}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MobileMenuDropdown({
+  isOpen,
+  navLinks,
+  role,
+  setRole,
+  onClose,
+}: {
+  isOpen: boolean;
+  navLinks: NavHeaderProps["navLinks"];
+  role: Role | null;
+  setRole: (r: Role) => void;
+  onClose: () => void;
+}) {
+  if (!isOpen) return null;
+  return (
+    <div className="absolute top-full inset-x-0 bg-white border-b border-[#E2E8F0] px-4 pt-2 pb-4 z-[49]">
+      {navLinks.map((l) => (
+        <NavLink
+          key={l.path}
+          to={l.path}
+          className={({ isActive }) =>
+            `flex items-center gap-[10px] py-[11px] px-[8px] text-[14px] font-medium no-underline border-b border-[#F1F5F9] ${
+              isActive ? "text-[#0D9488]" : "text-[#00201B]"
+            }`
+          }
+        >
+          {l.icon} {l.label}
+        </NavLink>
+      ))}
+      <div className="mt-2 flex gap-2">
+        {DEMO_ROLES.map((r) => (
+          <button
+            key={r}
+            onClick={() => {
+              setRole(r);
+              onClose();
+            }}
+            className="flex-1 py-2 px-1 text-[12px] font-bold rounded-lg border-none cursor-pointer"
+            style={{
+              background: r === role ? ROLE_COLORS[r] : "#F1F5F9",
+              color: r === role ? "#fff" : "#64748B",
+            }}
+          >
+            {ROLE_LABELS[r]}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function NavHeader({
   ribbonH,
   navH,
@@ -116,82 +264,18 @@ export function NavHeader({
           ))}
           <div className="w-[1px] h-[20px] bg-[#E2E8F0] mx-[6px]" />
 
-          {/* Avatar del usuario (solo si hay sesión/rol demo activo) */}
-          {user &&
-            (user.avatar ? (
-              <img
-                src={user.avatar}
-                alt={user.nombre}
-                className="w-[32px] h-[32px] rounded-full object-cover border border-[#E2E8F0]"
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              <div
-                className="w-[32px] h-[32px] rounded-full bg-[#E2E8F0] text-[#64748B] flex items-center justify-center font-bold text-[12px]"
-                title={user.nombre}
-              >
-                {user.nombre.charAt(0).toUpperCase()}
-              </div>
-            ))}
+          {/* Avatar del usuario */}
+          {user && <UserAvatar user={user} />}
 
           {/* Role switcher (demo) */}
-          <div className="relative">
-            <button
-              onClick={() => setRoleSwitcherOpen((o) => !o)}
-              className="flex items-center gap-[6px] text-[12px] font-bold text-white px-[12px] py-[7px] rounded-[7px] border-none cursor-pointer transition-opacity duration-150 hover:opacity-85"
-              style={{ background: role ? ROLE_COLORS[role] : "#64748B" }}
-              title="Cambiar rol (demo)"
-            >
-              <span className="text-[10px] opacity-75 font-semibold">ROL:</span>
-              {role ? ROLE_LABELS[role] : "Elegir"}
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                className="w-[10px] h-[10px] opacity-70"
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </button>
-            {roleSwitcherOpen && (
-              <div className="absolute top-[calc(100%+6px)] right-0 bg-white border border-[#E2E8F0] rounded-[10px] shadow-[0_4px_20px_rgba(0,0,0,0.1)] p-1 z-[100] min-w-[160px]">
-                <div className="text-[10px] font-bold text-[#94A3B8] uppercase tracking-[0.08em] px-[12px] pt-[6px] pb-[4px]">
-                  Demo · Cambiar rol
-                </div>
-                {DEMO_ROLES.map((r) => (
-                  <button
-                    key={r}
-                    onClick={() => {
-                      setRole(r);
-                      setRoleSwitcherOpen(false);
-                    }}
-                    className="flex items-center gap-[8px] w-full px-[12px] py-[8px] border-none cursor-pointer rounded-[7px] text-[13px] transition-colors duration-150 hover:bg-[#F8FAFB]"
-                    style={{
-                      background: r === role ? "#F0FDFA" : "transparent",
-                      fontWeight: r === role ? 700 : 500,
-                      color: r === role ? ROLE_COLORS[r] : "#00201B",
-                    }}
-                  >
-                    <span
-                      className="w-[8px] h-[8px] rounded-full shrink-0"
-                      style={{ background: ROLE_COLORS[r] }}
-                    />
-                    {ROLE_LABELS[r]}
-                  </button>
-                ))}
-                {user && (
-                  <div className="border-t border-[#F1F5F9] my-1 px-[12px] pt-[4px] pb-[6px]">
-                    <p className="text-[11px] text-[#94A3B8] leading-[1.4] m-0">
-                      {user.nombre}
-                      <br />
-                      {user.unidad}
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+          <RoleSwitcherDropdown
+            role={role}
+            setRole={setRole}
+            user={user}
+            isOpen={roleSwitcherOpen}
+            onToggle={() => setRoleSwitcherOpen((o) => !o)}
+            onClose={() => setRoleSwitcherOpen(false)}
+          />
 
           {user ? (
             <button
@@ -241,41 +325,13 @@ export function NavHeader({
       </div>
 
       {/* Mobile dropdown */}
-      {mobileOpen && (
-        <div className="absolute top-full inset-x-0 bg-white border-b border-[#E2E8F0] px-4 pt-2 pb-4 z-[49]">
-          {navLinks.map((l) => (
-            <NavLink
-              key={l.path}
-              to={l.path}
-              className={({ isActive }) =>
-                `flex items-center gap-[10px] py-[11px] px-[8px] text-[14px] font-medium no-underline border-b border-[#F1F5F9] ${
-                  isActive ? "text-[#0D9488]" : "text-[#00201B]"
-                }`
-              }
-            >
-              {l.icon} {l.label}
-            </NavLink>
-          ))}
-          <div className="mt-2 flex gap-2">
-            {DEMO_ROLES.map((r) => (
-              <button
-                key={r}
-                onClick={() => {
-                  setRole(r);
-                  setMobileOpen(false);
-                }}
-                className="flex-1 py-2 px-1 text-[12px] font-bold rounded-lg border-none cursor-pointer"
-                style={{
-                  background: r === role ? ROLE_COLORS[r] : "#F1F5F9",
-                  color: r === role ? "#fff" : "#64748B",
-                }}
-              >
-                {ROLE_LABELS[r]}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
+      <MobileMenuDropdown
+        isOpen={mobileOpen}
+        navLinks={navLinks}
+        role={role}
+        setRole={setRole}
+        onClose={() => setMobileOpen(false)}
+      />
     </nav>
   );
 }

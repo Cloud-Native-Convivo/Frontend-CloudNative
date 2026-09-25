@@ -293,6 +293,133 @@ const activity: ActivityItem[] = [
   },
 ];
 
+function DashboardHeroHeader({ user }: { user: ReturnType<typeof useAuth>["user"] }) {
+  return (
+    <div className="bg-text px-6 py-10 md:px-10">
+      <div className="mx-auto max-w-6xl">
+        <h1 className="font-display text-3xl font-semibold text-white md:text-4xl">
+          Buenos días, {user?.nombre.split(" ")[0] ?? "Residente"}
+        </h1>
+        <p className="mt-1 font-body text-sm text-white/60">{user?.unidad ?? ""}</p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link
+            to="/espacios"
+            className="rounded-full border border-white/40 px-4 py-2 font-body text-sm font-medium text-white transition-colors hover:bg-white/10"
+          >
+            Reservar espacio
+          </Link>
+          <Link
+            to="/gastos"
+            className="rounded-full border border-white/40 px-4 py-2 font-body text-sm font-medium text-white transition-colors hover:bg-white/10"
+          >
+            Pagar gastos
+          </Link>
+          <a
+            href="#incidentes"
+            className="rounded-full border border-white/40 px-4 py-2 font-body text-sm font-medium text-white transition-colors hover:bg-white/10"
+          >
+            Reportar incidente
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DashboardVisitasSection({ visits: items }: { visits: Visit[] }) {
+  return (
+    <section id="incidentes">
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="font-display text-xl font-semibold text-text">Visitas próximas</h2>
+        <Link to="/visitas" className="font-body text-sm font-medium text-primary hover:underline">
+          Gestionar →
+        </Link>
+      </div>
+      <div className="overflow-hidden rounded-xl border border-border bg-white">
+        <table className="w-full font-body text-sm">
+          <thead>
+            <tr className="border-b border-border bg-slate-50 text-left">
+              <th className="px-4 py-3 font-semibold text-muted">Nombre</th>
+              <th className="px-4 py-3 font-semibold text-muted">Fecha</th>
+              <th className="px-4 py-3 font-semibold text-muted">Estado</th>
+              <th className="px-4 py-3 font-semibold text-muted">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((visit, i) => (
+              <tr key={visit.id} className={i < items.length - 1 ? "border-b border-border" : ""}>
+                <td className="px-4 py-3 font-medium text-text">{visit.nombre}</td>
+                <td className="px-4 py-3 text-muted">{visit.fecha}</td>
+                <td className="px-4 py-3">
+                  {visit.estado === "Confirmada" ? (
+                    <Badge label="Confirmada" variant="green" />
+                  ) : (
+                    <Badge label="Pendiente QR" variant="yellow" />
+                  )}
+                </td>
+                <td className="px-4 py-3">
+                  <button className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-text transition-colors hover:border-primary hover:text-primary">
+                    Ver QR
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function DashboardQuickLinksSection({ quickLinks: links }: { quickLinks: QuickLink[] }) {
+  return (
+    <section>
+      <h2 className="mb-4 font-display text-xl font-semibold text-text">Accesos rápidos</h2>
+      <div className="grid grid-cols-2 gap-3">
+        {links.map((link) => (
+          <Link
+            key={link.label}
+            to={link.to}
+            className="flex flex-col items-center gap-2 rounded-xl border border-border bg-white p-4 text-center transition-shadow hover:shadow-sm"
+          >
+            <span
+              className={`flex h-10 w-10 items-center justify-center rounded-full text-xl ${link.bg} ${link.iconColor}`}
+            >
+              {link.icon}
+            </span>
+            <span className="font-body text-xs font-semibold text-text">{link.label}</span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function DashboardActivitySection({ activity: items }: { activity: ActivityItem[] }) {
+  return (
+    <section>
+      <h2 className="mb-4 font-display text-xl font-semibold text-text">Actividad reciente</h2>
+      <div className="rounded-xl border border-border bg-white p-4">
+        <ul className="flex flex-col gap-4">
+          {items.map((item) => (
+            <li key={item.id} className="flex items-start gap-3">
+              <span
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm ${item.color}`}
+              >
+                {item.icon}
+              </span>
+              <div className="flex flex-col gap-0.5">
+                <p className="font-body text-sm leading-snug text-text">{item.description}</p>
+                <p className="font-body text-xs text-muted">{item.timestamp}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 // ── Page component ────────────────────────────────────────────────────────────
 
 export default function ResidenteDashboard() {
@@ -391,36 +518,7 @@ export default function ResidenteDashboard() {
   return (
     <div className="flex flex-col gap-0 font-body">
       {/* ── Page header ── */}
-      <div className="bg-text px-6 py-10 md:px-10">
-        <div className="mx-auto max-w-6xl">
-          <h1 className="font-display text-3xl font-semibold text-white md:text-4xl">
-            Buenos días, {user?.nombre.split(" ")[0] ?? "Residente"}
-          </h1>
-          <p className="mt-1 font-body text-sm text-white/60">{user?.unidad ?? ""}</p>
-
-          {/* Quick actions */}
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              to="/espacios"
-              className="rounded-full border border-white/40 px-4 py-2 font-body text-sm font-medium text-white transition-colors hover:bg-white/10"
-            >
-              Reservar espacio
-            </Link>
-            <Link
-              to="/gastos"
-              className="rounded-full border border-white/40 px-4 py-2 font-body text-sm font-medium text-white transition-colors hover:bg-white/10"
-            >
-              Pagar gastos
-            </Link>
-            <a
-              href="#incidentes"
-              className="rounded-full border border-white/40 px-4 py-2 font-body text-sm font-medium text-white transition-colors hover:bg-white/10"
-            >
-              Reportar incidente
-            </a>
-          </div>
-        </div>
-      </div>
+      <DashboardHeroHeader user={user} />
 
       {/* ── Content area ── */}
       <div className="bg-slate-50 px-6 py-8 md:px-10">
@@ -486,109 +584,16 @@ export default function ResidenteDashboard() {
               </section>
 
               {/* Visitas próximas */}
-              <section id="incidentes">
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="font-display text-xl font-semibold text-text">Visitas próximas</h2>
-                  <Link
-                    to="/visitas"
-                    className="font-body text-sm font-medium text-primary hover:underline"
-                  >
-                    Gestionar →
-                  </Link>
-                </div>
-                <div className="overflow-hidden rounded-xl border border-border bg-white">
-                  <table className="w-full font-body text-sm">
-                    <thead>
-                      <tr className="border-b border-border bg-slate-50 text-left">
-                        <th className="px-4 py-3 font-semibold text-muted">Nombre</th>
-                        <th className="px-4 py-3 font-semibold text-muted">Fecha</th>
-                        <th className="px-4 py-3 font-semibold text-muted">Estado</th>
-                        <th className="px-4 py-3 font-semibold text-muted">Acción</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {visits.map((visit, i) => (
-                        <tr
-                          key={visit.id}
-                          className={i < visits.length - 1 ? "border-b border-border" : ""}
-                        >
-                          <td className="px-4 py-3 font-medium text-text">{visit.nombre}</td>
-                          <td className="px-4 py-3 text-muted">{visit.fecha}</td>
-                          <td className="px-4 py-3">
-                            {visit.estado === "Confirmada" ? (
-                              <Badge label="Confirmada" variant="green" />
-                            ) : (
-                              <Badge label="Pendiente QR" variant="yellow" />
-                            )}
-                          </td>
-                          <td className="px-4 py-3">
-                            <button className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-text transition-colors hover:border-primary hover:text-primary">
-                              Ver QR
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </section>
+              <DashboardVisitasSection visits={visits} />
             </div>
 
             {/* Right column */}
             <div className="flex flex-col gap-8">
               {/* Accesos rápidos */}
-              <section>
-                <h2 className="mb-4 font-display text-xl font-semibold text-text">
-                  Accesos rápidos
-                </h2>
-                <div className="grid grid-cols-2 gap-3">
-                  {quickLinks.map((link) => (
-                    <Link
-                      key={link.label}
-                      to={link.to}
-                      className="flex flex-col items-center gap-2 rounded-xl border border-border bg-white p-4 text-center transition-shadow hover:shadow-sm"
-                    >
-                      <span
-                        className={`flex h-10 w-10 items-center justify-center rounded-full text-xl ${link.bg} ${link.iconColor}`}
-                      >
-                        {link.icon}
-                      </span>
-                      <span className="font-body text-xs font-semibold text-text">
-                        {link.label}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </section>
+              <DashboardQuickLinksSection quickLinks={quickLinks} />
 
               {/* Actividad reciente */}
-              <section>
-                <h2 className="mb-4 font-display text-xl font-semibold text-text">
-                  Actividad reciente
-                </h2>
-                <div className="rounded-xl border border-border bg-white p-4">
-                  <ul className="flex flex-col gap-4">
-                    {activity.map((item, i) => (
-                      <li key={item.id} className="flex items-start gap-3">
-                        <span
-                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm ${item.color}`}
-                        >
-                          {item.icon}
-                        </span>
-                        <div className="flex flex-col gap-0.5">
-                          <p className="font-body text-sm leading-snug text-text">
-                            {item.description}
-                          </p>
-                          <p className="font-body text-xs text-muted">{item.timestamp}</p>
-                        </div>
-                        {i < activity.length - 1 && (
-                          <span className="absolute" aria-hidden="true" />
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </section>
+              <DashboardActivitySection activity={activity} />
             </div>
           </div>
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Visita, RegistroForm } from "./types";
 import { QRCode } from "./QRCode";
+import { notify } from "../../utils/notify";
 
 interface PreRegistroModalProps {
   onClose: () => void;
@@ -86,6 +87,10 @@ export function PreRegistroModal({ onClose, onCreated }: PreRegistroModalProps) 
     setCreatedVisita(visita);
     setStep("qr");
     onCreated(visita);
+    notify.success({
+      title: "Visita pre-registrada",
+      description: "Código QR disponible para compartir con tu invitado.",
+    });
   };
 
   if (step === "qr" && createdVisita) {

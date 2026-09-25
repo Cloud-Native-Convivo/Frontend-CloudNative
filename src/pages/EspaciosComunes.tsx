@@ -482,27 +482,22 @@ export default function EspaciosComunes() {
 
   useEffect(() => {
     let active = true;
-    async function fetchEspacios() {
-      try {
-        setLoading(true);
-        const data = await listarEspacios();
+    listarEspacios()
+      .then((data) => {
         if (active) {
-          if (Array.isArray(data)) {
-            setEspacios(data.map(mapearBackendEspacio));
-          } else {
-            setEspacios([]);
-          }
+          setEspacios(Array.isArray(data) ? data.map(mapearBackendEspacio) : []);
         }
-      } catch {
-        // Fallback elegante al catálogo local si el backend no está disponible
+      })
+      .catch(() => {
         if (active) {
           setEspacios(ESPACIOS);
         }
-      } finally {
-        if (active) setLoading(false);
-      }
-    }
-    void fetchEspacios();
+      })
+      .finally(() => {
+        if (active) {
+          setLoading(false);
+        }
+      });
     return () => {
       active = false;
     };

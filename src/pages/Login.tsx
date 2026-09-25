@@ -1,7 +1,11 @@
 import { useState, useRef } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { IconGoogle } from "../components/icons/Icons";
-import { buildGoogleAuthorizeUrl } from "../lib/cognitoAuth";
+import {
+  buildGoogleAuthorizeUrl,
+  checkCognitoReachability,
+  isCognitoConfigured,
+} from "../lib/cognitoAuth";
 
 interface FormState {
   email: string;
@@ -11,10 +15,6 @@ interface FormState {
 interface FieldError {
   email?: string;
   password?: string;
-}
-
-async function handleGoogleLogin() {
-  window.location.assign(await buildGoogleAuthorizeUrl());
 }
 
 function validate(form: FormState): FieldError {
@@ -28,9 +28,31 @@ function validate(form: FormState): FieldError {
 }
 
 export default function Login() {
+  const navigate = useNavigate();
   const [form, setForm] = useState<FormState>({ email: "", password: "" });
   const [errors, setErrors] = useState<FieldError>({});
+  const [isConnectingGoogle, setIsConnectingGoogle] = useState(false);
   const submitted = useRef(false);
+
+  async function handleGoogleLogin() {
+    setIsConnectingGoogle(true);
+    try {
+      if (!isCognitoConfigured()) {
+        navigate("/auth/error?reason=config_missing");
+        return;
+      }
+      const isReachable = await checkCognitoReachability(2500);
+      if (!isReachable) {
+        navigate("/auth/error?reason=connection_failed");
+        return;
+      }
+      const authorizeUrl = await buildGoogleAuthorizeUrl();
+      window.location.assign(authorizeUrl);
+    } catch {
+      setIsConnectingGoogle(false);
+      navigate("/auth/error?reason=connection_failed");
+    }
+  }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -171,10 +193,12 @@ export default function Login() {
           <button
             type="button"
             onClick={handleGoogleLogin}
-            className="mt-5 w-full flex items-center justify-center gap-2 bg-white border border-border text-text font-semibold text-sm py-3 rounded-lg transition-colors hover:bg-primary/5 hover:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            disabled={isConnectingGoogle}
+            aria-busy={isConnectingGoogle}
+            className="mt-5 w-full flex items-center justify-center gap-2 bg-white border border-border text-text font-semibold text-sm py-3 rounded-lg transition-colors hover:bg-primary/5 hover:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <IconGoogle className="w-4 h-4" />
-            Continuar con Google
+            {isConnectingGoogle ? "Conectando con Google…" : "Continuar con Google"}
           </button>
 
           <p className="mt-6 text-center text-sm text-muted">

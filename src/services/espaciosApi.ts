@@ -1,4 +1,4 @@
-import { getStoredIdToken } from "../lib/authStorage";
+import { getStoredIdToken } from "../utils/authStorage";
 
 const rawBffUrl =
   (typeof import.meta !== "undefined" && import.meta.env?.VITE_BFF_URL) ||

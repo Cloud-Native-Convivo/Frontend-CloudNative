@@ -15,6 +15,13 @@
   --font-body: "Inter", system-ui, sans-serif;
 }
 
+:root {
+  --sileo-state-success: #0d9488;
+  --sileo-state-warning: #eab308;
+  --sileo-state-error: #e11d48;
+  --sileo-state-info: #0284c7;
+}
+
 /* ── Hero entrance animations ─────────────────────────────────────── */
 @keyframes cvFadeSlideUp {
   from {

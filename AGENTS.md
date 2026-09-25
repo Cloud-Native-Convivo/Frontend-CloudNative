@@ -44,17 +44,20 @@ Convivo — SPA de gestión para condominios residenciales en Chile. Roles: resi
 
 ```text
 src/
-  components/     # Layout (incluye sub-componentes internos FloatingSidebar,
-                  # AnnouncementRibbon — no son archivos separados), FlipCard,
-                  # RouteError, icons/Icons.tsx
-  pages/          # Home, Login, AuthCallback, NotFound, RegistroCuenta,
-                  # EspaciosComunes, ResidenteDashboard, Dashboard, Reservas,
-                  # Gastos, Tablon, Canales, Registro, Precios, Visitas, Incidentes
-  hooks/          # useAuth, AuthProvider
-  lib/            # cognitoAuth (login real Cognito+Google, con test propio), data (mock)
-  types/          # tipos TypeScript (Role, etc.)
-  routes/         # router.tsx, ProtectedRoute (con test propio)
-  test/           # setup de Vitest
+  api/            # BFF client (client.ts), re-export de servicios
+  assets/         # Recursos estáticos (README)
+  auth/           # cognitoAuth (OAuth 2.0 PKCE con Google), storage auth
+  components/     # Layout, FlipCard, RouteError, icons/Icons.tsx, subcomponentes por dominio
+  context/        # authContext, AuthProvider (estado global de sesión)
+  data/           # Datasets mock (gastos, avisos, canales, registroFotos)
+  hooks/          # useAuth (consumidor de AuthContext), AuthProvider (re-export)
+  pages/          # Home, Login, AuthCallback, NotFound, RegistroCuenta, etc.
+  redux/          # Placeholder para futura integración de store si aplica (YAGNI)
+  routes/         # router.tsx, ProtectedRoute
+  services/       # espaciosApi, gastosApi, panelApi
+  types/          # Tipos TypeScript (Role, User, etc.)
+  utils/          # notify (sileo + cuelume), authStorage
+  lib/            # Wrappers de re-export para compatibilidad histórica
 ```
 
 ## 4. Comandos

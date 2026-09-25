@@ -1,4 +1,4 @@
-import { getStoredIdToken } from "../lib/authStorage";
+import { getStoredIdToken } from "../utils/authStorage";
 import type { BackendReserva } from "./espaciosApi";
 
 const rawBffUrl =

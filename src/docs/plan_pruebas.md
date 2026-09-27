@@ -1,11 +1,11 @@
 # Plan de Pruebas — Convivo Frontend
 
-**Proyecto:** Convivo — SPA de Gestión para Condominios Residenciales  
-**Estándar de referencia:** ISO/IEC/IEEE 29119-3 / IEEE 730  
+**Proyecto:** Convivo — SPA de Gestión para Condominios Residenciales
+**Estándar de referencia:** ISO/IEC/IEEE 29119-3 / IEEE 730
 **Stack de pruebas:**
 
 - **Caja Negra (E2E / Sistema):** Playwright Test 1.58+ (`@playwright/test`)
-- **Caja Blanca (Unitaria / Integración):** Vitest 5, React Testing Library 16, jsdom 30, @vitest/ui, @vitest/coverage-v8  
+- **Caja Blanca (Unitaria / Integración):** Vitest 5, React Testing Library 16, jsdom 30, @vitest/ui, @vitest/coverage-v8
   **Fecha:** 25 de septiembre de 2026
 
 ---
@@ -14,7 +14,7 @@
 
 El objetivo de este plan de pruebas es garantizar la integridad, fiabilidad funcional, seguridad en el manejo de roles/sesiones y estabilidad de los componentes y flujos de usuario del frontend de Convivo.
 
-### Objetivos Específicos:
+### Objetivos Específicos
 
 - Validar el flujo de autenticación OAuth 2.0 PKCE con Google y AWS Cognito.
 - Asegurar el control de acceso en rutas protegidas (`ProtectedRoute`) según el rol del usuario (`residente`, `conserje`, `admin`, `comite`).

@@ -109,12 +109,9 @@ jobs:
       - name: Instalar navegador
         run: npx playwright install --with-deps chromium
 
-      # GITHUB_REPOSITORY vacio: vite.config.ts fuerza base "/" y el dev
-      # server responde en la raiz que espera baseURL.
+      # Config publica de Cognito (va en la URL de authorize); sin ella /login no muestra el boton Google
       - name: Playwright e2e
         env:
-          GITHUB_REPOSITORY: ""
-          # Config publica de Cognito (va en la URL de authorize); sin ella /login no muestra el boton Google
           VITE_COGNITO_DOMAIN: ${{ vars.VITE_COGNITO_DOMAIN }}
           VITE_COGNITO_CLIENT_ID: ${{ vars.VITE_COGNITO_CLIENT_ID }}
           VITE_COGNITO_REDIRECT_URI: ${{ vars.VITE_COGNITO_REDIRECT_URI }}
@@ -167,10 +164,11 @@ jobs:
 
       - run: npm ci --legacy-peer-deps
 
-      # GITHUB_REPOSITORY vacio: base "/" para servir dist/ desde la raiz.
       - name: Build
         env:
-          GITHUB_REPOSITORY: ""
+          VITE_COGNITO_DOMAIN: ${{ vars.VITE_COGNITO_DOMAIN || 'convivo-residentes.auth.us-east-1.amazoncognito.com' }}
+          VITE_COGNITO_CLIENT_ID: ${{ vars.VITE_COGNITO_CLIENT_ID || '1h4j5k6l7m8n9o0p' }}
+          VITE_COGNITO_REDIRECT_URI: ${{ vars.VITE_COGNITO_REDIRECT_URI || 'https://localhost:5173' }}
         run: npm run build
 
       - name: Lighthouse

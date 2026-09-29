@@ -14,5 +14,13 @@ export default defineConfig({
     globals: true,
     setupFiles: ["./tests/test/setup.ts"],
     exclude: ["**/node_modules/**", "**/dist/**", "**/tests/e2e/**"],
+    coverage: {
+      provider: "v8",
+      // json-summary + json los consume vitest-coverage-report-action
+      reporter: ["text", "json-summary", "json"],
+      reportOnFailure: true,
+      include: ["src/**/*.{ts,tsx}"],
+      exclude: ["src/**/*.test.{ts,tsx}", "src/**/*.d.ts"],
+    },
   },
 });

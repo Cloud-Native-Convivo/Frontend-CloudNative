@@ -5,6 +5,17 @@ Todas las modificaciones notables de este proyecto se documentan en este archivo
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/),
 y este proyecto sigue [Versionado Semántico](https://semver.org/lang/es/).
 
+## [0.6.1] - 2026-09-29
+
+### Added
+
+- CI con señales en cada PR: cobertura comentada, e2e con Playwright, tamaño de bundle, Lighthouse, CodeQL, dependency review, lint de workflows y OpenSSF Scorecard.
+- `SECURITY.md` con enlace al reporte privado de vulnerabilidades.
+
+### Changed
+
+- actionlint en CI se ejecuta desde la imagen oficial fijada por digest.
+
 ## [0.5.0] - 2026-09-12
 
 ### Added

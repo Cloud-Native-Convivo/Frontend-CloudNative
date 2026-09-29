@@ -8,9 +8,7 @@ import path from "node:path";
 // la variable no existe y base queda "/".
 // GITHUB_REPOSITORY no se usa porque es una env var protegida del runner
 // de GitHub Actions y no se puede sobreescribir de forma fiable.
-const base = process.env.DEPLOY_BASE
-  ? `/${process.env.DEPLOY_BASE}/`
-  : "/";
+const base = process.env.DEPLOY_BASE ? `/${process.env.DEPLOY_BASE}/` : "/";
 
 export default defineConfig({
   base,

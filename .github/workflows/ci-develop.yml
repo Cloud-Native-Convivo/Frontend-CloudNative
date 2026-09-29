@@ -89,7 +89,8 @@ jobs:
         with:
           json-summary-path: coverage/coverage-summary.json
           json-final-path: coverage/coverage-final.json
-          json-summary-compare-path: coverage-baseline/coverage-summary.json
+          # Sin baseline (primer run o cache vencido) se omite la comparacion
+          json-summary-compare-path: ${{ hashFiles('coverage-baseline/coverage-summary.json') != '' && 'coverage-baseline/coverage-summary.json' || '' }}
 
   e2e:
     runs-on: ubuntu-latest
@@ -113,6 +114,10 @@ jobs:
       - name: Playwright e2e
         env:
           GITHUB_REPOSITORY: ""
+          # Config publica de Cognito (va en la URL de authorize); sin ella /login no muestra el boton Google
+          VITE_COGNITO_DOMAIN: ${{ vars.VITE_COGNITO_DOMAIN }}
+          VITE_COGNITO_CLIENT_ID: ${{ vars.VITE_COGNITO_CLIENT_ID }}
+          VITE_COGNITO_REDIRECT_URI: ${{ vars.VITE_COGNITO_REDIRECT_URI }}
         run: npm run test:e2e
 
       - name: Subir reporte de Playwright

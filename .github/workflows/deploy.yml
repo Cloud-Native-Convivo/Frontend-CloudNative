@@ -12,16 +12,16 @@ concurrency:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
           cache: npm
@@ -32,8 +32,10 @@ jobs:
         run: npm run lint
 
       - name: Validar variables de despliegue
+        env:
+          BFF_URL: ${{ secrets.VITE_BFF_URL || vars.VITE_BFF_URL }}
         run: |
-          if [ -z "${{ secrets.VITE_BFF_URL || vars.VITE_BFF_URL }}" ]; then
+          if [ -z "$BFF_URL" ]; then
             echo "::warning::VITE_BFF_URL no configurada en GitHub Secrets/Vars. Se utilizara endpoint de respaldo HTTPS."
           fi
 
@@ -45,16 +47,19 @@ jobs:
           VITE_BFF_URL: ${{ secrets.VITE_BFF_URL || vars.VITE_BFF_URL || 'https://3d2ods6had.execute-api.us-east-1.amazonaws.com/api/v1' }}
         run: npm run build
 
-      - uses: actions/upload-pages-artifact@v5
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: dist/
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

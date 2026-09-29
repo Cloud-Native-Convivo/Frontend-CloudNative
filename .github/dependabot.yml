@@ -1,0 +1,30 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+    labels: ["dependencies"]
+    groups:
+      react:
+        patterns: ["react", "react-dom", "react-router", "@types/react", "@types/react-dom"]
+      vite-vitest:
+        patterns: ["vite", "@vitejs/*", "@tailwindcss/*", "tailwindcss", "vitest", "@vitest/*"]
+      lint-format:
+        patterns: ["eslint", "eslint-*", "@eslint/*", "typescript-eslint", "globals", "oxfmt"]
+      types:
+        patterns: ["@types/*"]
+      others:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+    labels: ["dependencies"]
+    groups:
+      actions:
+        patterns: ["*"]

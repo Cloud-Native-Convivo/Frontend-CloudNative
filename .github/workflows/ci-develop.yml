@@ -1,7 +1,7 @@
 # CI — develop
 # Valida format + lint + typecheck + build en PRs hacia `develop` y en cada
-# push directo a `develop` (sin paso de deploy). Tapa el gap: hoy nada corre
-# en esta rama.
+# push directo a `develop` (sin paso de deploy). Ademas publica senales de
+# decision en el PR: cobertura, tamano de bundle, Lighthouse y e2e.
 
 name: CI — develop
 
@@ -16,15 +16,17 @@ permissions:
 
 concurrency:
   group: ci-develop-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
           cache: npm
@@ -42,3 +44,152 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  coverage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci --legacy-peer-deps
+
+      # Baseline de develop: el push guarda el resumen, los PR lo restauran
+      # por prefijo para calcular el delta.
+      - name: Restaurar baseline de cobertura
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: coverage-baseline
+          key: coverage-baseline-${{ github.sha }}
+          restore-keys: coverage-baseline-
+
+      - name: Tests con cobertura
+        run: npm run coverage
+
+      - name: Guardar baseline
+        if: github.event_name == 'push'
+        run: |
+          mkdir -p coverage-baseline
+          cp coverage/coverage-summary.json coverage-baseline/coverage-summary.json
+
+      # Los PR de forks tienen token de solo lectura: no pueden comentar.
+      - name: Reporte de cobertura en el PR
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        uses: davelosert/vitest-coverage-report-action@c4bbc33a89b7ace0e63d35f1f7d4bcee31155a73 # v2.13.0
+        with:
+          json-summary-path: coverage/coverage-summary.json
+          json-final-path: coverage/coverage-final.json
+          # Sin baseline (primer run o cache vencido) se omite la comparacion
+          json-summary-compare-path: ${{ hashFiles('coverage-baseline/coverage-summary.json') != '' && 'coverage-baseline/coverage-summary.json' || '' }}
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci --legacy-peer-deps
+
+      - name: Instalar navegador
+        run: npx playwright install --with-deps chromium
+
+      # Config publica de Cognito (va en la URL de authorize); sin ella /login no muestra el boton Google
+      - name: Playwright e2e
+        env:
+          VITE_COGNITO_DOMAIN: ${{ vars.VITE_COGNITO_DOMAIN }}
+          VITE_COGNITO_CLIENT_ID: ${{ vars.VITE_COGNITO_CLIENT_ID }}
+          VITE_COGNITO_REDIRECT_URI: ${{ vars.VITE_COGNITO_REDIRECT_URI }}
+        run: npm run test:e2e
+
+      - name: Subir reporte de Playwright
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  bundle-size:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - uses: preactjs/compressed-size-action@f322c295dde06a1cb7ccaef105732dd8a726d1d9 # 2.10.0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          install-script: npm ci --legacy-peer-deps
+          build-script: build
+          pattern: "dist/**/*.{js,css}"
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci --legacy-peer-deps
+
+      - name: Build
+        env:
+          VITE_COGNITO_DOMAIN: ${{ vars.VITE_COGNITO_DOMAIN || 'convivo-residentes.auth.us-east-1.amazoncognito.com' }}
+          VITE_COGNITO_CLIENT_ID: ${{ vars.VITE_COGNITO_CLIENT_ID || '1h4j5k6l7m8n9o0p' }}
+          VITE_COGNITO_REDIRECT_URI: ${{ vars.VITE_COGNITO_REDIRECT_URI || 'https://localhost:5173' }}
+        run: npm run build
+
+      - name: Lighthouse
+        id: lhci
+        uses: treosh/lighthouse-ci-action@3e7e23fb74242897f95c0ba9cabad3d0227b9b18 # 12.6.2
+        with:
+          configPath: ./lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Resumen
+        if: always()
+        env:
+          LINKS: ${{ steps.lhci.outputs.links }}
+        run: |
+          {
+            echo "### Lighthouse"
+            echo
+            echo 'Reportes (almacenamiento publico temporal):'
+            echo
+            echo '```json'
+            echo "${LINKS:-sin reportes}"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

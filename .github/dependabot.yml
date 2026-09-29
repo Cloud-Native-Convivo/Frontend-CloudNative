@@ -1,0 +1,39 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    # Espera 7 dias antes de proponer una version nueva (mitiga paquetes comprometidos recien publicados)
+    cooldown:
+      default-days: 7
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+    labels: ["dependencies"]
+    groups:
+      react:
+        patterns: ["react", "react-dom", "react-router", "@types/react", "@types/react-dom"]
+      vite-vitest:
+        patterns: ["vite", "@vitejs/*", "@tailwindcss/*", "tailwindcss", "vitest", "@vitest/*"]
+      lint-format:
+        patterns: ["eslint", "eslint-*", "@eslint/*", "typescript-eslint", "globals", "oxfmt"]
+      types:
+        patterns: ["@types/*"]
+      others:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: github-actions
+
+    # Espera 7 dias antes de proponer una version nueva (mitiga paquetes comprometidos recien publicados)
+
+    cooldown:
+
+      default-days: 7
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+    labels: ["dependencies"]
+    groups:
+      actions:
+        patterns: ["*"]

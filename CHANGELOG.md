@@ -5,6 +5,13 @@ Todas las modificaciones notables de este proyecto se documentan en este archivo
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/),
 y este proyecto sigue [Versionado Semántico](https://semver.org/lang/es/).
 
+## [0.6.2] - 2026-09-29
+
+### Security
+
+- `undici` actualizado a 8.11.2 (llega vía `jsdom`, solo tests; GHSA-3wwx-pv8p-q78v).
+- Workflow `react-doctor` con permisos de escritura solo a nivel de job.
+
 ## [0.6.1] - 2026-09-29
 
 ### Added

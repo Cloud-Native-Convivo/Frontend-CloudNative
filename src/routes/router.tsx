@@ -17,6 +17,8 @@ import EspaciosComunes from "../pages/EspaciosComunes";
 import Visitas from "../pages/Visitas";
 import Incidentes from "../pages/Incidentes";
 import NotFound from "../pages/NotFound";
+import Privacidad from "../pages/Privacidad";
+import Terminos from "../pages/Terminos";
 
 const router = createBrowserRouter(
   [
@@ -41,6 +43,8 @@ const router = createBrowserRouter(
         { path: "tablon", Component: Tablon },
         { path: "canales", Component: Canales },
         { path: "precios", Component: Precios },
+        { path: "privacidad", Component: Privacidad },
+        { path: "terminos", Component: Terminos },
 
         // Residente only
         {

@@ -28,6 +28,12 @@ const TRATAMIENTOS = [
     finalidad: "Informarte el cobro y el estado de tu cuenta",
     base: "Obligación legal (Ley 21.442 de Copropiedad Inmobiliaria)",
   },
+  {
+    dato: "Versión de estos documentos que aceptaste y fecha de aceptación",
+    origen: "Tú, al aceptar Términos y Privacidad en tu primer inicio de sesión",
+    finalidad: "Acreditar tu consentimiento y pedirlo de nuevo si los documentos cambian",
+    base: "Obligación legal de demostrar el consentimiento (Ley 21.719)",
+  },
 ];
 
 const PROVEEDORES = [
@@ -102,7 +108,9 @@ const SECTIONS: LegalSection[] = [
         Cuando la base es tu consentimiento, lo pedimos por separado para cada finalidad y puedes
         retirarlo en cualquier momento, sin costo y sin tener que justificarlo. Retirarlo no afecta
         lo tratado antes de hacerlo. Si retiras el consentimiento para el inicio de sesión, no
-        podrás usar las funciones que requieren cuenta.
+        podrás usar las funciones que requieren cuenta. Al aceptar, guardamos en tu cuenta la
+        versión de esta política y de los Términos de uso que aceptaste y la fecha; si cambian, te
+        pediremos aceptarlos de nuevo.
       </p>
     ),
   },

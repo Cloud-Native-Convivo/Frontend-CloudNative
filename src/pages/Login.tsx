@@ -192,6 +192,17 @@ export default function Login() {
             <IconGoogle className="w-4 h-4" />
             {isConnectingGoogle ? "Conectando con Google…" : "Continuar con Google"}
           </button>
+          <p className="mt-3 text-center text-xs leading-relaxed text-muted">
+            Al continuar te pediremos aceptar los{" "}
+            <Link to="/terminos" className="text-primary hover:text-accent">
+              Términos de uso
+            </Link>{" "}
+            y la{" "}
+            <Link to="/privacidad" className="text-primary hover:text-accent">
+              Política de privacidad
+            </Link>
+            .
+          </p>
 
           <p className="mt-6 text-center text-sm text-muted">
             ¿Eres nuevo?{" "}

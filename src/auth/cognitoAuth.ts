@@ -58,7 +58,8 @@ export async function buildGoogleAuthorizeUrl(): Promise<string> {
   const params = new URLSearchParams({
     client_id: import.meta.env.VITE_COGNITO_CLIENT_ID,
     response_type: "code",
-    scope: "openid email profile",
+    // aws.cognito.signin.user.admin: permite UpdateUserAttributes (aceptación de términos).
+    scope: "openid email profile aws.cognito.signin.user.admin",
     redirect_uri: import.meta.env.VITE_COGNITO_REDIRECT_URI,
     identity_provider: "Google", // salta el selector propio de Cognito, va directo a Google
     code_challenge: challenge,
@@ -113,6 +114,8 @@ export interface CognitoIdTokenClaims {
   "custom:unidad"?: string;
   "custom:torre"?: string;
   "custom:piso"?: string;
+  "custom:terminos_version"?: string;
+  "custom:terminos_fecha"?: string;
   "cognito:groups"?: string[];
   [key: string]: unknown;
 }
@@ -125,6 +128,45 @@ export function roleFromClaims(claims: CognitoIdTokenClaims): (typeof VALID_ROLE
     .map((g) => g.toLowerCase())
     .find((g) => (VALID_ROLES as readonly string[]).includes(g));
   return (match as (typeof VALID_ROLES)[number]) ?? "residente";
+}
+
+// Versión vigente de /terminos y /privacidad. Subirla cuando cambie el texto: todo usuario
+// cuyo custom:terminos_version no coincida vuelve a pasar por /aceptar-terminos.
+export const TERMINOS_VERSION = "2026-09-30";
+
+export function aceptoTerminosVigentes(claims: CognitoIdTokenClaims): boolean {
+  return claims["custom:terminos_version"] === TERMINOS_VERSION;
+}
+
+export function cognitoRegion(): string {
+  // ponytail: solo dominios prefijo de Cognito (*.auth.<region>.amazoncognito.com); con
+  // dominio custom, agregar VITE_COGNITO_REGION.
+  const match = /\.auth\.([a-z0-9-]+)\.amazoncognito\.com$/.exec(
+    import.meta.env.VITE_COGNITO_DOMAIN ?? "",
+  );
+  if (!match) throw new Error("No se pudo deducir la región de AWS desde VITE_COGNITO_DOMAIN.");
+  return match[1];
+}
+
+/** Registra en el usuario de Cognito qué versión de los términos aceptó y cuándo. */
+export async function registrarAceptacionTerminos(accessToken: string): Promise<void> {
+  const response = await fetch(`https://cognito-idp.${cognitoRegion()}.amazonaws.com/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-amz-json-1.1",
+      "X-Amz-Target": "AWSCognitoIdentityProviderService.UpdateUserAttributes",
+    },
+    body: JSON.stringify({
+      AccessToken: accessToken,
+      UserAttributes: [
+        { Name: "custom:terminos_version", Value: TERMINOS_VERSION },
+        { Name: "custom:terminos_fecha", Value: new Date().toISOString() },
+      ],
+    }),
+  });
+  if (!response.ok) {
+    throw new Error(`Cognito rechazó el registro de aceptación (HTTP ${response.status}).`);
+  }
 }
 
 export function decodeIdToken(idToken: string): CognitoIdTokenClaims {

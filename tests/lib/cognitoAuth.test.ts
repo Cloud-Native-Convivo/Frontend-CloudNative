@@ -8,6 +8,10 @@ import {
   decodeIdToken,
   exchangeCodeForTokens,
   roleFromClaims,
+  TERMINOS_VERSION,
+  aceptoTerminosVigentes,
+  cognitoRegion,
+  registrarAceptacionTerminos,
 } from "@/lib/cognitoAuth";
 
 beforeEach(() => {
@@ -145,5 +149,55 @@ describe("exchangeCodeForTokens", () => {
     const result = await exchangeCodeForTokens("real-code");
     expect(result).toEqual(mockTokens);
     expect(sessionStorage.getItem("convivo.pkce_verifier")).toBeNull();
+  });
+});
+
+describe("aceptoTerminosVigentes", () => {
+  // Partición de equivalencia: sin claim / versión anterior / versión vigente.
+  it.each([
+    [{ sub: "u" }, false],
+    [{ sub: "u", "custom:terminos_version": "2020-01-01" }, false],
+    [{ sub: "u", "custom:terminos_version": TERMINOS_VERSION }, true],
+  ])("claims %o -> %s", (claims, esperado) => {
+    expect(aceptoTerminosVigentes(claims)).toBe(esperado);
+  });
+});
+
+describe("cognitoRegion", () => {
+  it("extrae la región del dominio prefijo de Cognito", () => {
+    expect(cognitoRegion()).toBe("us-east-1");
+  });
+
+  it("lanza error con un dominio custom", () => {
+    vi.stubEnv("VITE_COGNITO_DOMAIN", "login.convivo.cl");
+    expect(() => cognitoRegion()).toThrow();
+  });
+});
+
+describe("registrarAceptacionTerminos", () => {
+  it("llama UpdateUserAttributes con versión vigente y fecha ISO", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200 });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await registrarAceptacionTerminos("access-123");
+
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe("https://cognito-idp.us-east-1.amazonaws.com/");
+    expect(init.headers["X-Amz-Target"]).toBe(
+      "AWSCognitoIdentityProviderService.UpdateUserAttributes",
+    );
+    const body = JSON.parse(init.body);
+    expect(body.AccessToken).toBe("access-123");
+    expect(body.UserAttributes[0]).toEqual({
+      Name: "custom:terminos_version",
+      Value: TERMINOS_VERSION,
+    });
+    expect(body.UserAttributes[1].Name).toBe("custom:terminos_fecha");
+    expect(Number.isNaN(Date.parse(body.UserAttributes[1].Value))).toBe(false);
+  });
+
+  it("lanza error si Cognito responde !ok", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 400 }));
+    await expect(registrarAceptacionTerminos("x")).rejects.toThrow("HTTP 400");
   });
 });

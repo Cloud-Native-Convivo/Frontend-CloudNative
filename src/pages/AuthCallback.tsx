@@ -1,10 +1,14 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
-import { decodeIdToken, exchangeCodeForTokens, roleFromClaims } from "../lib/cognitoAuth";
-import { notify } from "../utils/notify";
+import {
+  aceptoTerminosVigentes,
+  decodeIdToken,
+  exchangeCodeForTokens,
+  roleFromClaims,
+} from "../lib/cognitoAuth";
+import { completarSesion } from "../auth/sesion";
 import type { User } from "../types";
-import { setStoredUser, setStoredIdToken, setStoredAccessToken } from "../utils/authStorage";
 
 export default function AuthCallback() {
   const navigate = useNavigate();
@@ -43,16 +47,12 @@ export default function AuthCallback() {
           role: roleFromClaims(claims),
           avatar: claims.picture,
         };
-        setStoredUser(usuario);
-        if (tokens.id_token) {
-          setStoredIdToken(tokens.id_token);
+        // Sin aceptación vigente no se guarda sesión: primero /aceptar-terminos.
+        if (!aceptoTerminosVigentes(claims)) {
+          navigate("/aceptar-terminos", { replace: true, state: { tokens, usuario } });
+          return;
         }
-        if (tokens.access_token) {
-          setStoredAccessToken(tokens.access_token);
-        }
-        setUser(usuario);
-        notify.success({ title: "Sesión iniciada correctamente" });
-        navigate("/mi-dashboard", { replace: true });
+        completarSesion(tokens, usuario, setUser, navigate);
       } catch {
         navigate("/auth/error?reason=exchange_failed", { replace: true });
       }

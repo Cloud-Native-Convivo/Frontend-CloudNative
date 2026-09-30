@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
+import { CHART_COLORS } from "./chartColors";
 
 export interface EvolucionPunto {
   mes: string;
@@ -28,7 +29,7 @@ function ChartTooltip({
 }) {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-[#00201B] text-white text-[12px] px-3 py-1.5 rounded-lg shadow-lg font-mono">
+      <div className="bg-text text-white text-[12px] px-3 py-1.5 rounded-lg shadow-lg font-mono">
         ${payload[0].value.toLocaleString("es-CL")}K
       </div>
     );
@@ -44,13 +45,13 @@ export default function GastosBarChart({ data }: GastosBarChartProps) {
         barCategoryGap="28%"
         margin={{ top: 4, right: 4, left: -24, bottom: 0 }}
       >
-        <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} vertical={false} />
         <XAxis
           dataKey="mes"
           tick={{
             fontSize: 11,
             fontFamily: "Inter, system-ui, sans-serif",
-            fill: "#94A3B8",
+            fill: CHART_COLORS.axis,
           }}
           axisLine={false}
           tickLine={false}
@@ -59,16 +60,16 @@ export default function GastosBarChart({ data }: GastosBarChartProps) {
           tick={{
             fontSize: 10,
             fontFamily: "Inter, system-ui, sans-serif",
-            fill: "#94A3B8",
+            fill: CHART_COLORS.axis,
           }}
           axisLine={false}
           tickLine={false}
           domain={[500, 620]}
         />
-        <Tooltip content={<ChartTooltip />} cursor={{ fill: "#F0FDFA" }} />
+        <Tooltip content={<ChartTooltip />} cursor={{ fill: CHART_COLORS.highlight }} />
         <Bar dataKey="gasto" radius={[5, 5, 0, 0]}>
           {data.map((m, i) => (
-            <Cell key={m.mes} fill={i === data.length - 1 ? "#0D9488" : "#CCFBF1"} />
+            <Cell key={m.mes} fill={i === data.length - 1 ? CHART_COLORS.primary : CHART_COLORS.barMuted} />
           ))}
         </Bar>
       </BarChart>

@@ -751,7 +751,7 @@ export default function Reservas() {
             to="/espacios"
             className="text-white font-medium text-sm hover:text-primary transition-colors flex items-center gap-1"
           >
-            Explorar espacios comunes →
+            Explorar espacios comunes
           </Link>
         </div>
       </div>

@@ -8,8 +8,6 @@ interface PlanTier {
   name: string;
   monthlyPrice: number | null;
   annualPrice: number | null;
-  badge?: string;
-  highlight: boolean;
   desc: string;
   cta: string;
 }
@@ -32,7 +30,6 @@ const PLANS: PlanTier[] = [
     name: "Básico",
     monthlyPrice: 0,
     annualPrice: 0,
-    highlight: false,
     desc: "Para comunidades pequeñas que quieren digitalizar sin inversión.",
     cta: "Comenzar gratis",
   },
@@ -41,8 +38,6 @@ const PLANS: PlanTier[] = [
     name: "Comunidad",
     monthlyPrice: 19900,
     annualPrice: 14900,
-    badge: "Más popular",
-    highlight: true,
     desc: "Todo lo que necesita un condominio moderno. Sin límites.",
     cta: "Comenzar ahora",
   },
@@ -51,7 +46,6 @@ const PLANS: PlanTier[] = [
     name: "Enterprise",
     monthlyPrice: null,
     annualPrice: null,
-    highlight: false,
     desc: "Para conjuntos multi-torre con miles de residentes.",
     cta: "Hablar con ventas",
   },
@@ -311,7 +305,7 @@ function FeatureCell({ value }: { value: boolean | string }) {
     return (
       <td className="px-5 py-3 text-center">
         <div className="inline-flex w-[22px] h-[22px] rounded-full bg-teal-100 items-center justify-center">
-          <IconCheck className="w-3 h-3 text-[#005047]" />
+          <IconCheck className="w-3 h-3 text-accent" />
         </div>
       </td>
     );
@@ -339,10 +333,10 @@ export default function Precios() {
   const [annual, setAnnual] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFB]">
+    <div className="min-h-screen bg-slate-50">
       {/* Hero */}
-      <div className="bg-[#00201B] px-6 pt-20 pb-[72px] text-center">
-        <p className="text-[11px] font-bold text-teal-300/70 tracking-[0.12em] uppercase mb-4">
+      <div className="bg-text px-6 pt-20 pb-[72px] text-center">
+        <p className="text-[11px] font-bold text-teal-300/70 tracking-wide mb-4">
           Planes y precios
         </p>
         <h1 className="font-serif text-[clamp(34px,5vw,60px)] text-white leading-[1.1] m-0 mb-4 font-normal">
@@ -394,45 +388,35 @@ export default function Precios() {
             return (
               <div
                 key={plan.id}
-                className={`relative rounded-[20px] ${
-                  plan.highlight
-                    ? "bg-teal-600 border border-teal-600 p-[40px_32px] shadow-[0_24px_72px_rgba(13,148,136,0.3)] -translate-y-2"
-                    : "bg-white border border-slate-200 p-8 shadow-[0_2px_20px_rgba(0,0,0,0.05)]"
-                }`}
+                className="relative rounded-[20px] bg-white border border-slate-200 p-8 shadow-[0_2px_20px_rgba(0,0,0,0.05)]"
               >
-                {plan.badge && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-[#005047] text-[11px] font-extrabold px-3.5 py-1 rounded-full border border-teal-100 whitespace-nowrap shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
-                    {plan.badge}
-                  </div>
-                )}
-
                 <div
-                  className={`text-[13px] font-bold mb-2 tracking-[0.04em] ${plan.highlight ? "text-white/75" : "text-slate-400"}`}
+                  className="text-[13px] font-bold mb-2 tracking-wide text-slate-400"
                 >
                   {plan.name}
                 </div>
                 <div className="mb-2">
                   <span
-                    className={`font-serif text-[46px] leading-none ${plan.highlight ? "text-white" : "text-[#00201B]"}`}
+                    className="font-serif text-[46px] leading-none text-text"
                   >
                     {price}
                   </span>
                   {period && (
                     <span
-                      className={`text-[13px] ml-1 ${plan.highlight ? "text-white/55" : "text-slate-400"}`}
+                      className="text-[13px] ml-1 text-slate-400"
                     >
                       {period}
                     </span>
                   )}
                 </div>
                 <p
-                  className={`text-[13px] leading-[1.6] m-0 mb-7 ${plan.highlight ? "text-white/60" : "text-slate-500"}`}
+                  className="text-[13px] leading-[1.6] m-0 mb-7 text-slate-500"
                 >
                   {plan.desc}
                 </p>
 
                 <button
-                  className={`w-full p-[13px] text-[14px] font-bold rounded-[10px] cursor-pointer transition-opacity duration-200 border-none hover:opacity-85 ${plan.highlight ? "bg-white text-teal-600" : "bg-[#00201B] text-white"}`}
+                  className="w-full p-[13px] text-[14px] font-bold rounded-[10px] cursor-pointer transition-opacity duration-200 border-none hover:opacity-85 bg-text text-white"
                 >
                   {plan.cta}
                 </button>
@@ -446,7 +430,7 @@ export default function Precios() {
       {/* Feature comparison table */}
       <div className="max-w-[1200px] mx-auto px-6 pb-[100px]">
         <div className="text-center mb-12">
-          <h2 className="font-serif text-[clamp(26px,3vw,38px)] text-[#00201B] leading-[1.2] m-0 mb-2.5 font-normal">
+          <h2 className="font-serif text-[clamp(26px,3vw,38px)] text-text leading-[1.2] m-0 mb-2.5 font-normal">
             Comparación completa
           </h2>
           <p className="text-[15px] text-slate-500 m-0">
@@ -459,13 +443,13 @@ export default function Precios() {
             <table className="w-full border-collapse min-w-[600px]">
               <thead>
                 <tr className="border-b-2 border-slate-200">
-                  <th className="text-left py-5 px-6 text-[12px] font-bold text-slate-400 uppercase tracking-[0.08em]">
+                  <th className="text-left py-5 px-6 text-[12px] font-bold text-slate-400 tracking-wide">
                     Funcionalidad
                   </th>
                   {PLANS.map((p) => (
                     <th
                       key={p.id}
-                      className={`text-center p-5 text-[14px] font-bold w-[160px] ${p.highlight ? "text-teal-600" : "text-[#00201B]"}`}
+                      className="text-center p-5 text-[14px] font-bold w-[160px] text-text"
                     >
                       {p.name}
                     </th>
@@ -478,7 +462,7 @@ export default function Precios() {
                     <tr>
                       <td
                         colSpan={4}
-                        className={`pt-4 px-6 pb-2 text-[11px] font-extrabold text-teal-600 uppercase tracking-[0.1em] bg-slate-50 ${gi > 0 ? "border-t border-slate-200" : ""}`}
+                        className={`pt-4 px-6 pb-2 text-[11px] font-extrabold text-teal-600 tracking-wide bg-slate-50 ${gi > 0 ? "border-t border-slate-200" : ""}`}
                       >
                         {group.category}
                       </td>
@@ -488,7 +472,7 @@ export default function Precios() {
                         key={`${gi}-${fi}`}
                         className={`border-b border-slate-100 ${fi % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
                       >
-                        <td className="py-3 px-6 text-[13px] text-[#00201B]">{feat.label}</td>
+                        <td className="py-3 px-6 text-[13px] text-text">{feat.label}</td>
                         <FeatureCell value={feat.basico} />
                         <FeatureCell value={feat.comunidad} />
                         <FeatureCell value={feat.enterprise} />
@@ -503,14 +487,14 @@ export default function Precios() {
       </div>
 
       {/* CTA banner */}
-      <section className="bg-gradient-to-br from-teal-600 to-[#005047] py-[72px] px-6 text-center">
+      <section className="bg-primary py-[72px] px-6 text-center">
         <h2 className="font-serif text-[clamp(26px,3.5vw,42px)] text-white m-0 mb-3.5 font-normal">
           ¿Tienes dudas sobre qué plan elegir?
         </h2>
         <p className="text-[16px] text-white/70 m-0 mb-8">
           Nuestro equipo te ayuda a elegir el plan ideal para tu condominio — sin compromiso.
         </p>
-        <button className="bg-white text-[#005047] font-bold text-[15px] py-3.5 px-9 rounded-[10px] border-none cursor-pointer transition-[transform,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)]">
+        <button className="bg-white text-accent font-bold text-[15px] py-3.5 px-9 rounded-[10px] border-none cursor-pointer transition-[transform,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)]">
           Hablar con ventas
         </button>
       </section>

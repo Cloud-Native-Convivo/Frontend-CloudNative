@@ -23,12 +23,12 @@ export function DesgloseMensualCard({
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-7">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="font-serif text-[20px] text-[#00201B] m-0 font-normal">Desglose mensual</h3>
+        <h3 className="font-serif text-[20px] text-text m-0 font-normal">Desglose mensual</h3>
         <select
           aria-label="Filtrar por mes"
           value={selectedMes}
           onChange={(e) => onSelectMes(e.target.value)}
-          className="text-[13px] border border-slate-200 rounded-lg py-[7px] px-3 text-[#00201B] bg-white outline-none"
+          className="text-[13px] border border-slate-200 rounded-lg py-[7px] px-3 text-text bg-white outline-none"
         >
           {meses.map((m) => (
             <option key={m}>{m}</option>
@@ -39,13 +39,13 @@ export function DesgloseMensualCard({
         {gastos.map((g) => (
           <div key={g.item}>
             <div className="flex justify-between mb-1.5">
-              <span className="text-[13px] text-[#00201B] font-medium">{g.item}</span>
-              <span className="text-[13px] font-bold text-[#00201B]">{g.mensual}</span>
+              <span className="text-[13px] text-text font-medium">{g.item}</span>
+              <span className="text-[13px] font-bold text-text">{g.mensual}</span>
             </div>
             <div className="bg-slate-100 rounded-[4px] h-[7px]">
               <div
-                className="h-full rounded-[4px]"
-                style={{ width: `${g.pct}%`, backgroundColor: g.color }}
+                className={`h-full rounded-[4px] ${g.color}`}
+                style={{ width: `${g.pct}%` }}
               />
             </div>
             <div className="text-[11px] text-slate-400 mt-[3px]">
@@ -56,7 +56,7 @@ export function DesgloseMensualCard({
       </div>
       <div className="mt-6 pt-[18px] border-t border-slate-200 flex justify-between">
         <span className="text-[14px] text-slate-500 font-medium">Total mensual</span>
-        <span className="font-serif text-[20px] text-[#00201B]">$600.000 CLP</span>
+        <span className="font-serif text-[20px] text-text">$600.000 CLP</span>
       </div>
     </div>
   );

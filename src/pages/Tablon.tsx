@@ -7,7 +7,6 @@ import {
   IconCalendar,
   IconMessage,
   IconHome,
-  IconChevronRight,
 } from "../components/icons/Icons";
 import { FlipCard } from "../components/FlipCard";
 import { AvisosGrid, type AvisoItem } from "../components/tablon/AvisosGrid";
@@ -82,22 +81,22 @@ const flipCards = [
   {
     title: "Avisos del comité",
     desc: "Comunicados oficiales, mantenciones y cambios de reglamento.",
-    icon: <IconBell className="w-[28px] h-[28px] text-[#0D9488]" />,
+    icon: <IconBell className="w-[28px] h-[28px] text-primary" />,
   },
   {
     title: "Asambleas",
     desc: "Convocatorias con confirmación de asistencia directa desde la plataforma.",
-    icon: <IconCalendar className="w-[28px] h-[28px] text-[#0D9488]" />,
+    icon: <IconCalendar className="w-[28px] h-[28px] text-primary" />,
   },
   {
     title: "Publicaciones de residentes",
     desc: "Pérdidas, arriendos y noticias de la comunidad.",
-    icon: <IconMessage className="w-[28px] h-[28px] text-[#0D9488]" />,
+    icon: <IconMessage className="w-[28px] h-[28px] text-primary" />,
   },
   {
     title: "Notificaciones push",
     desc: "Cada aviso nuevo llega a tu teléfono automáticamente.",
-    icon: <IconHome className="w-[28px] h-[28px] text-[#0D9488]" />,
+    icon: <IconHome className="w-[28px] h-[28px] text-primary" />,
   },
 ];
 
@@ -127,10 +126,10 @@ export default function Tablon() {
   const filtered = avisos.filter((a) => activeTipo === "Todos" || a.tipo === activeTipo);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFB]">
-      <div className="bg-[#00201B] px-6 pb-16 pt-[72px]">
+    <div className="min-h-screen bg-slate-50">
+      <div className="bg-text px-6 pb-16 pt-[72px]">
         <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-white/45 tracking-[0.14em] uppercase mb-4">
+          <p className="text-[11px] font-bold text-white/45 tracking-wide mb-4">
             Cartelera digital
           </p>
           <h1 className="font-display text-[clamp(36px,5vw,64px)] text-white leading-[1.08] mb-[18px] font-normal">
@@ -142,10 +141,10 @@ export default function Tablon() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-[#0D9488] to-[#005047] px-6 pb-9 pt-10">
+      <div className="bg-primary px-6 pb-9 pt-10">
         <div className="max-w-[1280px] mx-auto flex justify-between items-end flex-wrap gap-5">
           <div>
-            <p className="text-[11px] font-bold text-white/60 tracking-[0.12em] uppercase mb-2.5">
+            <p className="text-[11px] font-bold text-white/60 tracking-wide mb-2.5">
               Cartelera digital
             </p>
             <h2 className="font-display text-[clamp(24px,3vw,36px)] text-white leading-[1.1] mb-2.5 font-normal">
@@ -158,7 +157,7 @@ export default function Tablon() {
           </div>
           <button
             onClick={() => setShowNew(true)}
-            className="flex items-center gap-2 bg-white text-[#005047] border-none rounded-[10px] px-5 py-3 text-[14px] font-bold cursor-pointer transition-opacity duration-200 whitespace-nowrap hover:opacity-90"
+            className="flex items-center gap-2 bg-white text-accent border-none rounded-[10px] px-5 py-3 text-[14px] font-bold cursor-pointer transition-opacity duration-200 whitespace-nowrap hover:opacity-90"
           >
             <IconPlus className="w-4 h-4" />
             {canPublishDirect ? "Publicar aviso" : "Solicitar publicación"}
@@ -175,8 +174,8 @@ export default function Tablon() {
                 onClick={() => setActiveTipo(t)}
                 className={`px-4 py-2 rounded-full text-[13px] font-medium cursor-pointer border transition-colors duration-150 ${
                   activeTipo === t
-                    ? "border-[#0D9488] bg-[#0D9488] text-white"
-                    : "border-border bg-white text-text-muted hover:border-[#0D9488]"
+                    ? "border-primary bg-primary text-white"
+                    : "border-border bg-white text-text-muted hover:border-primary"
                 }`}
               >
                 {t}
@@ -201,10 +200,10 @@ export default function Tablon() {
 
       <div className="bg-white px-6 py-20">
         <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-[#0D9488] tracking-[0.14em] uppercase mb-3">
+          <p className="text-[11px] font-bold text-primary tracking-wide mb-3">
             Funcionalidades
           </p>
-          <h2 className="font-display text-[clamp(28px,3.5vw,44px)] text-[#00201B] m-0 mb-12 font-normal">
+          <h2 className="font-display text-[clamp(28px,3.5vw,44px)] text-text m-0 mb-12 font-normal">
             Todo lo que necesitas en un tablón
           </h2>
           <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-5">
@@ -213,15 +212,15 @@ export default function Tablon() {
                 key={card.title}
                 height={200}
                 front={
-                  <div className="h-full bg-[#F8FAFB] rounded-2xl border border-border flex flex-col items-center justify-center p-6 text-center gap-3.5">
+                  <div className="h-full bg-slate-50 rounded-2xl border border-border flex flex-col items-center justify-center p-6 text-center gap-3.5">
                     {card.icon}
-                    <span className="text-[15px] font-bold text-[#00201B] leading-[1.3]">
+                    <span className="text-[15px] font-bold text-text leading-[1.3]">
                       {card.title}
                     </span>
                   </div>
                 }
                 back={
-                  <div className="h-full bg-gradient-to-br from-[#00201B] to-[#005047] rounded-2xl p-6 flex flex-col justify-center text-center">
+                  <div className="h-full bg-text rounded-2xl p-6 flex flex-col justify-center text-center">
                     <p className="text-white/85 text-[14px] leading-[1.65] m-0">{card.desc}</p>
                   </div>
                 }
@@ -234,7 +233,7 @@ export default function Tablon() {
       {altSections.map((sec) => (
         <div
           key={sec.title}
-          className={`py-[72px] px-6 ${sec.imgLeft ? "bg-[#F8FAFB]" : "bg-white"}`}
+          className={`py-[72px] px-6 ${sec.imgLeft ? "bg-slate-50" : "bg-white"}`}
         >
           <div
             className={`max-w-[1280px] mx-auto flex items-center gap-16 flex-wrap ${
@@ -242,10 +241,10 @@ export default function Tablon() {
             }`}
           >
             <div className="flex-[1_1_400px]">
-              <p className="text-[11px] font-bold text-[#0D9488] tracking-[0.14em] uppercase mb-3">
+              <p className="text-[11px] font-bold text-primary tracking-wide mb-3">
                 Comunidad conectada
               </p>
-              <h2 className="font-display text-[clamp(26px,3vw,40px)] text-[#00201B] m-0 mb-[18px] font-normal leading-[1.15]">
+              <h2 className="font-display text-[clamp(26px,3vw,40px)] text-text m-0 mb-[18px] font-normal leading-[1.15]">
                 {sec.title}
               </h2>
               <p className="text-[16px] text-text-muted leading-[1.75] m-0">{sec.body}</p>
@@ -261,20 +260,20 @@ export default function Tablon() {
         </div>
       ))}
 
-      <div className="bg-[#00201B] px-6 py-16">
+      <div className="bg-text px-6 py-16">
         <div className="max-w-[1280px] mx-auto flex items-center justify-center gap-6 flex-wrap">
           <Link
             to="/tablon"
-            className="inline-flex items-center gap-2 bg-[#0D9488] hover:bg-[#005047] text-white rounded-xl px-8 py-4 text-[15px] font-bold no-underline transition-colors duration-200"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-accent text-white rounded-xl px-8 py-4 text-[15px] font-bold no-underline transition-colors duration-200"
           >
-            Ver los avisos <IconChevronRight className="w-4 h-4" />
+            Ver los avisos 
           </Link>
           <button
             onClick={() => setShowNew(true)}
             className="inline-flex items-center gap-2 bg-transparent hover:bg-white/5 text-white rounded-xl border border-white/30 hover:border-white px-8 py-4 text-[15px] font-bold cursor-pointer transition-colors duration-200"
           >
             {canPublishDirect ? "Publicar aviso" : "Solicitar publicación"}{" "}
-            <IconChevronRight className="w-4 h-4" />
+            
           </button>
         </div>
       </div>

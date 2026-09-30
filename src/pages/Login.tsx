@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { IconGoogle } from "../components/icons/Icons";
 import {
@@ -33,6 +33,12 @@ export default function Login() {
   const [errors, setErrors] = useState<FieldError>({});
   const [isConnectingGoogle, setIsConnectingGoogle] = useState(false);
   const submitted = useRef(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 10);
+    return () => clearTimeout(t);
+  }, []);
 
   async function handleGoogleLogin() {
     setIsConnectingGoogle(true);
@@ -73,7 +79,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex">
       {/* Brand panel */}
-      <div className="hidden lg:flex flex-col justify-between w-105 shrink-0 bg-text p-12">
+      <div className={`hidden lg:flex flex-col justify-between w-105 shrink-0 bg-text p-12 transition-all duration-300 ease-out motion-reduce:transition-none ${mounted ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`}>
         <div>
           <span className="text-primary font-display text-2xl">Convivo</span>
         </div>
@@ -87,20 +93,11 @@ export default function Login() {
             Plataforma digital de gestión para comunidades residenciales en Chile.
           </p>
         </div>
-        <div className="flex gap-3 flex-wrap">
-          {["150+ comunidades", "98% satisfacción", "Soporte en español"].map((b) => (
-            <span
-              key={b}
-              className="text-xs text-white/50 border border-white/15 rounded-full px-3 py-1"
-            >
-              {b}
-            </span>
-          ))}
-        </div>
+        <p className="text-xs text-white/50">Residentes ingresan con su cuenta de Google.</p>
       </div>
 
       {/* Form panel */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-white">
+      <div className={`flex-1 flex items-center justify-center p-6 bg-white transition-all duration-300 delay-100 ease-out motion-reduce:transition-none ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
         <div className="w-full max-w-sm">
           {/* Mobile logo */}
           <div className="lg:hidden mb-8 text-center">
@@ -143,14 +140,9 @@ export default function Login() {
 
             {/* Password */}
             <div>
-              <div className="flex justify-between items-center mb-1.5">
-                <label htmlFor="password" className="block text-sm font-semibold text-text">
-                  Contraseña
-                </label>
-                <a href="#" className="text-xs text-primary hover:text-accent transition-colors">
-                  ¿Olvidaste la contraseña?
-                </a>
-              </div>
+              <label htmlFor="password" className="block text-sm font-semibold text-text mb-1.5">
+                Contraseña
+              </label>
               <input
                 id="password"
                 name="password"

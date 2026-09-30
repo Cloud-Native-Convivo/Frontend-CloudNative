@@ -174,7 +174,7 @@ export function StepReglamento({
       <label
         className={`flex gap-3 items-start cursor-pointer p-3 rounded-lg border transition-colors ${
           accepted
-            ? "border-[#16A34A] bg-green-50"
+            ? "border-green-600 bg-green-50"
             : reglamentoError
               ? "border-alert-red bg-red-50"
               : "border-border"

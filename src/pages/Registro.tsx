@@ -10,7 +10,6 @@ import {
   IconDollar,
   IconCalendar,
   IconUsers,
-  IconChevronRight,
 } from "../components/icons/Icons";
 
 const categorias = [
@@ -56,22 +55,22 @@ const flipCards: FlipCardData[] = [
   {
     title: "Antes y después",
     desc: "Cada intervención documentada con foto de inicio y resultado.",
-    icon: <IconCamera className="w-[28px] h-[28px] text-[#0D9488]" />,
+    icon: <IconCamera className="w-[28px] h-[28px] text-primary" />,
   },
   {
     title: "Vinculado al gasto",
     desc: "El registro está enlazado al gasto del dashboard. Todo conectado.",
-    icon: <IconDollar className="w-[28px] h-[28px] text-[#0D9488]" />,
+    icon: <IconDollar className="w-[28px] h-[28px] text-primary" />,
   },
   {
     title: "Historial completo",
     desc: "Accede a toda la bitácora histórica, ordenada por fecha y tipo.",
-    icon: <IconCalendar className="w-[28px] h-[28px] text-[#0D9488]" />,
+    icon: <IconCalendar className="w-[28px] h-[28px] text-primary" />,
   },
   {
     title: "Con responsable",
     desc: "Cada trabajo muestra el proveedor, monto y boleta adjunta.",
-    icon: <IconUsers className="w-[28px] h-[28px] text-[#0D9488]" />,
+    icon: <IconUsers className="w-[28px] h-[28px] text-primary" />,
   },
 ];
 
@@ -111,7 +110,7 @@ function RegistroCard({ registro, onOpen }: RegistroCardProps) {
                   e.stopPropagation();
                   setShowBefore(i === 0);
                 }}
-                className={`px-2.5 py-1 rounded-full text-[11px] font-semibold cursor-pointer border-none transition-colors duration-150 text-[#00201B] ${
+                className={`px-2.5 py-1 rounded-full text-[11px] font-semibold cursor-pointer border-none transition-colors duration-150 text-text ${
                   isActive ? "bg-white" : "bg-white/50"
                 }`}
               >
@@ -130,11 +129,11 @@ function RegistroCard({ registro, onOpen }: RegistroCardProps) {
           <span className="text-[11px] text-slate-400">{registro.fecha}</span>
           <span className="text-[11px] text-slate-400">{registro.id}</span>
         </div>
-        <h3 className="font-display text-base text-[#00201B] m-0 mb-1.5 font-normal leading-snug">
+        <h3 className="font-display text-base text-text m-0 mb-1.5 font-normal leading-snug">
           {registro.titulo}
         </h3>
         <div className="text-[13px] text-slate-500 mb-1">{registro.responsable}</div>
-        <div className="text-[14px] font-bold text-[#00201B] mb-3.5">{registro.monto}</div>
+        <div className="text-[14px] font-bold text-text mb-3.5">{registro.monto}</div>
 
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-1.5 text-[12px] text-teal-600 font-medium">
@@ -142,7 +141,7 @@ function RegistroCard({ registro, onOpen }: RegistroCardProps) {
           </div>
           <button
             onClick={onOpen}
-            className="flex items-center gap-1.5 bg-teal-50 border border-teal-100 text-[#005047] rounded-lg px-3.5 py-2 text-[13px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-teal-100"
+            className="flex items-center gap-1.5 bg-teal-50 border border-teal-100 text-accent rounded-lg px-3.5 py-2 text-[13px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-teal-100"
           >
             <IconEye className="w-[14px] h-[14px]" /> Ver detalle
           </button>
@@ -160,11 +159,11 @@ export default function Registro() {
   const filtered = registroFotos.filter((r) => activeCat === "Todos" || r.categoria === activeCat);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFB]">
+    <div className="min-h-screen bg-slate-50">
       {/* Dark hero header */}
-      <div className="bg-[#00201B] p-[72px_24px_64px]">
+      <div className="bg-text p-[72px_24px_64px]">
         <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-white/45 tracking-[0.14em] uppercase mb-4">
+          <p className="text-[11px] font-bold text-white/45 tracking-wide mb-4">
             Bitácora fotográfica
           </p>
           <h1 className="font-display text-[clamp(36px,5vw,64px)] text-white leading-[1.08] m-0 mb-[18px] font-normal">
@@ -177,9 +176,9 @@ export default function Registro() {
       </div>
 
       {/* Existing gradient header strip */}
-      <div className="bg-gradient-to-br from-[#0D9488] to-[#005047] p-[40px_24px_36px]">
+      <div className="bg-primary p-[40px_24px_36px]">
         <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-white/60 tracking-[0.12em] uppercase mb-2.5">
+          <p className="text-[11px] font-bold text-white/60 tracking-wide mb-2.5">
             Bitácora fotográfica
           </p>
           <h2 className="font-display text-[clamp(24px,3vw,36px)] text-white leading-[1.1] m-0 mb-2.5 font-normal">
@@ -200,14 +199,14 @@ export default function Registro() {
             {
               val: registroFotos.length,
               label: "Trabajos registrados",
-              colorClass: "text-[#0D9488]",
+              colorClass: "text-primary",
             },
             {
               val: registroFotos.filter((r) => r.estado === "Completado").length,
               label: "Completados",
-              colorClass: "text-[#005047]",
+              colorClass: "text-accent",
             },
-            { val: "100%", label: "Con boleta adjunta", colorClass: "text-[#14B8A6]" },
+            { val: "100%", label: "Con boleta adjunta", colorClass: "text-teal-500" },
           ].map((s) => (
             <div
               key={s.label}
@@ -257,12 +256,12 @@ export default function Registro() {
       </div>
 
       {/* Sub-features flip cards */}
-      <div className="bg-[#fff] p-[80px_24px]">
+      <div className="bg-white p-[80px_24px]">
         <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-teal-600 tracking-[0.14em] uppercase mb-3">
+          <p className="text-[11px] font-bold text-teal-600 tracking-wide mb-3">
             Funcionalidades
           </p>
-          <h2 className="font-display text-[clamp(28px,3.5vw,44px)] text-[#00201B] m-0 mb-12 font-normal">
+          <h2 className="font-display text-[clamp(28px,3.5vw,44px)] text-text m-0 mb-12 font-normal">
             Cada trabajo, completamente documentado
           </h2>
           <div className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-5">
@@ -273,14 +272,14 @@ export default function Registro() {
                 front={
                   <div className="h-full bg-slate-50 rounded-2xl border border-slate-200 flex flex-col items-center justify-center p-6 text-center gap-3.5">
                     {card.icon}
-                    <span className="text-[15px] font-bold text-[#00201B] leading-snug">
+                    <span className="text-[15px] font-bold text-text leading-snug">
                       {card.title}
                     </span>
                   </div>
                 }
                 back={
                   <div className="h-full bg-teal-600 rounded-2xl flex items-center justify-center p-6 text-center">
-                    <span className="text-[14px] text-[#fff] leading-[1.6]">{card.desc}</span>
+                    <span className="text-[14px] text-white leading-[1.6]">{card.desc}</span>
                   </div>
                 }
               />
@@ -304,7 +303,7 @@ export default function Registro() {
                   className="w-full h-[380px] object-cover rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
                 />
                 <div>
-                  <h2 className="font-display text-[clamp(26px,3vw,40px)] text-[#00201B] m-0 mb-5 font-normal leading-[1.2]">
+                  <h2 className="font-display text-[clamp(26px,3vw,40px)] text-text m-0 mb-5 font-normal leading-[1.2]">
                     {section.title}
                   </h2>
                   <p className="text-base text-slate-500 leading-relaxed m-0">{section.body}</p>
@@ -313,7 +312,7 @@ export default function Registro() {
             ) : (
               <>
                 <div>
-                  <h2 className="font-display text-[clamp(26px,3vw,40px)] text-[#00201B] m-0 mb-5 font-normal leading-[1.2]">
+                  <h2 className="font-display text-[clamp(26px,3vw,40px)] text-text m-0 mb-5 font-normal leading-[1.2]">
                     {section.title}
                   </h2>
                   <p className="text-base text-slate-500 leading-relaxed m-0">{section.body}</p>
@@ -330,19 +329,19 @@ export default function Registro() {
       ))}
 
       {/* CTA strip */}
-      <div className="bg-[#00201B] p-[64px_24px]">
+      <div className="bg-text p-[64px_24px]">
         <div className="max-w-[1280px] mx-auto flex items-center justify-center gap-6 flex-wrap">
           <Link
             to="/registro"
-            className="inline-flex items-center gap-2 bg-teal-600 text-white rounded-xl px-8 py-4 text-[15px] font-bold no-underline transition-colors duration-200 hover:bg-[#005047]"
+            className="inline-flex items-center gap-2 bg-teal-600 text-white rounded-xl px-8 py-4 text-[15px] font-bold no-underline transition-colors duration-200 hover:bg-accent"
           >
-            Ver registros <IconChevronRight className="w-[16px] h-[16px]" />
+            Ver registros 
           </Link>
           <Link
             to="/dashboard"
             className="inline-flex items-center gap-2 bg-transparent text-white rounded-xl border border-white/30 px-8 py-4 text-[15px] font-bold no-underline transition-[border-color,background-color] duration-200 hover:border-white hover:bg-white/5"
           >
-            Dashboard <IconChevronRight className="w-[16px] h-[16px]" />
+            Dashboard 
           </Link>
         </div>
       </div>
@@ -354,7 +353,7 @@ export default function Registro() {
             type="button"
             aria-label="Cerrar"
             onClick={() => setSelected(null)}
-            className="absolute inset-0 bg-[#00201B]/65 backdrop-blur-md border-none p-0 cursor-default"
+            className="absolute inset-0 bg-text/65 backdrop-blur-md border-none p-0 cursor-default"
           />
           <div className="relative bg-white rounded-[20px] w-full max-w-[680px] max-h-[90vh] overflow-y-auto shadow-[0_32px_80px_rgba(0,0,0,0.25)]">
             <div className="relative h-[320px] bg-slate-200 overflow-hidden rounded-[20px_20px_0_0]">
@@ -371,7 +370,7 @@ export default function Registro() {
                       key={label}
                       onClick={() => setShowBefore(i === 0)}
                       className={`px-5 py-2 rounded-full text-[13px] font-semibold cursor-pointer border-none transition-colors duration-200 ${
-                        isActive ? "bg-white text-[#00201B]" : "bg-white/40 text-white"
+                        isActive ? "bg-white text-text" : "bg-white/40 text-white"
                       }`}
                     >
                       {label}
@@ -391,10 +390,10 @@ export default function Registro() {
             <div className="px-7 pt-7 pb-8">
               <div className="flex justify-between items-start gap-3 mb-4">
                 <div>
-                  <span className="text-[11px] font-bold text-[#005047] bg-teal-100 px-2.5 py-1 rounded-md inline-block mb-2">
+                  <span className="text-[11px] font-bold text-accent bg-teal-100 px-2.5 py-1 rounded-md inline-block mb-2">
                     {selected.categoria}
                   </span>
-                  <h2 className="font-display text-[22px] text-[#00201B] m-0 font-normal leading-tight">
+                  <h2 className="font-display text-[22px] text-text m-0 font-normal leading-tight">
                     {selected.titulo}
                   </h2>
                 </div>
@@ -411,16 +410,16 @@ export default function Registro() {
                   { label: "Estado", val: selected.estado },
                 ].map((f) => (
                   <div key={f.label}>
-                    <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.08em] mb-1">
+                    <div className="text-[11px] font-semibold text-slate-400 tracking-wide mb-1">
                       {f.label}
                     </div>
-                    <div className="text-[14px] font-semibold text-[#00201B]">{f.val}</div>
+                    <div className="text-[14px] font-semibold text-text">{f.val}</div>
                   </div>
                 ))}
               </div>
 
               <div className="flex items-center justify-between bg-teal-50 rounded-lg px-4 py-3.5">
-                <div className="flex items-center gap-2 text-[13px] text-[#005047] font-semibold">
+                <div className="flex items-center gap-2 text-[13px] text-accent font-semibold">
                   <IconCheck className="w-[16px] h-[16px]" /> Boleta adjunta: {selected.boleta}
                 </div>
                 <button className="flex items-center gap-1.5 bg-transparent border-none text-teal-600 text-[13px] font-semibold cursor-pointer">

@@ -23,10 +23,10 @@ export function SituacionResidenteCard({
     <div className="bg-white border border-slate-200 rounded-2xl p-7 mb-7">
       <div className="flex justify-between items-start flex-wrap gap-5">
         <div>
-          <p className="text-[12px] text-slate-400 font-semibold uppercase tracking-[0.08em] mb-1">
+          <p className="text-[12px] text-slate-400 font-semibold tracking-wide mb-1">
             {unidad}
           </p>
-          <h2 className="font-serif text-[28px] text-[#00201B] mb-2 font-normal">Mi situación</h2>
+          <h2 className="font-serif text-[28px] text-text mb-2 font-normal">Mi situación</h2>
           {estado === "cargando" && (
             <p className="text-[14px] text-slate-400">Cargando tu situación de pago…</p>
           )}
@@ -52,10 +52,10 @@ export function SituacionResidenteCard({
           <div className="flex gap-4 flex-wrap items-center">
             <div className="text-right">
               <div className="text-[12px] text-slate-400 mb-0.5">Saldo pendiente</div>
-              <div className="font-serif text-[32px] text-[#00201B]">
+              <div className="font-serif text-[32px] text-text">
                 ${monto.toLocaleString("es-CL")}
               </div>
-              <div className="text-[12px] text-[#94A3B8]">
+              <div className="text-[12px] text-slate-400">
                 CLP {vencimiento ? `· Vence ${vencimiento}` : ""}
               </div>
             </div>

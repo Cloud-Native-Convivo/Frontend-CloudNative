@@ -12,10 +12,10 @@ export function NuevoAvisoModal({ canPublishDirect, onClose }: NuevoAvisoModalPr
         type="button"
         aria-label="Cerrar"
         onClick={onClose}
-        className="absolute inset-0 bg-[#00201B]/60 backdrop-blur-sm border-none p-0 cursor-default"
+        className="absolute inset-0 bg-text/60 backdrop-blur-sm border-none p-0 cursor-default"
       />
       <div className="relative bg-white rounded-[20px] w-full max-w-[480px] px-7 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.2)]">
-        <h3 className="font-display text-[22px] text-[#00201B] m-0 mb-1.5">
+        <h3 className="font-display text-[22px] text-text m-0 mb-1.5">
           {canPublishDirect ? "Publicar aviso" : "Solicitar publicación"}
         </h3>
         <p className="text-[13px] text-text-muted m-0 mb-6">
@@ -33,7 +33,7 @@ export function NuevoAvisoModal({ canPublishDirect, onClose }: NuevoAvisoModalPr
             </label>
             <select
               id="nuevo-aviso-tipo"
-              className="w-full px-3 py-2.5 border border-border rounded-lg text-[14px] text-[#00201B] bg-white outline-none focus:border-[#0D9488]"
+              className="w-full px-3 py-2.5 border border-border rounded-lg text-[14px] text-text bg-white outline-none focus:border-primary"
             >
               <option>Aviso de interés comunitario</option>
               <option>Rifa / bazar</option>
@@ -51,7 +51,7 @@ export function NuevoAvisoModal({ canPublishDirect, onClose }: NuevoAvisoModalPr
               id="nuevo-aviso-titulo"
               type="text"
               placeholder="Título del aviso"
-              className="w-full px-3 py-2.5 border border-border rounded-lg text-[14px] text-[#00201B] outline-none box-border focus:border-[#0D9488]"
+              className="w-full px-3 py-2.5 border border-border rounded-lg text-[14px] text-text outline-none box-border focus:border-primary"
             />
           </div>
           <div>
@@ -65,7 +65,7 @@ export function NuevoAvisoModal({ canPublishDirect, onClose }: NuevoAvisoModalPr
               id="nuevo-aviso-desc"
               rows={4}
               placeholder="Descripción detallada..."
-              className="w-full px-3 py-2.5 border border-border rounded-lg text-[14px] text-[#00201B] outline-none resize-y font-sans box-border focus:border-[#0D9488]"
+              className="w-full px-3 py-2.5 border border-border rounded-lg text-[14px] text-text outline-none resize-y font-sans box-border focus:border-primary"
             />
           </div>
         </div>
@@ -91,7 +91,7 @@ export function NuevoAvisoModal({ canPublishDirect, onClose }: NuevoAvisoModalPr
               }
               onClose();
             }}
-            className="flex-[2] p-3 text-[14px] font-bold rounded-[10px] border-none bg-[#0D9488] text-white cursor-pointer hover:bg-[#005047]"
+            className="flex-[2] p-3 text-[14px] font-bold rounded-[10px] border-none bg-primary text-white cursor-pointer hover:bg-accent"
           >
             {canPublishDirect ? "Publicar" : "Enviar solicitud"}
           </button>

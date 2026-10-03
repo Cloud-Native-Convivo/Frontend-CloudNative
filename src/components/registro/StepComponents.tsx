@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import { Field } from "./FormFields";
 import { inputClass, type StepUnitForm, type StepAccountForm, type StepErrors } from "./types";
 
@@ -153,6 +154,7 @@ export function StepReglamento({
       <div
         className="border border-border rounded-xl p-4 h-52 overflow-y-auto text-sm text-muted leading-relaxed mb-4 bg-gray-50/60"
         tabIndex={0}
+        role="region"
         aria-label="Reglamento interno"
       >
         <p className="font-semibold text-text mb-2">Reglamento Interno — Torres del Parque</p>
@@ -174,7 +176,7 @@ export function StepReglamento({
       <label
         className={`flex gap-3 items-start cursor-pointer p-3 rounded-lg border transition-colors ${
           accepted
-            ? "border-[#16A34A] bg-green-50"
+            ? "border-green-600 bg-green-50"
             : reglamentoError
               ? "border-alert-red bg-red-50"
               : "border-border"
@@ -188,7 +190,8 @@ export function StepReglamento({
           aria-describedby={reglamentoError ? "reg-error" : undefined}
         />
         <span className="text-sm text-text leading-snug">
-          He leído y acepto el <strong>Reglamento Interno</strong> del condominio Torres del Parque.
+          He leído y acepto el <strong>Reglamento Interno</strong> del condominio{" "}
+          {import.meta.env.VITE_CONDOMINIO_NOMBRE || "Convivo"}.
         </span>
       </label>
       {reglamentoError && (

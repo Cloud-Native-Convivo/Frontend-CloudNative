@@ -1,9 +1,9 @@
-@import url("https://fonts.googleapis.com/css2?family=Gloock&family=Inter:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
 @theme inline {
   --color-primary: #0d9488;
   --color-accent: #005047;
+  --color-primary-on-dark: #5eead4; /* títulos y acentos sobre fondo text (footer, hero) */
   --color-surface: #ffffff;
   --color-border: #e2e8f0;
   --color-text: #00201b;
@@ -111,6 +111,16 @@ body {
   font-family: var(--font-body);
   color: #00201b;
   background: #ffffff;
+}
+
+/* Accessibility: Keyboard focus indicator */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar {

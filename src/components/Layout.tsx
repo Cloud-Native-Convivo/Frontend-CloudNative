@@ -114,6 +114,14 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Accesibilidad: Enlace para saltar navegación */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-[100] focus:bg-white focus:text-primary focus:p-4 focus:font-bold"
+      >
+        Saltar al contenido principal
+      </a>
+
       {/* Ribbon */}
       {ribbonVisible && <AnnouncementRibbon onDismiss={() => setRibbonVisible(false)} />}
 
@@ -129,7 +137,7 @@ export default function Layout() {
       />
 
       {/* Page content */}
-      <main className="flex-1" style={{ paddingTop: isHome ? 0 : TOP_OFFSET }}>
+      <main id="main-content" className="flex-1" style={{ paddingTop: isHome ? 0 : TOP_OFFSET }}>
         <Outlet />
       </main>
 

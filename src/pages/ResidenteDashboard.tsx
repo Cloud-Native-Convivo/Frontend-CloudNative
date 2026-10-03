@@ -4,6 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 import { obtenerPanel } from "../services/panelApi";
 import { listarEspacios } from "../services/espaciosApi";
 import { obtenerResumenGastos } from "../services/gastosApi";
+import { CHART_COLORS } from "../components/charts/chartColors";
 
 const SparkAreaChart = lazy(() => import("../components/charts/SparkAreaChart"));
 
@@ -89,7 +90,7 @@ function KpiCard({
   subtitle,
   badge,
   spark,
-  sparkColor = "#0D9488",
+  sparkColor = CHART_COLORS.primary,
 }: KpiCardProps) {
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-border bg-white p-5 shadow-sm overflow-hidden relative">
@@ -139,7 +140,7 @@ const DEFAULT_KPIS: KpiCardProps[] = [
     subtitle: "Sáb 23 ago, 18:00 hrs",
     badge: { label: "Confirmada", variant: "green" },
     spark: [{ v: 1 }, { v: 2 }, { v: 1 }, { v: 3 }, { v: 2 }, { v: 4 }, { v: 3 }, { v: 5 }],
-    sparkColor: "#0D9488",
+    sparkColor: CHART_COLORS.primary,
   },
   {
     id: "gastos-pendientes",
@@ -149,7 +150,7 @@ const DEFAULT_KPIS: KpiCardProps[] = [
     subtitle: "Vence en 5 días",
     badge: { label: "Pendiente", variant: "yellow" },
     spark: [{ v: 3 }, { v: 4 }, { v: 3 }, { v: 5 }, { v: 4 }, { v: 6 }, { v: 5 }, { v: 7 }],
-    sparkColor: "#005047",
+    sparkColor: CHART_COLORS.accent,
   },
   {
     id: "incidentes-abiertos",
@@ -159,7 +160,7 @@ const DEFAULT_KPIS: KpiCardProps[] = [
     subtitle: "Filtr. desde plomería",
     badge: { label: "En revisión", variant: "yellow" },
     spark: [{ v: 0 }, { v: 1 }, { v: 0 }, { v: 1 }, { v: 2 }, { v: 1 }, { v: 1 }, { v: 1 }],
-    sparkColor: "#EAB308",
+    sparkColor: CHART_COLORS.alertYellow,
   },
   {
     id: "correspondencia",
@@ -169,7 +170,7 @@ const DEFAULT_KPIS: KpiCardProps[] = [
     subtitle: "Esperando retiro",
     badge: { label: "Pendiente retiro", variant: "yellow" },
     spark: [{ v: 1 }, { v: 0 }, { v: 2 }, { v: 1 }, { v: 3 }, { v: 2 }, { v: 2 }, { v: 2 }],
-    sparkColor: "#0D9488",
+    sparkColor: CHART_COLORS.primary,
   },
 ];
 
@@ -332,7 +333,7 @@ function DashboardVisitasSection({ visits: items }: { visits: Visit[] }) {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="font-display text-xl font-semibold text-text">Visitas próximas</h2>
         <Link to="/visitas" className="font-body text-sm font-medium text-primary hover:underline">
-          Gestionar →
+          Gestionar
         </Link>
       </div>
       <div className="overflow-hidden rounded-xl border border-border bg-white">
@@ -573,7 +574,7 @@ export default function ResidenteDashboard() {
                     to="/tablon"
                     className="font-body text-sm font-medium text-primary hover:underline"
                   >
-                    Ver todas →
+                    Ver todas
                   </Link>
                 </div>
                 <div className="flex flex-col gap-3">
@@ -611,7 +612,7 @@ export default function ResidenteDashboard() {
               to="/gastos"
               className="shrink-0 rounded-full bg-primary px-5 py-2.5 font-body text-sm font-semibold text-white transition-colors hover:bg-accent"
             >
-              Ver gastos →
+              Ver gastos
             </Link>
           </div>
         </div>

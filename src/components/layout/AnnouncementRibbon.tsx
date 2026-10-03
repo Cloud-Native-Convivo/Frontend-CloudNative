@@ -4,19 +4,19 @@ import { Link } from "react-router";
 
 const RIBBON_ITEMS = [
   {
-    text: "📢 Asamblea de copropietarios — 22 agosto, 19:00 hrs · Sala de Juegos",
+    text: "Asamblea de copropietarios — 22 agosto, 19:00 hrs · Sala de Juegos",
     path: "/tablon",
   },
   {
-    text: "💧 Corte de agua programado Torres A y B — 25 agosto 09:00 hrs",
+    text: "Corte de agua programado Torres A y B — 25 agosto 09:00 hrs",
     path: "/tablon",
   },
   {
-    text: "🎟️ Rifa solidaria — Bazar Comunidad · Boletos en conserjería",
+    text: "Rifa solidaria — Bazar Comunidad · Boletos en conserjería",
     path: "/tablon",
   },
   {
-    text: "📸 Nuevo registro fotográfico: renovación jardín central",
+    text: "Nuevo registro fotográfico: renovación jardín central",
     path: "/registro",
   },
 ];
@@ -47,17 +47,15 @@ export function AnnouncementRibbon({ onDismiss }: { onDismiss: () => void }) {
   const item = RIBBON_ITEMS[idx];
 
   return (
-    <div className="fixed top-0 inset-x-0 z-[60] h-[32px] bg-[#005047] flex items-center">
+    <div className="fixed top-0 inset-x-0 z-[60] h-[32px] bg-accent flex items-center">
       <div className="max-w-[1280px] mx-auto px-4 flex items-center gap-[12px] w-full">
-        <div className="shrink-0 bg-[#0D9488] rounded-[3px] px-2 py-[1px] flex items-center gap-[5px]">
-          <span className="w-[5px] h-[5px] rounded-full bg-[#4ADE80] inline-block" />
-          <span className="text-[10px] font-bold text-white tracking-[0.08em] uppercase">
-            Tablón
-          </span>
+        <div className="shrink-0 bg-primary rounded-[3px] px-2 py-[1px]">
+          <span className="text-[10px] font-bold text-white tracking-wide">Tablón</span>
         </div>
 
         <Link
           to={item.path}
+          viewTransition
           className="flex-1 text-[12px] text-white/90 no-underline overflow-hidden whitespace-nowrap text-ellipsis transition-opacity duration-300"
           style={{ opacity: fading ? 0 : 1 }}
         >
@@ -73,11 +71,10 @@ export function AnnouncementRibbon({ onDismiss }: { onDismiss: () => void }) {
                 setIdx(i);
                 setFading(false);
               }}
-              className="h-[5px] rounded-[3px] border-none cursor-pointer p-0 transition-[width,background-color] duration-300"
-              style={{
-                width: i === idx ? 14 : 5,
-                background: i === idx ? "#5EEAD4" : "rgba(255,255,255,0.3)",
-              }}
+              className={`h-[5px] rounded-[3px] border-none cursor-pointer p-0 transition-[width,background-color] duration-300 ${
+                i === idx ? "bg-primary-on-dark" : "bg-white/30"
+              }`}
+              style={{ width: i === idx ? 14 : 5 }}
             />
           ))}
         </div>

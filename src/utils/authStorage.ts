@@ -1,10 +1,18 @@
 import type { User } from "../types";
+import { z } from "zod";
 
 export const USER_STORAGE_KEY = "convivo_user_v1";
 export const ID_TOKEN_STORAGE_KEY = "convivo_id_token_v1";
 export const ACCESS_TOKEN_STORAGE_KEY = "convivo_access_token_v1";
 
 const LEGACY_USER_KEY = "convivo_user";
+
+const userSchema = z.object({
+  nombre: z.string(),
+  unidad: z.string(),
+  role: z.enum(["residente", "conserje", "admin", "comite"] as const),
+  avatar: z.string().optional(),
+});
 
 function getItem(storage: Storage, key: string): string | null {
   if (typeof window === "undefined") return null;
@@ -28,7 +36,8 @@ export function getStoredUser(): User | null {
   const raw = getItem(sessionStorage, USER_STORAGE_KEY) ?? getItem(localStorage, LEGACY_USER_KEY);
   if (!raw) return null;
   try {
-    return JSON.parse(raw) as User;
+    const parsed = JSON.parse(raw);
+    return userSchema.parse(parsed) as User;
   } catch {
     return null;
   }

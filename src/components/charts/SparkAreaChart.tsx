@@ -1,5 +1,6 @@
 // react-doctor-disable-next-line react-doctor/prefer-dynamic-import -- Este módulo es cargado perezosamente vía React.lazy() en ResidenteDashboard.tsx
 import { AreaChart, Area, ResponsiveContainer, Tooltip } from "recharts";
+import { CHART_COLORS } from "./chartColors";
 
 export interface SparkPoint {
   v: number;
@@ -14,7 +15,7 @@ interface SparkAreaChartProps {
 export default function SparkAreaChart({
   data,
   title,
-  sparkColor = "#0D9488",
+  sparkColor = CHART_COLORS.primary,
 }: SparkAreaChartProps) {
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -28,7 +29,7 @@ export default function SparkAreaChart({
         <Tooltip
           content={({ active, payload }) =>
             active && payload?.length ? (
-              <span className="text-[11px] font-body bg-[#00201B] text-white px-2 py-1 rounded-md">
+              <span className="text-[11px] font-body bg-text text-white px-2 py-1 rounded-md">
                 {payload[0].value}
               </span>
             ) : null

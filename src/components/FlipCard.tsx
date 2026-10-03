@@ -1,4 +1,4 @@
-/* eslint-disable react/forbid-dom-props */
+/* eslint-disable react/forbid-dom-props, jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */
 import { useState } from "react";
 
 interface FlipCardProps {
@@ -15,6 +15,10 @@ export function FlipCard({ front, back, height = 180 }: FlipCardProps) {
       className="cursor-pointer [perspective:1000px]"
       onMouseEnter={() => setFlipped(true)}
       onMouseLeave={() => setFlipped(false)}
+      onFocus={() => setFlipped(true)}
+      onBlur={() => setFlipped(false)}
+      role="region"
+      tabIndex={0}
       style={{ height }}
     >
       <div

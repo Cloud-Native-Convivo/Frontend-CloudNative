@@ -9,7 +9,6 @@ import {
   IconBell,
   IconShield,
   IconHome,
-  IconChevronRight,
 } from "../components/icons/Icons";
 import { FlipCard } from "../components/FlipCard";
 import { PayModal } from "../components/gastos/PayModal";
@@ -175,10 +174,10 @@ export default function Gastos() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFB]">
-      <div className="bg-[#00201B] px-6 pt-[56px] pb-12">
+    <div className="min-h-screen bg-slate-50">
+      <div className="bg-text px-6 pt-[56px] pb-12">
         <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-teal-300/70 tracking-[0.12em] uppercase mb-2.5">
+          <p className="text-[11px] font-bold text-teal-300/70 tracking-wide mb-2.5">
             Finanzas del condominio
           </p>
           <h1 className="font-serif text-[clamp(32px,4vw,52px)] text-white leading-[1.1] mb-3 font-normal">
@@ -214,7 +213,7 @@ export default function Gastos() {
 
           {isAdmin && (
             <div className="bg-white border border-slate-200 rounded-2xl p-7">
-              <h3 className="font-serif text-[20px] text-[#00201B] m-0 mb-6 font-normal">
+              <h3 className="font-serif text-[20px] text-text m-0 mb-6 font-normal">
                 Estado por unidad
               </h3>
               <div className="flex flex-col gap-2.5">
@@ -224,8 +223,8 @@ export default function Gastos() {
                     className={`flex justify-between items-center py-3 px-3.5 rounded-[10px] border ${u.bgClass} ${u.colorClass.split(" ")[1]}`}
                   >
                     <div>
-                      <div className="text-[13px] font-semibold text-[#00201B]">{u.unidad}</div>
-                      <div className="text-[12px] text-[#94A3B8]">
+                      <div className="text-[13px] font-semibold text-text">{u.unidad}</div>
+                      <div className="text-[12px] text-slate-400">
                         {u.estado === "Al día" ? "Sin deuda" : `Deuda: ${u.monto}`}
                       </div>
                     </div>
@@ -247,10 +246,10 @@ export default function Gastos() {
       <div className="bg-white py-20 px-6 border-t border-slate-200">
         <div className="max-w-[1280px] mx-auto">
           <div className="text-center max-w-[480px] mx-auto mb-14">
-            <p className="text-[11px] font-bold text-teal-600 tracking-[0.12em] uppercase mb-3">
+            <p className="text-[11px] font-bold text-teal-600 tracking-wide mb-3">
               Ventajas del módulo
             </p>
-            <h2 className="font-serif text-[clamp(28px,3.5vw,42px)] text-[#00201B] leading-[1.2] m-0 mb-3.5 font-normal">
+            <h2 className="font-serif text-[clamp(28px,3.5vw,42px)] text-text leading-[1.2] m-0 mb-3.5 font-normal">
               Gestión clara, sin sorpresas
             </h2>
             <p className="text-[15px] text-slate-500 m-0">
@@ -265,7 +264,7 @@ export default function Gastos() {
                 front={
                   <div className="bg-slate-50 rounded-xl border border-slate-200 h-full flex flex-col items-center justify-center gap-3.5 py-6 px-5 box-border">
                     <Icon className="w-8 h-8 text-teal-600" />
-                    <span className="text-[15px] font-semibold text-[#00201B] text-center leading-[1.3]">
+                    <span className="text-[15px] font-semibold text-text text-center leading-[1.3]">
                       {title}
                     </span>
                   </div>
@@ -286,7 +285,7 @@ export default function Gastos() {
       {alternatingSections.map((section) => (
         <div
           key={section.title}
-          className={`py-[72px] px-6 ${section.imgRight ? "bg-[#F8FAFB]" : "bg-white"}`}
+          className={`py-[72px] px-6 ${section.imgRight ? "bg-slate-50" : "bg-white"}`}
         >
           <div
             className={`max-w-[1280px] mx-auto flex items-center gap-16 flex-wrap ${
@@ -294,10 +293,10 @@ export default function Gastos() {
             }`}
           >
             <div className="flex-[1_1_400px]">
-              <p className="text-[11px] font-bold text-teal-600 tracking-[0.12em] uppercase mb-3">
+              <p className="text-[11px] font-bold text-teal-600 tracking-wide mb-3">
                 Gastos comunes
               </p>
-              <h2 className="font-serif text-[clamp(26px,3vw,40px)] text-[#00201B] m-0 mb-[18px] font-normal leading-[1.15]">
+              <h2 className="font-serif text-[clamp(26px,3vw,40px)] text-text m-0 mb-[18px] font-normal leading-[1.15]">
                 {section.title}
               </h2>
               <p className="text-[16px] text-slate-500 leading-[1.75] m-0">{section.body}</p>
@@ -307,13 +306,15 @@ export default function Gastos() {
                 src={section.imgUrl}
                 alt={section.title}
                 className="w-full rounded-[18px] block shadow-[0_16px_48px_rgba(0,0,0,0.1)]"
+                loading="lazy"
+                decoding="async"
               />
             </div>
           </div>
         </div>
       ))}
 
-      <div className="bg-[#00201B] py-14 px-6">
+      <div className="bg-text py-14 px-6">
         <div className="max-w-[1280px] mx-auto flex flex-wrap gap-6 justify-center">
           <a
             href="/gastos"
@@ -324,7 +325,6 @@ export default function Gastos() {
               <div className="text-[13px] text-white/50 mb-1">¿Eres residente?</div>
               <div className="text-[16px] font-bold text-white">Paga tus gastos</div>
             </div>
-            <IconChevronRight className="w-[18px] h-[18px] text-white/40 ml-auto" />
           </a>
           <a
             href="/dashboard"
@@ -335,7 +335,6 @@ export default function Gastos() {
               <div className="text-[13px] text-white/50 mb-1">¿Eres del comité?</div>
               <div className="text-[16px] font-bold text-white">Ir al dashboard</div>
             </div>
-            <IconChevronRight className="w-[18px] h-[18px] text-white/40 ml-auto" />
           </a>
         </div>
       </div>

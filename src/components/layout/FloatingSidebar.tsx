@@ -9,14 +9,14 @@ const FLOATING_SIDEBAR_ITEMS = [
     icon: <IconCalendar className="w-[17px] h-[17px]" />,
     label: "Reservar",
     path: "/reservas",
-    bg: "#0D9488",
+    bg: "bg-primary",
   },
   {
     id: "gastos",
     icon: <IconDollar className="w-[17px] h-[17px]" />,
     label: "Mis gastos",
     path: "/gastos",
-    bg: "#005047",
+    bg: "bg-accent",
   },
 ];
 
@@ -34,9 +34,8 @@ export function FloatingSidebar() {
           className="flex items-center justify-end no-underline"
         >
           <div
-            className="flex items-center h-[40px] overflow-hidden whitespace-nowrap rounded-l-[6px] transition-[max-width,padding,opacity] duration-[220ms] ease-out"
+            className={`flex items-center h-[40px] overflow-hidden whitespace-nowrap rounded-l-[6px] transition-[max-width,padding,opacity] duration-[220ms] ease-out ${item.bg}`}
             style={{
-              background: item.bg,
               maxWidth: hovered === item.id ? 120 : 0,
               paddingLeft: hovered === item.id ? 12 : 0,
               opacity: hovered === item.id ? 1 : 0,
@@ -46,9 +45,8 @@ export function FloatingSidebar() {
           </div>
 
           <div
-            className="w-[40px] h-[40px] shrink-0 flex items-center justify-center text-white shadow-[0_2px_12px_rgba(0,0,0,0.22)] transition-[border-radius] duration-[220ms] ease-out"
+            className={`w-[40px] h-[40px] shrink-0 flex items-center justify-center text-white shadow-[0_2px_12px_rgba(0,0,0,0.22)] transition-[border-radius] duration-[220ms] ease-out ${item.bg}`}
             style={{
-              background: item.bg,
               borderRadius: hovered === item.id ? "0 6px 6px 0" : "6px 0 0 6px",
             }}
           >

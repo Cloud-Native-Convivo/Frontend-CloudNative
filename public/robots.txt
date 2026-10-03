@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /mi-dashboard
+Disallow: /dashboard
+Disallow: /registro
+Disallow: /auth/
+
+Sitemap: https://cloud-native-convivo.github.io/Frontend-CloudNative/sitemap.xml

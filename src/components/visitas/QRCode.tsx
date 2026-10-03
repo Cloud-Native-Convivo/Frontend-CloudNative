@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { CHART_COLORS } from "../charts/chartColors";
 
 const GRID = 21;
 const QUIET = 4;
@@ -55,7 +56,7 @@ export function QRCode({ code, size = 200 }: { code: string; size?: number }) {
           y={(r + QUIET) * CELL}
           width={CELL}
           height={CELL}
-          fill="#00201B"
+          fill={CHART_COLORS.text}
         />
       ))}
     </svg>

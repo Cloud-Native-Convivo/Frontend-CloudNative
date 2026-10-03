@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import AuthError from "@/pages/AuthError";
-import * as cognitoAuth from "@/lib/cognitoAuth";
+import * as cognitoAuth from "@/auth/cognitoAuth";
 
 describe("AuthError page", () => {
   beforeEach(() => {

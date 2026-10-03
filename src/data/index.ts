@@ -4,28 +4,28 @@ export const gastos = [
     mensual: "$180.000",
     anual: "$2.160.000",
     pct: 30,
-    color: "#0D9488",
+    color: "bg-primary",
   },
   {
     item: "Seguridad y conserjería",
     mensual: "$250.000",
     anual: "$3.000.000",
     pct: 42,
-    color: "#005047",
+    color: "bg-accent",
   },
   {
     item: "Servicios básicos (luz/aguas)",
     mensual: "$90.000",
     anual: "$1.080.000",
     pct: 15,
-    color: "#14B8A6",
+    color: "bg-teal-500",
   },
   {
     item: "Fondo de reserva",
     mensual: "$80.000",
     anual: "$960.000",
     pct: 13,
-    color: "#99F6E4",
+    color: "bg-teal-200",
   },
 ];
 

@@ -3,12 +3,8 @@ import type { Role, User } from "../types";
 import { getStoredUser as loadUser, setStoredUser, clearStoredAuth } from "../utils/authStorage";
 import { AuthContext, USERS } from "./authContext";
 
-function getInitialUser(): User | null {
-  return loadUser();
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUserState] = useState<User | null>(getInitialUser);
+  const [user, setUserState] = useState<User | null>(loadUser);
 
   const setUser = useCallback((u: User | null) => {
     if (u) {

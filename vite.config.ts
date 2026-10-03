@@ -22,4 +22,16 @@ export default defineConfig({
     // recharts falla al importarse dinámicamente sin pre-bundling forzado.
     include: ["recharts", "recharts/es6/component/DefaultLegendContent"],
   },
+  build: {
+    sourcemap: "hidden", // Evita exponer el código fuente original
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            return "vendor";
+          }
+        },
+      },
+    },
+  },
 });

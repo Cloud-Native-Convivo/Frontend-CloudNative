@@ -8,7 +8,30 @@
       name="description"
       content="Convivo — plataforma de gestión para condominios y comunidades residenciales."
     />
-    <title>Convivo</title>
+    
+    <!-- CSP: Restringe orígenes de scripts, estilos y fuentes -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; connect-src 'self' https:; font-src 'self' data: https:;">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gloock&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- LCP Optimization: Preload Hero Image -->
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1624204386084-dd8c05e32226?w=1800&h=1100&fit=crop&auto=format" fetchpriority="high">
+    
+    <link rel="canonical" href="https://cloud-native-convivo.github.io/Frontend-CloudNative/" />
+    <title>Convivo | Gestión simple para condominios residenciales</title>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Convivo",
+      "operatingSystem": "Web",
+      "applicationCategory": "BusinessApplication",
+      "description": "Plataforma digital para condominios en Chile. Reservas, gastos, avisos y seguridad.",
+      "url": "https://cloud-native-convivo.github.io/Frontend-CloudNative"
+    }
+    </script>
     <script>
       // Contraparte de public/404.html — decodifica la ruta real antes de
       // que React Router monte. https://github.com/rafgraph/spa-github-pages

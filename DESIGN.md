@@ -61,9 +61,12 @@ Modelo de 3 capas — evita hardcodear hex en componentes:
 | Text | `#00201B` | 0, 32, 27 | 100, 0, 16, 87 | Texto principal sobre fondos claros |
 | Primary | `#0D9488` | 13, 148, 136 | 91, 0, 8, 42 | Acciones principales, botones, enlaces activos |
 | Accent | `#005047` | 0, 80, 71 | 100, 0, 11, 69 | Estados hover/presionado, énfasis secundario |
+| Primary on dark | `#5EEAD4` | 94, 234, 212 | 60, 0, 9, 8 | Títulos y acentos sobre fondo Text (footer, hero); clase `text-primary-on-dark` |
 | Surface | `#FFFFFF` | 255, 255, 255 | 0, 0, 0, 0 | Tarjetas, paneles, modales |
 | Border | `#E2E8F0` | 226, 232, 240 | 6, 3, 0, 6 | Bordes, separadores, líneas divisorias |
 | Muted | `#64748B` | 100, 116, 139 | 28, 17, 0, 45 | Texto secundario, labels desactivados |
+
+Los tokens se declaran con `@theme inline`: Tailwind los incrusta en cada clase y **no** emite `--color-*` en `:root`. Por eso `style={{ color: "var(--color-primary)" }}` no funciona — un color que depende de estado va como clase completa (`bg-primary`, `text-accent`), no como estilo inline ni hex.
 
 ### 2.2 Tokens de componente
 

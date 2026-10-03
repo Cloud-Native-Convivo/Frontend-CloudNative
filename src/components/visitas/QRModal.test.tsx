@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { QRModal } from "./QRModal";
+import type { Visita } from "./types";
 
 describe("QRModal", () => {
   const mockVisita = {
@@ -17,7 +18,7 @@ describe("QRModal", () => {
     fecha: "",
     motivo: "",
     unidad: "",
-  } as any;
+  } as unknown as Visita;
 
   it("renderiza la información de la visita y el código QR", () => {
     // Arrange

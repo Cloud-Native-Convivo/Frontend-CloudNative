@@ -53,6 +53,8 @@ function UserAvatar({ user }: { user: User }) {
         alt={user.nombre}
         className="w-[32px] h-[32px] rounded-full object-cover border border-border"
         referrerPolicy="no-referrer"
+        loading="lazy"
+        decoding="async"
       />
     );
   }
@@ -87,6 +89,8 @@ function RoleSwitcherDropdown({
         onClick={onToggle}
         className={`flex items-center gap-[6px] text-[12px] font-bold text-white px-[12px] py-[7px] rounded-[7px] border-none cursor-pointer transition-opacity duration-150 hover:opacity-85 ${role ? ROLE_BG[role] : "bg-muted"}`}
         title="Cambiar rol (demo)"
+        aria-expanded={isOpen}
+        aria-haspopup="menu"
       >
         <span className="text-[10px] opacity-75 font-semibold">ROL:</span>
         {role ? ROLE_LABELS[role] : "Elegir"}
@@ -113,12 +117,12 @@ function RoleSwitcherDropdown({
                 onClose();
               }}
               className={`flex items-center gap-[8px] w-full px-[12px] py-[8px] border-none cursor-pointer rounded-[7px] text-[13px] transition-colors duration-150 hover:bg-slate-50 ${
-                r === role ? `bg-teal-50 font-bold ${ROLE_TEXT[r]}` : "bg-transparent font-medium text-text"
+                r === role
+                  ? `bg-teal-50 font-bold ${ROLE_TEXT[r]}`
+                  : "bg-transparent font-medium text-text"
               }`}
             >
-              <span
-                className={`w-[8px] h-[8px] rounded-full shrink-0 ${ROLE_BG[r]}`}
-              />
+              <span className={`w-[8px] h-[8px] rounded-full shrink-0 ${ROLE_BG[r]}`} />
               {ROLE_LABELS[r]}
             </button>
           ))}
@@ -157,6 +161,7 @@ function MobileMenuDropdown({
         <NavLink
           key={l.path}
           to={l.path}
+          viewTransition
           className={({ isActive }) =>
             `flex items-center gap-[10px] py-[11px] px-[8px] text-[14px] font-medium no-underline border-b border-slate-100 ${
               isActive ? "text-primary" : "text-text"
@@ -224,7 +229,7 @@ export function NavHeader({
     >
       <div className="max-w-[1280px] mx-auto px-6 w-full flex items-center justify-between">
         {/* Logo */}
-        <NavLink to="/" className="flex items-center gap-[10px] no-underline">
+        <NavLink to="/" viewTransition className="flex items-center gap-[10px] no-underline">
           <div className="w-[34px] h-[34px] rounded-[9px] bg-primary flex items-center justify-center">
             <IconHome className="text-white w-[17px] h-[17px]" />
           </div>
@@ -244,11 +249,10 @@ export function NavHeader({
             <NavLink
               key={l.path}
               to={l.path}
+              viewTransition
               className={({ isActive }) =>
                 `flex items-center gap-[5px] text-[13px] font-medium no-underline px-[11px] py-[6px] rounded-[7px] transition-colors duration-150 ${
-                  isActive
-                    ? "text-primary bg-teal-50"
-                    : "text-muted bg-transparent hover:text-text"
+                  isActive ? "text-primary bg-teal-50" : "text-muted bg-transparent hover:text-text"
                 }`
               }
             >
@@ -295,6 +299,7 @@ export function NavHeader({
           ) : (
             <Link
               to="/login"
+              viewTransition
               className="flex items-center gap-[5px] text-[12px] font-semibold text-muted bg-transparent px-[12px] py-[7px] rounded-[7px] no-underline border border-border transition-colors duration-200 hover:text-text hover:border-slate-300"
               data-cuelume-press="whisper"
             >
@@ -308,6 +313,8 @@ export function NavHeader({
           className="nav-burger bg-transparent border-none cursor-pointer p-1 text-text hidden"
           aria-label={mobileOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
           onClick={() => setMobileOpen((o) => !o)}
+          aria-expanded={mobileOpen}
+          aria-haspopup="menu"
         >
           {mobileOpen ? (
             <IconX className="w-[22px] h-[22px]" />

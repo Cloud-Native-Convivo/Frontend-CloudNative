@@ -43,10 +43,7 @@ export function DesgloseMensualCard({
               <span className="text-[13px] font-bold text-text">{g.mensual}</span>
             </div>
             <div className="bg-slate-100 rounded-[4px] h-[7px]">
-              <div
-                className={`h-full rounded-[4px] ${g.color}`}
-                style={{ width: `${g.pct}%` }}
-              />
+              <div className={`h-full rounded-[4px] ${g.color}`} style={{ width: `${g.pct}%` }} />
             </div>
             <div className="text-[11px] text-slate-400 mt-[3px]">
               {g.pct}% del total · Anual: {g.anual}

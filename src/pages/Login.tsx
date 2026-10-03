@@ -5,7 +5,7 @@ import {
   buildGoogleAuthorizeUrl,
   checkCognitoReachability,
   isCognitoConfigured,
-} from "../lib/cognitoAuth";
+} from "../auth/cognitoAuth";
 
 interface FormState {
   email: string;
@@ -79,7 +79,9 @@ export default function Login() {
   return (
     <div className="min-h-screen flex">
       {/* Brand panel */}
-      <div className={`hidden lg:flex flex-col justify-between w-105 shrink-0 bg-text p-12 transition-all duration-300 ease-out motion-reduce:transition-none ${mounted ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`}>
+      <div
+        className={`hidden lg:flex flex-col justify-between w-105 shrink-0 bg-text p-12 transition-all duration-300 ease-out motion-reduce:transition-none ${mounted ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`}
+      >
         <div>
           <span className="text-primary font-display text-2xl">Convivo</span>
         </div>
@@ -97,7 +99,9 @@ export default function Login() {
       </div>
 
       {/* Form panel */}
-      <div className={`flex-1 flex items-center justify-center p-6 bg-white transition-all duration-300 delay-100 ease-out motion-reduce:transition-none ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+      <div
+        className={`flex-1 flex items-center justify-center p-6 bg-white transition-all duration-300 delay-100 ease-out motion-reduce:transition-none ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+      >
         <div className="w-full max-w-sm">
           {/* Mobile logo */}
           <div className="lg:hidden mb-8 text-center">

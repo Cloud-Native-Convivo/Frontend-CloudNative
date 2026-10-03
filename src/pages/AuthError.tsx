@@ -5,7 +5,7 @@ import {
   buildGoogleAuthorizeUrl,
   checkCognitoReachability,
   isCognitoConfigured,
-} from "../lib/cognitoAuth";
+} from "../auth/cognitoAuth";
 
 interface ErrorInfo {
   title: string;

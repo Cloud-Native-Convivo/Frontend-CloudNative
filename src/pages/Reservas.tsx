@@ -207,6 +207,8 @@ function ReservaCard({ reserva, onCancel, onBlock }: ReservaCardProps) {
           src={reserva.imagen}
           alt={reserva.espacio}
           className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          loading="lazy"
+          decoding="async"
         />
         <div className="flex flex-1 flex-col gap-2 min-w-0">
           <div className="flex flex-wrap items-start gap-2">

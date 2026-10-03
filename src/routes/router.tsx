@@ -3,34 +3,31 @@ import ProtectedRoute from "./ProtectedRoute";
 import Layout from "../components/Layout";
 import RouteError from "../components/RouteError";
 import Home from "../pages/Home";
-import Reservas from "../pages/Reservas";
-import Gastos from "../pages/Gastos";
-import Tablon from "../pages/Tablon";
-import Canales from "../pages/Canales";
-import Registro from "../pages/Registro";
-import Precios from "../pages/Precios";
 import Login from "../pages/Login";
-import AuthCallback from "../pages/AuthCallback";
-import AuthError from "../pages/AuthError";
-import AceptarTerminos from "../pages/AceptarTerminos";
-import RegistroCuenta from "../pages/RegistroCuenta";
-import EspaciosComunes from "../pages/EspaciosComunes";
-import Visitas from "../pages/Visitas";
-import Incidentes from "../pages/Incidentes";
 import NotFound from "../pages/NotFound";
-import Privacidad from "../pages/Privacidad";
-import Terminos from "../pages/Terminos";
 
 const router = createBrowserRouter(
   [
     // Auth routes (no Layout wrapper)
     { path: "/login", Component: Login, errorElement: <RouteError /> },
-    { path: "/auth/callback", Component: AuthCallback, errorElement: <RouteError /> },
-    { path: "/auth/error", Component: AuthError, errorElement: <RouteError /> },
-    { path: "/aceptar-terminos", Component: AceptarTerminos, errorElement: <RouteError /> },
+    {
+      path: "/auth/callback",
+      lazy: () => import("../pages/AuthCallback").then((m) => ({ Component: m.default })),
+      errorElement: <RouteError />,
+    },
+    {
+      path: "/auth/error",
+      lazy: () => import("../pages/AuthError").then((m) => ({ Component: m.default })),
+      errorElement: <RouteError />,
+    },
+    {
+      path: "/aceptar-terminos",
+      lazy: () => import("../pages/AceptarTerminos").then((m) => ({ Component: m.default })),
+      errorElement: <RouteError />,
+    },
     {
       path: "/crear-cuenta",
-      Component: RegistroCuenta,
+      lazy: () => import("../pages/RegistroCuenta").then((m) => ({ Component: m.default })),
       errorElement: <RouteError />,
     },
 
@@ -42,11 +39,26 @@ const router = createBrowserRouter(
       children: [
         // Public / all roles
         { index: true, Component: Home },
-        { path: "tablon", Component: Tablon },
-        { path: "canales", Component: Canales },
-        { path: "precios", Component: Precios },
-        { path: "privacidad", Component: Privacidad },
-        { path: "terminos", Component: Terminos },
+        {
+          path: "tablon",
+          lazy: () => import("../pages/Tablon").then((m) => ({ Component: m.default })),
+        },
+        {
+          path: "canales",
+          lazy: () => import("../pages/Canales").then((m) => ({ Component: m.default })),
+        },
+        {
+          path: "precios",
+          lazy: () => import("../pages/Precios").then((m) => ({ Component: m.default })),
+        },
+        {
+          path: "privacidad",
+          lazy: () => import("../pages/Privacidad").then((m) => ({ Component: m.default })),
+        },
+        {
+          path: "terminos",
+          lazy: () => import("../pages/Terminos").then((m) => ({ Component: m.default })),
+        },
 
         // Residente only
         {
@@ -64,25 +76,47 @@ const router = createBrowserRouter(
         },
 
         // All authenticated roles
-        { path: "espacios", Component: EspaciosComunes },
-        { path: "gastos", Component: Gastos },
+        {
+          path: "espacios",
+          lazy: () => import("../pages/EspaciosComunes").then((m) => ({ Component: m.default })),
+        },
+        {
+          path: "gastos",
+          lazy: () => import("../pages/Gastos").then((m) => ({ Component: m.default })),
+        },
 
         // Residente + Admin
         {
           element: <ProtectedRoute allowedRoles={["residente", "admin"]} />,
-          children: [{ path: "reservas", Component: Reservas }],
+          children: [
+            {
+              path: "reservas",
+              lazy: () => import("../pages/Reservas").then((m) => ({ Component: m.default })),
+            },
+          ],
         },
 
         // Visitas: all roles — content adapts per role
-        { path: "visitas", Component: Visitas },
+        {
+          path: "visitas",
+          lazy: () => import("../pages/Visitas").then((m) => ({ Component: m.default })),
+        },
 
         // Incidentes: all roles — residente reports, conserje/admin manage
-        { path: "incidentes", Component: Incidentes },
+        {
+          path: "incidentes",
+          lazy: () => import("../pages/Incidentes").then((m) => ({ Component: m.default })),
+        },
 
         // Conserje + Admin + Comité
         {
           element: <ProtectedRoute allowedRoles={["conserje", "admin", "comite"]} />,
-          children: [{ path: "registro", Component: Registro }],
+          children: [
+            {
+              path: "registro",
+              lazy: () => import("../pages/Registro").then((m) => ({ Component: m.default })),
+            },
+          ],
         },
 
         // Admin only

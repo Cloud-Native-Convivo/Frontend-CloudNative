@@ -23,9 +23,7 @@ export function SituacionResidenteCard({
     <div className="bg-white border border-slate-200 rounded-2xl p-7 mb-7">
       <div className="flex justify-between items-start flex-wrap gap-5">
         <div>
-          <p className="text-[12px] text-slate-400 font-semibold tracking-wide mb-1">
-            {unidad}
-          </p>
+          <p className="text-[12px] text-slate-400 font-semibold tracking-wide mb-1">{unidad}</p>
           <h2 className="font-serif text-[28px] text-text mb-2 font-normal">Mi situación</h2>
           {estado === "cargando" && (
             <p className="text-[14px] text-slate-400">Cargando tu situación de pago…</p>

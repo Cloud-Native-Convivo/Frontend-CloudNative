@@ -69,7 +69,10 @@ export default function GastosBarChart({ data }: GastosBarChartProps) {
         <Tooltip content={<ChartTooltip />} cursor={{ fill: CHART_COLORS.highlight }} />
         <Bar dataKey="gasto" radius={[5, 5, 0, 0]}>
           {data.map((m, i) => (
-            <Cell key={m.mes} fill={i === data.length - 1 ? CHART_COLORS.primary : CHART_COLORS.barMuted} />
+            <Cell
+              key={m.mes}
+              fill={i === data.length - 1 ? CHART_COLORS.primary : CHART_COLORS.barMuted}
+            />
           ))}
         </Bar>
       </BarChart>

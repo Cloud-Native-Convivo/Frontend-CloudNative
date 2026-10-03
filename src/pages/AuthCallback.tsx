@@ -6,7 +6,7 @@ import {
   decodeIdToken,
   exchangeCodeForTokens,
   roleFromClaims,
-} from "../lib/cognitoAuth";
+} from "../auth/cognitoAuth";
 import { completarSesion } from "../auth/sesion";
 import type { User } from "../types";
 

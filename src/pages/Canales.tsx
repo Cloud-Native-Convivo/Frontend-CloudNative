@@ -90,9 +90,7 @@ export default function Canales() {
       {/* Dark hero header */}
       <div className="bg-text p-[72px_24px_64px]">
         <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-white/45 tracking-wide mb-4">
-            Contacto directo
-          </p>
+          <p className="text-[11px] font-bold text-white/45 tracking-wide mb-4">Contacto directo</p>
           <h1 className="font-display text-[clamp(36px,5vw,64px)] text-white leading-[1.08] m-0 mb-[18px] font-normal">
             Canales de seguridad
           </h1>
@@ -169,9 +167,7 @@ export default function Canales() {
                 </div>
                 <div>
                   <div className="flex items-center gap-[10px] mb-1 flex-wrap">
-                    <h3 className="font-display text-[18px] text-text m-0 font-normal">
-                      {c.area}
-                    </h3>
+                    <h3 className="font-display text-[18px] text-text m-0 font-normal">{c.area}</h3>
                     <span
                       className={`text-[11px] font-bold py-[3px] px-[10px] rounded-full ${badge.className}`}
                     >
@@ -218,9 +214,7 @@ export default function Canales() {
               <div className="text-primary">
                 <IconShield className="w-[24px] h-[24px]" />
               </div>
-              <h3 className="font-display text-[20px] text-text m-0 font-normal">
-                Plan Cuadrante
-              </h3>
+              <h3 className="font-display text-[20px] text-text m-0 font-normal">Plan Cuadrante</h3>
             </div>
             <p className="text-[14px] text-muted leading-[1.7] m-0 mb-4">
               Ficha del sector con el cuadrante de seguridad vigente y el contacto del funcionario a
@@ -255,9 +249,7 @@ export default function Canales() {
       {/* Sub-features flip cards */}
       <div className="bg-white p-[80px_24px]">
         <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-primary tracking-wide mb-3">
-            Funcionalidades
-          </p>
+          <p className="text-[11px] font-bold text-primary tracking-wide mb-3">Funcionalidades</p>
           <h2 className="font-display text-[clamp(28px,3.5vw,44px)] text-text m-0 mb-12 font-normal">
             Cada canal, a un clic de distancia
           </h2>
@@ -298,6 +290,8 @@ export default function Canales() {
                   src={section.imgUrl}
                   alt={section.title}
                   className="w-full h-[380px] object-cover rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div>
                   <h2 className="font-display text-[clamp(26px,3vw,40px)] text-text m-0 mb-5 font-normal leading-[1.2]">
@@ -318,6 +312,8 @@ export default function Canales() {
                   src={section.imgUrl}
                   alt={section.title}
                   className="w-full h-[380px] object-cover rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
+                  loading="lazy"
+                  decoding="async"
                 />
               </>
             )}
@@ -332,13 +328,13 @@ export default function Canales() {
             to="/canales"
             className="inline-flex items-center gap-2 bg-primary hover:bg-accent text-white rounded-xl py-4 px-8 text-[15px] font-bold no-underline transition-colors duration-200"
           >
-            Ver canales 
+            Ver canales
           </Link>
           <Link
             to="/dashboard"
             className="inline-flex items-center gap-2 bg-transparent hover:bg-white/5 text-white rounded-xl border border-white/30 hover:border-white py-4 px-8 text-[15px] font-bold no-underline transition-[border-color,background-color] duration-200"
           >
-            Dashboard 
+            Dashboard
           </Link>
         </div>
       </div>

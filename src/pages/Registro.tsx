@@ -99,6 +99,8 @@ function RegistroCard({ registro, onOpen }: RegistroCardProps) {
           src={showBefore ? registro.antes : registro.despues}
           alt={showBefore ? "Antes" : "Después"}
           className="w-full h-full object-cover transition-opacity duration-300"
+          loading="lazy"
+          decoding="async"
         />
         <div className="absolute top-3 left-3 flex gap-1">
           {["Antes", "Después"].map((label, i) => {
@@ -258,9 +260,7 @@ export default function Registro() {
       {/* Sub-features flip cards */}
       <div className="bg-white p-[80px_24px]">
         <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-teal-600 tracking-wide mb-3">
-            Funcionalidades
-          </p>
+          <p className="text-[11px] font-bold text-teal-600 tracking-wide mb-3">Funcionalidades</p>
           <h2 className="font-display text-[clamp(28px,3.5vw,44px)] text-text m-0 mb-12 font-normal">
             Cada trabajo, completamente documentado
           </h2>
@@ -301,6 +301,8 @@ export default function Registro() {
                   src={section.imgUrl}
                   alt={section.title}
                   className="w-full h-[380px] object-cover rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div>
                   <h2 className="font-display text-[clamp(26px,3vw,40px)] text-text m-0 mb-5 font-normal leading-[1.2]">
@@ -321,6 +323,8 @@ export default function Registro() {
                   src={section.imgUrl}
                   alt={section.title}
                   className="w-full h-[380px] object-cover rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
+                  loading="lazy"
+                  decoding="async"
                 />
               </>
             )}
@@ -335,13 +339,13 @@ export default function Registro() {
             to="/registro"
             className="inline-flex items-center gap-2 bg-teal-600 text-white rounded-xl px-8 py-4 text-[15px] font-bold no-underline transition-colors duration-200 hover:bg-accent"
           >
-            Ver registros 
+            Ver registros
           </Link>
           <Link
             to="/dashboard"
             className="inline-flex items-center gap-2 bg-transparent text-white rounded-xl border border-white/30 px-8 py-4 text-[15px] font-bold no-underline transition-[border-color,background-color] duration-200 hover:border-white hover:bg-white/5"
           >
-            Dashboard 
+            Dashboard
           </Link>
         </div>
       </div>
@@ -361,6 +365,8 @@ export default function Registro() {
                 src={showBefore ? selected.antes : selected.despues}
                 alt={showBefore ? "Antes" : "Después"}
                 className="w-full h-full object-cover transition-opacity duration-300"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                 {["Antes", "Después"].map((label, i) => {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
-import { registrarAceptacionTerminos, type CognitoTokens } from "../lib/cognitoAuth";
+import { registrarAceptacionTerminos, type CognitoTokens } from "../auth/cognitoAuth";
 import { completarSesion } from "../auth/sesion";
 import { notify } from "../utils/notify";
 import type { User } from "../types";
@@ -23,7 +23,10 @@ function Casilla({
   children: React.ReactNode;
 }) {
   return (
-    <label htmlFor={id} className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-text">
+    <label
+      htmlFor={id}
+      className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-text"
+    >
       <input
         id={id}
         type="checkbox"
@@ -65,7 +68,8 @@ export default function AceptarTerminos() {
   function rechazar() {
     notify.info({
       title: "No se inició sesión",
-      description: "Para usar Convivo necesitas aceptar los Términos de uso y la Política de privacidad.",
+      description:
+        "Para usar Convivo necesitas aceptar los Términos de uso y la Política de privacidad.",
     });
     navigate("/", { replace: true });
   }
@@ -74,7 +78,9 @@ export default function AceptarTerminos() {
     <div className="flex min-h-screen items-center justify-center bg-white p-6">
       <div className="w-full max-w-md">
         <span className="font-display text-2xl text-primary">Convivo</span>
-        <h1 className="mt-8 mb-3 font-display text-3xl font-normal text-text">Antes de continuar</h1>
+        <h1 className="mt-8 mb-3 font-display text-3xl font-normal text-text">
+          Antes de continuar
+        </h1>
         <p className="mb-8 text-sm leading-relaxed text-muted">
           Hola, {usuario.nombre}. Para crear tu sesión necesitamos que aceptes estos dos documentos.
           Se abren en otra pestaña para que puedas leerlos sin perder este paso.
@@ -90,7 +96,12 @@ export default function AceptarTerminos() {
           </Casilla>
           <Casilla id="acepta-privacidad" checked={privacidad} onChange={setPrivacidad}>
             Leí la{" "}
-            <Link to="/privacidad" target="_blank" rel="noopener" className="text-primary underline">
+            <Link
+              to="/privacidad"
+              target="_blank"
+              rel="noopener"
+              className="text-primary underline"
+            >
               Política de privacidad
             </Link>{" "}
             y consiento el tratamiento de mis datos descrito en ella.

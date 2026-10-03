@@ -50,13 +50,12 @@ export function AnnouncementRibbon({ onDismiss }: { onDismiss: () => void }) {
     <div className="fixed top-0 inset-x-0 z-[60] h-[32px] bg-accent flex items-center">
       <div className="max-w-[1280px] mx-auto px-4 flex items-center gap-[12px] w-full">
         <div className="shrink-0 bg-primary rounded-[3px] px-2 py-[1px]">
-          <span className="text-[10px] font-bold text-white tracking-wide">
-            Tablón
-          </span>
+          <span className="text-[10px] font-bold text-white tracking-wide">Tablón</span>
         </div>
 
         <Link
           to={item.path}
+          viewTransition
           className="flex-1 text-[12px] text-white/90 no-underline overflow-hidden whitespace-nowrap text-ellipsis transition-opacity duration-300"
           style={{ opacity: fading ? 0 : 1 }}
         >

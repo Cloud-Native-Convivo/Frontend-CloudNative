@@ -390,34 +390,16 @@ export default function Precios() {
                 key={plan.id}
                 className="relative rounded-[20px] bg-white border border-slate-200 p-8 shadow-[0_2px_20px_rgba(0,0,0,0.05)]"
               >
-                <div
-                  className="text-[13px] font-bold mb-2 tracking-wide text-slate-400"
-                >
+                <div className="text-[13px] font-bold mb-2 tracking-wide text-slate-400">
                   {plan.name}
                 </div>
                 <div className="mb-2">
-                  <span
-                    className="font-serif text-[46px] leading-none text-text"
-                  >
-                    {price}
-                  </span>
-                  {period && (
-                    <span
-                      className="text-[13px] ml-1 text-slate-400"
-                    >
-                      {period}
-                    </span>
-                  )}
+                  <span className="font-serif text-[46px] leading-none text-text">{price}</span>
+                  {period && <span className="text-[13px] ml-1 text-slate-400">{period}</span>}
                 </div>
-                <p
-                  className="text-[13px] leading-[1.6] m-0 mb-7 text-slate-500"
-                >
-                  {plan.desc}
-                </p>
+                <p className="text-[13px] leading-[1.6] m-0 mb-7 text-slate-500">{plan.desc}</p>
 
-                <button
-                  className="w-full p-[13px] text-[14px] font-bold rounded-[10px] cursor-pointer transition-opacity duration-200 border-none hover:opacity-85 bg-text text-white"
-                >
+                <button className="w-full p-[13px] text-[14px] font-bold rounded-[10px] cursor-pointer transition-opacity duration-200 border-none hover:opacity-85 bg-text text-white">
                   {plan.cta}
                 </button>
               </div>

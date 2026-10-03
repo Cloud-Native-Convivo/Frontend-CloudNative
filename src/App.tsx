@@ -11,13 +11,11 @@ export default function App() {
 
   return (
     <AuthProvider>
-      {!isAppReady && (
-        <GlobalLoader onComplete={() => setIsAppReady(true)} />
-      )}
-      
-      <div 
+      {!isAppReady && <GlobalLoader onComplete={() => setIsAppReady(true)} />}
+
+      <div
         className={`transition-opacity duration-300 ease-out ${
-          isAppReady ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'
+          isAppReady ? "opacity-100" : "opacity-0 h-0 overflow-hidden"
         }`}
       >
         <Toaster

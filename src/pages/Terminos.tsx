@@ -7,9 +7,9 @@ const SECTIONS: LegalSection[] = [
     title: "Quién presta el servicio",
     body: (
       <p>
-        Convivo es una plataforma para la gestión de condominios en Chile, operada por Convivo
-        SpA, RUT <Pendiente>RUT</Pendiente>, con domicilio en <Pendiente>domicilio</Pendiente>. Al
-        usar Convivo aceptas estos términos. Si no estás de acuerdo, no uses la plataforma.
+        Convivo es una plataforma para la gestión de condominios en Chile, operada por Convivo SpA,
+        RUT <Pendiente>RUT</Pendiente>, con domicilio en <Pendiente>domicilio</Pendiente>. Al usar
+        Convivo aceptas estos términos. Si no estás de acuerdo, no uses la plataforma.
       </p>
     ),
   },
@@ -29,9 +29,18 @@ const SECTIONS: LegalSection[] = [
     title: "Tu cuenta",
     body: (
       <ul>
-        <li>Los residentes ingresan con su cuenta de Google. Convivo no conoce ni guarda tu contraseña de Google.</li>
-        <li>Tu rol (residente, conserjería, administración o comité) lo asigna la administración de tu condominio.</li>
-        <li>Eres responsable de lo que se haga desde tu cuenta. Si sospechas un acceso no autorizado, avísanos de inmediato.</li>
+        <li>
+          Los residentes ingresan con su cuenta de Google. Convivo no conoce ni guarda tu contraseña
+          de Google.
+        </li>
+        <li>
+          Tu rol (residente, conserjería, administración o comité) lo asigna la administración de tu
+          condominio.
+        </li>
+        <li>
+          Eres responsable de lo que se haga desde tu cuenta. Si sospechas un acceso no autorizado,
+          avísanos de inmediato.
+        </li>
       </ul>
     ),
   },
@@ -45,7 +54,10 @@ const SECTIONS: LegalSection[] = [
           <li>Acceder o intentar acceder a cuentas, datos o sistemas sin autorización.</li>
           <li>Interferir con el funcionamiento de la plataforma o sobrecargarla a propósito.</li>
           <li>Hacerte pasar por otra persona, residente o miembro de la administración.</li>
-          <li>Publicar contenido ilícito, injurioso, discriminatorio o que exponga datos de otras personas.</li>
+          <li>
+            Publicar contenido ilícito, injurioso, discriminatorio o que exponga datos de otras
+            personas.
+          </li>
         </ul>
         <p>
           Algunas de estas conductas son delitos según la Ley 21.459 sobre delitos informáticos.
@@ -71,8 +83,8 @@ const SECTIONS: LegalSection[] = [
       <p>
         Las reglas sobre espacios comunes y gastos comunes las fija tu comunidad, conforme a su
         reglamento de copropiedad y a la Ley 21.442 de Copropiedad Inmobiliaria. Convivo es la
-        herramienta que las aplica; no las define. Ante una diferencia entre lo que muestra
-        Convivo y lo acordado por la comunidad, prevalece lo acordado por la comunidad.
+        herramienta que las aplica; no las define. Ante una diferencia entre lo que muestra Convivo
+        y lo acordado por la comunidad, prevalece lo acordado por la comunidad.
       </p>
     ),
   },
@@ -84,8 +96,8 @@ const SECTIONS: LegalSection[] = [
         Los planes para comunidades se describen en <Link to="/precios">Precios</Link>. Los montos
         se expresan en pesos chilenos, <Pendiente>IVA incluido o no</Pendiente>. Cuando contrates
         como consumidor por medios electrónicos, tienes los derechos que te otorga la Ley 19.496
-        sobre protección de los derechos de los consumidores, incluido el derecho de retracto
-        cuando corresponda.
+        sobre protección de los derechos de los consumidores, incluido el derecho de retracto cuando
+        corresponda.
       </p>
     ),
   },
@@ -94,9 +106,9 @@ const SECTIONS: LegalSection[] = [
     title: "Propiedad intelectual",
     body: (
       <p>
-        El software, la marca y el diseño de Convivo están protegidos por la Ley 17.336 de
-        Propiedad Intelectual. Las fotografías de terceros se usan bajo la licencia de su fuente.
-        Usar Convivo no te transfiere derechos sobre ellos.
+        El software, la marca y el diseño de Convivo están protegidos por la Ley 17.336 de Propiedad
+        Intelectual. Las fotografías de terceros se usan bajo la licencia de su fuente. Usar Convivo
+        no te transfiere derechos sobre ellos.
       </p>
     ),
   },
@@ -119,8 +131,7 @@ const SECTIONS: LegalSection[] = [
       <p>
         Puedes dejar de usar Convivo y pedir el cierre de tu cuenta cuando quieras. Podemos
         suspender una cuenta que infrinja estos términos, informándote el motivo. Al cerrarse una
-        cuenta, tus datos se tratan según la{" "}
-        <Link to="/privacidad">Política de privacidad</Link>.
+        cuenta, tus datos se tratan según la <Link to="/privacidad">Política de privacidad</Link>.
       </p>
     ),
   },
@@ -156,7 +167,11 @@ export default function Terminos() {
       intro={
         <p className="m-0">
           Estas son las reglas para usar Convivo. Cómo tratamos tus datos personales se explica en
-          la <Link to="/privacidad" className="text-primary">Política de privacidad</Link>.
+          la{" "}
+          <Link to="/privacidad" className="text-primary">
+            Política de privacidad
+          </Link>
+          .
         </p>
       }
       sections={SECTIONS}

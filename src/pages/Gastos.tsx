@@ -306,6 +306,8 @@ export default function Gastos() {
                 src={section.imgUrl}
                 alt={section.title}
                 className="w-full rounded-[18px] block shadow-[0_16px_48px_rgba(0,0,0,0.1)]"
+                loading="lazy"
+                decoding="async"
               />
             </div>
           </div>
@@ -323,7 +325,6 @@ export default function Gastos() {
               <div className="text-[13px] text-white/50 mb-1">¿Eres residente?</div>
               <div className="text-[16px] font-bold text-white">Paga tus gastos</div>
             </div>
-            
           </a>
           <a
             href="/dashboard"
@@ -334,7 +335,6 @@ export default function Gastos() {
               <div className="text-[13px] text-white/50 mb-1">¿Eres del comité?</div>
               <div className="text-[16px] font-bold text-white">Ir al dashboard</div>
             </div>
-            
           </a>
         </div>
       </div>

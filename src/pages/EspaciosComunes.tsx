@@ -200,6 +200,8 @@ function DetalleModal({ espacio, onClose }: DetalleModalProps) {
             src={espacio.imagen}
             alt={espacio.nombre}
             className="w-full aspect-video object-cover rounded-t-2xl"
+            loading="lazy"
+            decoding="async"
           />
           <button
             ref={closeRef}
@@ -349,6 +351,8 @@ function EspacioCard({ espacio, onVerDetalle, isAdmin }: EspacioCardProps) {
           src={espacio.imagen}
           alt={espacio.nombre}
           className="w-full aspect-video object-cover rounded-t-xl"
+          loading="lazy"
+          decoding="async"
         />
         {/* Availability badge */}
         <span

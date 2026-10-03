@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
-import {
-  IconPlus,
-  IconBell,
-  IconCalendar,
-  IconMessage,
-  IconHome,
-} from "../components/icons/Icons";
+import { IconPlus, IconBell, IconCalendar, IconMessage, IconHome } from "../components/icons/Icons";
 import { FlipCard } from "../components/FlipCard";
 import { AvisosGrid, type AvisoItem } from "../components/tablon/AvisosGrid";
 import { NuevoAvisoModal } from "../components/tablon/NuevoAvisoModal";
@@ -200,9 +194,7 @@ export default function Tablon() {
 
       <div className="bg-white px-6 py-20">
         <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-primary tracking-wide mb-3">
-            Funcionalidades
-          </p>
+          <p className="text-[11px] font-bold text-primary tracking-wide mb-3">Funcionalidades</p>
           <h2 className="font-display text-[clamp(28px,3.5vw,44px)] text-text m-0 mb-12 font-normal">
             Todo lo que necesitas en un tablón
           </h2>
@@ -254,6 +246,8 @@ export default function Tablon() {
                 src={sec.imgUrl}
                 alt={sec.title}
                 className="w-full rounded-[18px] block shadow-[0_16px_48px_rgba(0,0,0,0.1)]"
+                loading="lazy"
+                decoding="async"
               />
             </div>
           </div>
@@ -266,14 +260,13 @@ export default function Tablon() {
             to="/tablon"
             className="inline-flex items-center gap-2 bg-primary hover:bg-accent text-white rounded-xl px-8 py-4 text-[15px] font-bold no-underline transition-colors duration-200"
           >
-            Ver los avisos 
+            Ver los avisos
           </Link>
           <button
             onClick={() => setShowNew(true)}
             className="inline-flex items-center gap-2 bg-transparent hover:bg-white/5 text-white rounded-xl border border-white/30 hover:border-white px-8 py-4 text-[15px] font-bold cursor-pointer transition-colors duration-200"
           >
             {canPublishDirect ? "Publicar aviso" : "Solicitar publicación"}{" "}
-            
           </button>
         </div>
       </div>

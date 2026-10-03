@@ -37,11 +37,31 @@ const TRATAMIENTOS = [
 ];
 
 const PROVEEDORES = [
-  { nombre: "Amazon Web Services", rol: "Autenticación (Cognito) y servidor de la aplicación", lugar: "Estados Unidos (us-east-1)" },
-  { nombre: "Google", rol: "Proveedor de identidad para el inicio de sesión", lugar: "Estados Unidos" },
-  { nombre: "GitHub Pages", rol: "Alojamiento del sitio; recibe tu dirección IP", lugar: "Estados Unidos" },
-  { nombre: "Google Fonts", rol: "Tipografías del sitio; recibe tu dirección IP", lugar: "Estados Unidos" },
-  { nombre: "Unsplash", rol: "Fotografías del sitio; recibe tu dirección IP", lugar: "Estados Unidos" },
+  {
+    nombre: "Amazon Web Services",
+    rol: "Autenticación (Cognito) y servidor de la aplicación",
+    lugar: "Estados Unidos (us-east-1)",
+  },
+  {
+    nombre: "Google",
+    rol: "Proveedor de identidad para el inicio de sesión",
+    lugar: "Estados Unidos",
+  },
+  {
+    nombre: "GitHub Pages",
+    rol: "Alojamiento del sitio; recibe tu dirección IP",
+    lugar: "Estados Unidos",
+  },
+  {
+    nombre: "Google Fonts",
+    rol: "Tipografías del sitio; recibe tu dirección IP",
+    lugar: "Estados Unidos",
+  },
+  {
+    nombre: "Unsplash",
+    rol: "Fotografías del sitio; recibe tu dirección IP",
+    lugar: "Estados Unidos",
+  },
 ];
 
 const SECTIONS: LegalSection[] = [
@@ -57,9 +77,9 @@ const SECTIONS: LegalSection[] = [
         </p>
         <p>
           Para los datos de gestión del condominio (unidad, reservas, gastos comunes), el
-          responsable es la comunidad de copropietarios, representada por su administración.
-          Convivo actúa como encargado: trata esos datos solo por instrucción de la comunidad y
-          para los fines que ella define.
+          responsable es la comunidad de copropietarios, representada por su administración. Convivo
+          actúa como encargado: trata esos datos solo por instrucción de la comunidad y para los
+          fines que ella define.
         </p>
       </>
     ),
@@ -75,11 +95,17 @@ const SECTIONS: LegalSection[] = [
         </p>
         <div className="overflow-x-auto rounded-lg border border-border">
           <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-            <caption className="sr-only">Datos tratados, origen, finalidad y base de licitud</caption>
+            <caption className="sr-only">
+              Datos tratados, origen, finalidad y base de licitud
+            </caption>
             <thead className="bg-slate-50">
               <tr>
                 {["Dato", "Origen", "Finalidad", "Base de licitud"].map((h) => (
-                  <th key={h} scope="col" className="border-b border-border px-4 py-3 font-semibold">
+                  <th
+                    key={h}
+                    scope="col"
+                    className="border-b border-border px-4 py-3 font-semibold"
+                  >
                     {h}
                   </th>
                 ))}
@@ -87,8 +113,13 @@ const SECTIONS: LegalSection[] = [
             </thead>
             <tbody>
               {TRATAMIENTOS.map((t) => (
-                <tr key={t.dato} className="align-top [&:not(:last-child)]:border-b [&:not(:last-child)]:border-border">
-                  <th scope="row" className="px-4 py-3 font-medium">{t.dato}</th>
+                <tr
+                  key={t.dato}
+                  className="align-top [&:not(:last-child)]:border-b [&:not(:last-child)]:border-border"
+                >
+                  <th scope="row" className="px-4 py-3 font-medium">
+                    {t.dato}
+                  </th>
                   <td className="px-4 py-3 text-muted">{t.origen}</td>
                   <td className="px-4 py-3 text-muted">{t.finalidad}</td>
                   <td className="px-4 py-3 text-muted">{t.base}</td>
@@ -133,7 +164,8 @@ const SECTIONS: LegalSection[] = [
         </ul>
         <p>
           Todos estos proveedores están fuera de Chile, lo que constituye una transferencia
-          internacional de datos. La respaldamos con <Pendiente>garantías contractuales con cada proveedor</Pendiente>.
+          internacional de datos. La respaldamos con{" "}
+          <Pendiente>garantías contractuales con cada proveedor</Pendiente>.
         </p>
       </>
     ),
@@ -156,9 +188,14 @@ const SECTIONS: LegalSection[] = [
     title: "Cuánto tiempo conservamos tus datos",
     body: (
       <ul>
-        <li>Cuenta de acceso: mientras la mantengas activa; se elimina <Pendiente>plazo</Pendiente> después de que la cierres.</li>
+        <li>
+          Cuenta de acceso: mientras la mantengas activa; se elimina <Pendiente>plazo</Pendiente>{" "}
+          después de que la cierres.
+        </li>
         <li>Unidad y rol: mientras seas residente del condominio.</li>
-        <li>Reservas: <Pendiente>plazo</Pendiente>.</li>
+        <li>
+          Reservas: <Pendiente>plazo</Pendiente>.
+        </li>
         <li>
           Gastos comunes: el plazo que exija la ley a la administración para respaldar los cobros,{" "}
           <Pendiente>plazo exacto</Pendiente>.
@@ -173,13 +210,13 @@ const SECTIONS: LegalSection[] = [
       <>
         <p>
           Toda la comunicación viaja cifrada (HTTPS). El inicio de sesión usa el estándar OAuth 2.0
-          con PKCE, sin que Convivo vea tu contraseña de Google. Cada persona ve solo la
-          información que corresponde a su rol.
+          con PKCE, sin que Convivo vea tu contraseña de Google. Cada persona ve solo la información
+          que corresponde a su rol.
         </p>
         <p>
           Si ocurre una vulneración de seguridad que afecte tus datos, la informaremos a la Agencia
-          de Protección de Datos Personales y a las personas afectadas, en la forma y los plazos
-          que establece la ley.
+          de Protección de Datos Personales y a las personas afectadas, en la forma y los plazos que
+          establece la ley.
         </p>
       </>
     ),
@@ -191,12 +228,25 @@ const SECTIONS: LegalSection[] = [
       <>
         <p>Respecto de tus datos personales puedes ejercer, sin costo, los derechos de:</p>
         <ul>
-          <li><strong>Acceso</strong>: saber qué datos tenemos y cómo los usamos.</li>
-          <li><strong>Rectificación</strong>: corregir datos inexactos o incompletos.</li>
-          <li><strong>Supresión</strong>: pedir que eliminemos tus datos.</li>
-          <li><strong>Oposición</strong>: oponerte a un tratamiento determinado.</li>
-          <li><strong>Portabilidad</strong>: recibir tus datos en un formato de uso común.</li>
-          <li><strong>Bloqueo</strong>: suspender temporalmente un tratamiento mientras se resuelve tu solicitud.</li>
+          <li>
+            <strong>Acceso</strong>: saber qué datos tenemos y cómo los usamos.
+          </li>
+          <li>
+            <strong>Rectificación</strong>: corregir datos inexactos o incompletos.
+          </li>
+          <li>
+            <strong>Supresión</strong>: pedir que eliminemos tus datos.
+          </li>
+          <li>
+            <strong>Oposición</strong>: oponerte a un tratamiento determinado.
+          </li>
+          <li>
+            <strong>Portabilidad</strong>: recibir tus datos en un formato de uso común.
+          </li>
+          <li>
+            <strong>Bloqueo</strong>: suspender temporalmente un tratamiento mientras se resuelve tu
+            solicitud.
+          </li>
           <li>
             <strong>No ser objeto de decisiones automatizadas</strong> que te afecten de forma
             significativa. Convivo no toma decisiones de ese tipo.
@@ -239,7 +289,10 @@ const SECTIONS: LegalSection[] = [
     title: "Marco legal",
     body: (
       <ul>
-        <li>Ley 19.628 sobre protección de la vida privada, modificada por la Ley 21.719 sobre protección de datos personales.</li>
+        <li>
+          Ley 19.628 sobre protección de la vida privada, modificada por la Ley 21.719 sobre
+          protección de datos personales.
+        </li>
         <li>Ley 21.442 de Copropiedad Inmobiliaria.</li>
         <li>Ley 21.459 sobre delitos informáticos.</li>
       </ul>
@@ -256,7 +309,10 @@ export default function Privacidad() {
         <p className="m-0">
           Esta política explica qué datos personales trata Convivo, para qué, con quién los
           compartimos y cómo ejercer tus derechos. Las reglas de uso de la plataforma están en los{" "}
-          <Link to="/terminos" className="text-primary">Términos de uso</Link>.
+          <Link to="/terminos" className="text-primary">
+            Términos de uso
+          </Link>
+          .
         </p>
       }
       sections={SECTIONS}

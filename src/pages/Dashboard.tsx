@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-dom-props */
-import { useState, lazy, Suspense } from "react";
+import { useState, useMemo, lazy, Suspense } from "react";
 import { gastos } from "../data";
 import { IconDownload, IconTrendingUp, IconEye, IconTag } from "../components/icons/Icons";
 
@@ -85,8 +85,17 @@ const categorias = [
 
 export default function Dashboard() {
   const [activeCategoria, setActiveCategoria] = useState("Todos");
-  const filtered = registros.filter(
-    (r) => activeCategoria === "Todos" || r.categoria === activeCategoria,
+  const filtered = useMemo(
+    () => registros.filter((r) => activeCategoria === "Todos" || r.categoria === activeCategoria),
+    [activeCategoria],
+  );
+
+  const totalMostrado = useMemo(
+    () =>
+      filtered
+        .reduce((acc, r) => acc + parseInt(r.monto.replace(/\D/g, "")), 0)
+        .toLocaleString("es-CL"),
+    [filtered],
   );
 
   return (
@@ -150,9 +159,7 @@ export default function Dashboard() {
                 </div>
                 <div className={k.color}>{k.icon}</div>
               </div>
-              <div className="font-[Gloock,Georgia,serif] text-[26px] text-text mb-1">
-                {k.val}
-              </div>
+              <div className="font-[Gloock,Georgia,serif] text-[26px] text-text mb-1">{k.val}</div>
               <div className="text-[12px] text-slate-400">{k.sub}</div>
             </div>
           ))}
@@ -209,7 +216,7 @@ export default function Dashboard() {
                 aria-label="Filtrar por categoría"
                 value={activeCategoria}
                 onChange={(e) => setActiveCategoria(e.target.value)}
-                className="text-[13px] border border-border rounded-lg py-[7px] px-3 text-text bg-white outline-none"
+                className="text-[13px] border border-border rounded-lg py-[7px] px-3 text-text bg-white outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-shadow"
               >
                 {categorias.map((c) => (
                   <option key={c}>{c}</option>
@@ -280,17 +287,11 @@ export default function Dashboard() {
               </tbody>
               <tfoot>
                 <tr className="border-t-2 border-border">
-                  <td
-                    colSpan={4}
-                    className="pt-[14px] pr-3 text-[13px] font-semibold text-muted"
-                  >
+                  <td colSpan={4} className="pt-[14px] pr-3 text-[13px] font-semibold text-muted">
                     Total mostrado
                   </td>
                   <td className="pt-[14px] pr-3 text-[15px] font-bold text-text">
-                    $
-                    {filtered
-                      .reduce((acc, r) => acc + parseInt(r.monto.replace(/\D/g, "")), 0)
-                      .toLocaleString("es-CL")}
+                    ${totalMostrado}
                   </td>
                   <td colSpan={2} />
                 </tr>

@@ -15,9 +15,7 @@ export function HistorialPagosTable({ historial }: HistorialPagosTableProps) {
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-7">
       <div className="flex justify-between items-center mb-5">
-        <h3 className="font-serif text-[20px] text-text m-0 font-normal">
-          Historial de pagos
-        </h3>
+        <h3 className="font-serif text-[20px] text-text m-0 font-normal">Historial de pagos</h3>
         <button className="flex items-center gap-1.5 text-[13px] font-semibold text-teal-600 bg-transparent border border-teal-600 rounded-lg py-2 px-3.5 cursor-pointer hover:bg-teal-50 transition-colors">
           <IconDownload className="w-[14px] h-[14px]" /> Exportar PDF
         </button>

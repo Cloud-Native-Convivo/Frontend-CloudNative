@@ -22,11 +22,14 @@
   },
   "dependencies": {
     "cuelume": "^0.2.2",
+    "glob": "^13.0.6",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-router": "^8.4.0",
     "recharts": "^3.10.1",
-    "sileo": "^0.1.5"
+    "sileo": "^0.1.5",
+    "typescript": "^5.9.3",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -42,6 +45,7 @@
     "@vitest/coverage-v8": "^5.0.1",
     "@vitest/ui": "^5.0.1",
     "eslint": "^10.11.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",
@@ -50,7 +54,6 @@
     "oxc-transform-react": "^0.151.0",
     "oxfmt": "^0.70.0",
     "tailwindcss": "^4.0.0",
-    "typescript": "^5.9.3",
     "typescript-eslint": "^8.70.1",
     "vite": "^8.3.0",
     "vitest": "^5.0.1"

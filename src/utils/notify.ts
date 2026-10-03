@@ -22,12 +22,12 @@ export const notify = {
     return sileo.error(opts);
   },
 
-  warning: (opts: SileoOptions, sound: SoundName = "droplet"): string => {
+  warning: (opts: SileoOptions, sound: SoundName = "attention"): string => {
     safePlay(sound);
     return sileo.warning(opts);
   },
 
-  info: (opts: SileoOptions, sound: SoundName = "chime"): string => {
+  info: (opts: SileoOptions, sound: SoundName = "ready"): string => {
     safePlay(sound);
     return sileo.info(opts);
   },

@@ -49,7 +49,7 @@ describe("notify", () => {
 
     // Assert
     expect(result).toBe("id-warning");
-    expect(play).toHaveBeenCalledWith("droplet");
+    expect(play).toHaveBeenCalledWith("attention");
     expect(sileo.warning).toHaveBeenCalledWith({ title: "Alerta" });
   });
 
@@ -59,16 +59,16 @@ describe("notify", () => {
 
     // Assert
     expect(result).toBe("id-info");
-    expect(play).toHaveBeenCalledWith("chime");
+    expect(play).toHaveBeenCalledWith("ready");
     expect(sileo.info).toHaveBeenCalledWith({ title: "Info" });
   });
 
   it("permite sobreescribir el sonido por defecto", () => {
     // Act
-    notify.success({ title: "Exito" }, "chime");
+    notify.success({ title: "Exito" }, "ready");
 
     // Assert
-    expect(play).toHaveBeenCalledWith("chime");
+    expect(play).toHaveBeenCalledWith("ready");
   });
 
   it("silencia errores al reproducir sonido (safePlay)", () => {

@@ -13,7 +13,11 @@ describe("QRModal", () => {
     tipo: "Servicio" as const,
     estado: "Pendiente" as const,
     codigo: "A1B2C3",
-  };
+    documento: "",
+    fecha: "",
+    motivo: "",
+    unidad: "",
+  } as any;
 
   it("renderiza la información de la visita y el código QR", () => {
     // Arrange

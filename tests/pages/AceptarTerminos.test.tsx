@@ -3,10 +3,10 @@ import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthProvider } from "@/hooks/AuthProvider";
 import AceptarTerminos from "@/pages/AceptarTerminos";
-import { registrarAceptacionTerminos } from "@/lib/cognitoAuth";
+import { registrarAceptacionTerminos } from "@/auth/cognitoAuth";
 
-vi.mock("@/lib/cognitoAuth", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@/lib/cognitoAuth")>()),
+vi.mock("@/auth/cognitoAuth", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/auth/cognitoAuth")>()),
   registrarAceptacionTerminos: vi.fn(),
 }));
 vi.mock("@/utils/notify", () => ({

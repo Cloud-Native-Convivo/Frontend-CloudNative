@@ -12,7 +12,7 @@ import {
   aceptoTerminosVigentes,
   cognitoRegion,
   registrarAceptacionTerminos,
-} from "@/lib/cognitoAuth";
+} from "@/auth/cognitoAuth";
 
 beforeEach(() => {
   sessionStorage.clear();

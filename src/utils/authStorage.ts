@@ -4,6 +4,7 @@ import { z } from "zod";
 export const USER_STORAGE_KEY = "convivo_user_v1";
 export const ID_TOKEN_STORAGE_KEY = "convivo_id_token_v1";
 export const ACCESS_TOKEN_STORAGE_KEY = "convivo_access_token_v1";
+export const REFRESH_TOKEN_STORAGE_KEY = "convivo_refresh_token_v1";
 
 const LEGACY_USER_KEY = "convivo_user";
 
@@ -63,12 +64,23 @@ export function setStoredAccessToken(token: string): void {
   setItem(sessionStorage, ACCESS_TOKEN_STORAGE_KEY, token);
 }
 
+// sessionStorage (no localStorage): el refresh token muere al cerrar la pestaña, lo que acota
+// la ventana de exposición si hay XSS. Deuda técnica: moverlo a una cookie HttpOnly vía BFF.
+export function getStoredRefreshToken(): string | null {
+  return getItem(sessionStorage, REFRESH_TOKEN_STORAGE_KEY);
+}
+
+export function setStoredRefreshToken(token: string): void {
+  setItem(sessionStorage, REFRESH_TOKEN_STORAGE_KEY, token);
+}
+
 export function clearStoredAuth(): void {
   if (typeof window === "undefined") return;
   try {
     sessionStorage.removeItem(USER_STORAGE_KEY);
     sessionStorage.removeItem(ID_TOKEN_STORAGE_KEY);
     sessionStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+    sessionStorage.removeItem(REFRESH_TOKEN_STORAGE_KEY);
     localStorage.removeItem(LEGACY_USER_KEY);
   } catch {
     // ignore

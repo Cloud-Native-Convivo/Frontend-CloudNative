@@ -1,6 +1,8 @@
-import { useState, useMemo, useCallback, type ReactNode } from "react";
+import { useState, useMemo, useCallback, useEffect, type ReactNode } from "react";
 import type { Role, User } from "../types";
-import { getStoredUser as loadUser, setStoredUser, clearStoredAuth } from "../utils/authStorage";
+import { getStoredUser as loadUser, setStoredUser } from "../utils/authStorage";
+import { cerrarSesionCognito, EVENTO_SESION_EXPIRADA } from "../auth/tokenManager";
+import { notify } from "../utils/notify";
 import { AuthContext, USERS } from "./authContext";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -10,9 +12,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (u) {
       setStoredUser(u);
     } else {
-      clearStoredAuth();
+      // Logout: borra los tokens locales y revoca el refresh token en Cognito.
+      void cerrarSesionCognito();
     }
     setUserState(u);
+  }, []);
+
+  // El refresh token venció o fue revocado: tokenManager ya borró la sesión local,
+  // acá solo se saca al usuario del estado para que las rutas protegidas redirijan.
+  useEffect(() => {
+    const alExpirar = () => {
+      setUserState(null);
+      notify.warning({ title: "Tu sesión expiró, vuelve a iniciar sesión" });
+    };
+    window.addEventListener(EVENTO_SESION_EXPIRADA, alExpirar);
+    return () => window.removeEventListener(EVENTO_SESION_EXPIRADA, alExpirar);
   }, []);
 
   const role = user?.role ?? null;

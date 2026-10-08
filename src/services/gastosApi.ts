@@ -1,4 +1,4 @@
-import { getStoredIdToken } from "../utils/authStorage";
+import { fetchConAuth } from "../auth/tokenManager";
 import { obtenerPanel } from "./panelApi";
 
 export interface BackendGastoComun {
@@ -27,16 +27,10 @@ const rawBffUrl =
 const API_ROOT = rawBffUrl.replace(/\/api\/v1\/?$/, "").replace(/\/+$/, "");
 const GASTOS_URL = `${API_ROOT}/api/gastos/api/v1/gastos-comunes`;
 
-export async function listarGastos(idToken?: string): Promise<BackendGastoComun[]> {
-  const token = idToken ?? getStoredIdToken();
-  const headers: Record<string, string> = {};
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
+export async function listarGastos(): Promise<BackendGastoComun[]> {
   // Intento 1: vía panel agregado (agregador seguro para residente)
   try {
-    const panel = await obtenerPanel(token ?? undefined);
+    const panel = await obtenerPanel();
     if (panel && panel.gastos) {
       if (Array.isArray(panel.gastos)) {
         return panel.gastos as BackendGastoComun[];
@@ -58,7 +52,7 @@ export async function listarGastos(idToken?: string): Promise<BackendGastoComun[
   // intento 1 (agregador opcional), si esto también falla hay que propagar el
   // error: devolver [] acá sería indistinguible de "el residente no tiene
   // gastos", y el llamador (obtenerResumenGastos) lo leería como "al día".
-  const response = await fetch(GASTOS_URL, { headers });
+  const response = await fetchConAuth(GASTOS_URL);
   if (!response.ok) {
     throw new Error(`No se pudo obtener gastos comunes: HTTP ${response.status}`);
   }
@@ -72,8 +66,8 @@ export async function listarGastos(idToken?: string): Promise<BackendGastoComun[
   return [];
 }
 
-export async function obtenerResumenGastos(idToken?: string): Promise<GastosResumen> {
-  const gastos = await listarGastos(idToken);
+export async function obtenerResumenGastos(): Promise<GastosResumen> {
+  const gastos = await listarGastos();
   const pendientes = gastos.filter(
     (g) => g.estado === "PENDIENTE" || g.estado === "PARCIAL" || g.estado === "MOROSO",
   );

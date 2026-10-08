@@ -8,7 +8,6 @@ import {
   listarEspacios,
   type BackendReserva,
 } from "../services/espaciosApi";
-import { getStoredIdToken } from "../utils/authStorage";
 
 interface Reserva {
   id: string;
@@ -572,11 +571,7 @@ export default function Reservas() {
 
   useEffect(() => {
     let active = true;
-    const idToken = getStoredIdToken() ?? undefined;
-    Promise.all([
-      listarEspacios(idToken).catch(() => []),
-      listarMisReservas(idToken).catch(() => []),
-    ])
+    Promise.all([listarEspacios().catch(() => []), listarMisReservas().catch(() => [])])
       .then(([espaciosData, reservasData]) => {
         if (!active) return;
 
@@ -624,12 +619,11 @@ export default function Reservas() {
     data: Omit<Reserva, "id" | "codigo">,
     payload?: { espacioId: number; fechaInicio: string; fechaFin: string },
   ) {
-    const idToken = getStoredIdToken() ?? undefined;
     let newReserva: Reserva;
 
     if (payload) {
       try {
-        const backendResult = await crearReserva(idToken, {
+        const backendResult = await crearReserva({
           espacio_id: payload.espacioId,
           fecha_inicio: payload.fechaInicio,
           fecha_fin: payload.fechaFin,

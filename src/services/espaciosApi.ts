@@ -1,4 +1,4 @@
-import { getStoredIdToken } from "../utils/authStorage";
+import { fetchConAuth } from "../auth/tokenManager";
 
 const rawBffUrl =
   (typeof import.meta !== "undefined" && import.meta.env?.VITE_BFF_URL) ||
@@ -37,53 +37,30 @@ export interface CrearReservaPayload {
   fecha_fin: string;
 }
 
-export async function listarEspacios(idToken?: string): Promise<BackendEspacio[]> {
-  const token = idToken ?? getStoredIdToken();
-  const headers: Record<string, string> = {};
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
+export async function listarEspacios(): Promise<BackendEspacio[]> {
   // Sin slash final: API Gateway matchea route keys de forma literal y la
   // ruta pública ("GET /api/v1/espacios-comunes/espacios") no acepta un
   // segmento final vacío (AWS rechaza esa route key al crearla). El BFF
   // igual normaliza a "/espacios/" antes de reenviar al microservicio.
-  const response = await fetch(`${API_BASE_URL}/espacios`, { headers });
+  const response = await fetchConAuth(`${API_BASE_URL}/espacios`);
   if (!response.ok) {
     throw new Error(`Error al listar espacios: HTTP ${response.status}`);
   }
   return response.json();
 }
 
-export async function listarMisReservas(idToken?: string): Promise<BackendReserva[]> {
-  const token = idToken ?? getStoredIdToken();
-  const headers: Record<string, string> = {};
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(`${API_BASE_URL}/reservas/`, { headers });
+export async function listarMisReservas(): Promise<BackendReserva[]> {
+  const response = await fetchConAuth(`${API_BASE_URL}/reservas/`);
   if (!response.ok) {
     throw new Error(`Error al listar reservas: HTTP ${response.status}`);
   }
   return response.json();
 }
 
-export async function crearReserva(
-  idToken: string | null | undefined,
-  datos: CrearReservaPayload,
-): Promise<BackendReserva> {
-  const token = idToken ?? getStoredIdToken();
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(`${API_BASE_URL}/reservas/`, {
+export async function crearReserva(datos: CrearReservaPayload): Promise<BackendReserva> {
+  const response = await fetchConAuth(`${API_BASE_URL}/reservas/`, {
     method: "POST",
-    headers,
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(datos),
   });
 

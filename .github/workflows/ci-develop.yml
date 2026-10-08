@@ -7,7 +7,7 @@ name: CI — develop
 
 on:
   pull_request:
-    branches: ["develop"]
+    branches: ["develop", "main"]
   push:
     branches: ["develop"]
 

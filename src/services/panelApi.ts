@@ -1,4 +1,4 @@
-import { getStoredIdToken } from "../utils/authStorage";
+import { fetchConAuth } from "../auth/tokenManager";
 import type { BackendReserva } from "./espaciosApi";
 
 const rawBffUrl =
@@ -16,14 +16,8 @@ export interface BackendPanelResponse {
   errores: string[];
 }
 
-export async function obtenerPanel(idToken?: string): Promise<BackendPanelResponse> {
-  const token = idToken ?? getStoredIdToken();
-  const headers: Record<string, string> = {};
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(`${API_BASE_URL}/panel`, { headers });
+export async function obtenerPanel(): Promise<BackendPanelResponse> {
+  const response = await fetchConAuth(`${API_BASE_URL}/panel`);
   if (!response.ok) {
     throw new Error(`Error al obtener panel: HTTP ${response.status}`);
   }

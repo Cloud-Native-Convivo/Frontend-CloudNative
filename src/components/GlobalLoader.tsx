@@ -5,20 +5,18 @@ export function GlobalLoader({ onComplete }: { onComplete: () => void }) {
   const [progress, setProgress] = useState(false);
 
   useEffect(() => {
-    // Start progress bar animation right away (slight delay ensures CSS transition applies)
-    const progressTimer = setTimeout(() => setProgress(true), 50);
-
-    // Fade out after 1.2 seconds
-    const fadeTimer = setTimeout(() => setIsFading(true), 1200);
-
-    // Remove component after 1.6 seconds (giving time for fade transition)
-    const removeTimer = setTimeout(onComplete, 1600);
-
-    return () => {
-      clearTimeout(progressTimer);
-      clearTimeout(fadeTimer);
-      clearTimeout(removeTimer);
+    const finishLoading = () => {
+      setProgress(true);
+      setIsFading(true);
+      setTimeout(onComplete, 300);
     };
+
+    if (document.readyState === "complete") {
+      finishLoading();
+    } else {
+      window.addEventListener("load", finishLoading);
+      return () => window.removeEventListener("load", finishLoading);
+    }
   }, [onComplete]);
 
   return (
@@ -33,7 +31,7 @@ export function GlobalLoader({ onComplete }: { onComplete: () => void }) {
         </h1>
         <div className="relative mt-10 h-[2px] w-64 bg-white/10 rounded-full" aria-hidden="true">
           <div
-            className={`relative h-full bg-gradient-to-r from-white/5 via-white/60 to-white rounded-full transition-all duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
+            className={`relative h-full bg-gradient-to-r from-white/5 via-white/60 to-white rounded-full transition-all duration-[300ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${
               progress ? "w-full" : "w-0"
             }`}
           >

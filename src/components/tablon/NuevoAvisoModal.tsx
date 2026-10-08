@@ -12,7 +12,7 @@ export function NuevoAvisoModal({ canPublishDirect, onClose }: NuevoAvisoModalPr
         type="button"
         aria-label="Cerrar"
         onClick={onClose}
-        className="absolute inset-0 bg-text/60 backdrop-blur-sm border-none p-0 cursor-default"
+        className="absolute inset-0 bg-text/60 border-none p-0 cursor-default"
       />
       <div className="relative bg-white rounded-[20px] w-full max-w-[480px] px-7 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.2)]">
         <h3 className="font-display text-[22px] text-text m-0 mb-1.5">

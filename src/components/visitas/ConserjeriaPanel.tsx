@@ -10,7 +10,7 @@ interface ConserjeriaPanelProps {
 const LOG_ENTRIES: LogEntry[] = [
   {
     hora: "08:32",
-    visitante: "María González",
+    visitante: "Visitante Demo",
     unidad: "Torre B · 304",
     accion: "Entrada",
     estado: "en_progreso",

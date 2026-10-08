@@ -723,7 +723,7 @@ export default function Reservas() {
         <div className="flex flex-col gap-4">
           {loading ? (
             <div className="text-center py-16 text-muted">
-              <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+              <div role="status" aria-label="Cargando reservas" className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
               <p className="font-medium text-text">Cargando reservas desde el servidor...</p>
             </div>
           ) : filtered.length === 0 ? (

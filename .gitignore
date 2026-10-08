@@ -46,3 +46,6 @@ playwright/.cache/
 # Copia de skills para otros agentes: se regenera desde skills-lock.json.
 # Se versiona solo .claude/skills (contenido identico).
 .agents/skills/
+
+# Graphify output
+graphify-out/

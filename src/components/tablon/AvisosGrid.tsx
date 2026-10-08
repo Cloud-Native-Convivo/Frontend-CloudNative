@@ -48,7 +48,7 @@ export function AvisosGrid({
             <div className="px-[22px] pt-[22px]">
               <div className="flex justify-between items-center mb-3">
                 <span
-                  className={`text-[11px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-full ${bc}`}
+                  className={`text-[12px] font-bold px-2.5 py-1 rounded-full ${bc}`}
                 >
                   {a.tipo}
                 </span>

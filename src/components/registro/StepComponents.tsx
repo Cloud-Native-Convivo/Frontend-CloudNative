@@ -83,7 +83,7 @@ export function StepAccount({
           type="text"
           value={form.nombre}
           onChange={onChange}
-          placeholder="María González"
+          placeholder="Ej: Juan Pérez"
           aria-label="Nombre completo"
           autoComplete="name"
           aria-invalid={!!errors.nombre}

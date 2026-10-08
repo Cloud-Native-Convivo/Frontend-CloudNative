@@ -190,7 +190,7 @@ function DetalleModal({ espacio, onClose }: DetalleModalProps) {
       ref={dialogRef}
       onClose={onClose}
       aria-labelledby="modal-title"
-      className="m-auto p-0 rounded-2xl bg-transparent backdrop:bg-black/60 backdrop:backdrop-blur-sm w-full max-w-2xl max-h-[90vh]"
+      className="m-auto p-0 rounded-2xl bg-transparent backdrop:bg-black/60 w-full max-w-2xl max-h-[90vh]"
     >
       {/* Panel */}
       <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -621,7 +621,7 @@ export default function EspaciosComunes() {
       <main className="px-6 py-6">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 text-center gap-4">
-            <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            <div role="status" aria-label="Cargando espacios" className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             <p className="font-display text-lg text-text">
               Cargando espacios comunes desde el servidor...
             </p>

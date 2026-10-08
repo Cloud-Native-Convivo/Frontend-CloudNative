@@ -10,7 +10,7 @@ export function PayModal({ onClose, onConfirm }: PayModalProps) {
         type="button"
         aria-label="Cerrar"
         onClick={onClose}
-        className="absolute inset-0 bg-text/60 backdrop-blur-[4px] border-none p-0 cursor-default"
+        className="absolute inset-0 bg-text/60 border-none p-0 cursor-default"
       />
       <div className="relative bg-white rounded-[20px] w-full max-w-[440px] py-8 px-7 shadow-[0_24px_80px_rgba(0,0,0,0.2)]">
         <h3 className="font-serif text-[22px] text-text m-0 mb-1.5 font-normal">

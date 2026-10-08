@@ -42,7 +42,7 @@ const SEED: Incidente[] = [
     ubicacion: "Torre A · Piso 3 · Pasillo norte",
     estado: "en_progreso",
     fechaCreacion: "14 ago 2026",
-    reportadoPor: "María González",
+    reportadoPor: "Residente Demo",
     responsable: "Jorge Pizarro",
     unidad: "Torre A · 1204",
   },
@@ -702,7 +702,7 @@ export default function Incidentes() {
       <header className="bg-text px-4 pt-8 pb-6">
         <div className="max-w-4xl mx-auto flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-bold tracking-widest text-primary/70 uppercase mb-2">
+            <p className="text-sm font-bold text-primary/70 mb-2">
               Gestión
             </p>
             <h1 className="font-display text-4xl text-white">Incidentes</h1>

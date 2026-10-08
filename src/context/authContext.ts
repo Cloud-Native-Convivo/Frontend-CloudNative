@@ -10,7 +10,7 @@ export interface AuthContextValue {
 
 export const USERS: Record<Role, User> = {
   residente: {
-    nombre: "María González",
+    nombre: "Residente Demo",
     unidad: "Torre A · Piso 12 · Unidad 1204",
     role: "residente",
   },

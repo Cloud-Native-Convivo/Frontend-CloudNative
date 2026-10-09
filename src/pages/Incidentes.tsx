@@ -702,9 +702,7 @@ export default function Incidentes() {
       <header className="bg-text px-4 pt-8 pb-6">
         <div className="max-w-4xl mx-auto flex items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-bold text-primary/70 mb-2">
-              Gestión
-            </p>
+            <p className="text-sm font-bold text-primary/70 mb-2">Gestión</p>
             <h1 className="font-display text-4xl text-white">Incidentes</h1>
             <p className="text-white/60 mt-1 text-sm">
               {isAdmin

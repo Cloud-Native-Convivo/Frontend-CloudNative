@@ -621,7 +621,11 @@ export default function EspaciosComunes() {
       <main className="px-6 py-6">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 text-center gap-4">
-            <div role="status" aria-label="Cargando espacios" className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            <div
+              role="status"
+              aria-label="Cargando espacios"
+              className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"
+            />
             <p className="font-display text-lg text-text">
               Cargando espacios comunes desde el servidor...
             </p>

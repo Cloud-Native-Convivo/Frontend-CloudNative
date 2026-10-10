@@ -9,14 +9,19 @@ export interface HistorialEntry {
 
 interface HistorialPagosTableProps {
   historial: HistorialEntry[];
+  onDescargarPdf?: (mes?: string) => void;
 }
 
-export function HistorialPagosTable({ historial }: HistorialPagosTableProps) {
+export function HistorialPagosTable({ historial, onDescargarPdf }: HistorialPagosTableProps) {
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-7">
       <div className="flex justify-between items-center mb-5">
         <h3 className="font-serif text-[20px] text-text m-0 font-normal">Historial de pagos</h3>
-        <button className="flex items-center gap-1.5 text-[13px] font-semibold text-teal-600 bg-transparent border border-teal-600 rounded-lg py-2 px-3.5 cursor-pointer hover:bg-teal-50 transition-colors">
+        <button
+          type="button"
+          onClick={() => onDescargarPdf?.()}
+          className="flex items-center gap-1.5 text-[13px] font-semibold text-teal-600 bg-transparent border border-teal-600 rounded-lg py-2 px-3.5 cursor-pointer hover:bg-teal-50 transition-colors"
+        >
           <IconDownload className="w-[14px] h-[14px]" /> Exportar PDF
         </button>
       </div>
@@ -47,7 +52,11 @@ export function HistorialPagosTable({ historial }: HistorialPagosTableProps) {
                   </span>
                 </td>
                 <td className="py-3.5">
-                  <button className="text-teal-600 hover:underline bg-transparent border-none text-[13px] font-semibold cursor-pointer p-0">
+                  <button
+                    type="button"
+                    onClick={() => onDescargarPdf?.(row.mes)}
+                    className="text-teal-600 hover:underline bg-transparent border-none text-[13px] font-semibold cursor-pointer p-0"
+                  >
                     Ver comprobante
                   </button>
                 </td>

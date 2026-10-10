@@ -2,7 +2,12 @@ import { useState, useEffect } from "react";
 import { gastos } from "../data";
 import { useAuth } from "../hooks/useAuth";
 import { notify } from "../utils/notify";
-import { obtenerResumenGastos, type GastosResumen } from "../services/gastosApi";
+import { sileo } from "sileo";
+import {
+  obtenerResumenGastos,
+  solicitarYDescargarPdfGastos,
+  type GastosResumen,
+} from "../services/gastosApi";
 import {
   IconDownload,
   IconDollar,
@@ -173,6 +178,30 @@ export default function Gastos() {
     };
   }, []);
 
+  const handleDescargarPdf = (mes?: string) => {
+    const mesObjetivo = mes ?? selectedMes;
+    void sileo.promise(
+      solicitarYDescargarPdfGastos({
+        unidadId: user?.unidad,
+        mes: mesObjetivo,
+      }),
+      {
+        loading: {
+          title: "Generando comprobante PDF...",
+          description: `Procesando comprobante de ${mesObjetivo} en segundo plano.`,
+        },
+        success: {
+          title: "¡Comprobante listo!",
+          description: "Tu PDF se ha descargado y enviamos una copia a tu correo.",
+        },
+        error: {
+          title: "Error al generar comprobante",
+          description: "No se pudo emitir el documento. Intenta nuevamente.",
+        },
+      },
+    );
+  };
+
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="bg-text px-6 pt-[56px] pb-12">
@@ -240,7 +269,10 @@ export default function Gastos() {
           )}
         </div>
 
-        <HistorialPagosTable historial={historial} />
+        <HistorialPagosTable
+          historial={historial}
+          onDescargarPdf={handleDescargarPdf}
+        />
       </div>
 
       <div className="bg-white py-20 px-6 border-t border-slate-200">

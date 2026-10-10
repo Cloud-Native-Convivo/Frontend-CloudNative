@@ -80,4 +80,94 @@ describe("gastosApi", () => {
 
     await expect(obtenerResumenGastos()).rejects.toThrow();
   });
+
+  it("solicitarPdfGastos envia POST al BFF y retorna ticketId", async () => {
+    const { solicitarPdfGastos } = await import("@/services/gastosApi");
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
+      ok: true,
+      status: 202,
+      json: async () => ({
+        ticketId: "ticket-12345",
+        status: "PENDIENTE",
+      }),
+    } as Response);
+
+    const res = await solicitarPdfGastos({ unidadId: "101", mes: "Agosto" });
+    expect(res.ticketId).toBe("ticket-12345");
+    expect(res.status).toBe("PENDIENTE");
+  });
+
+  it("descargarPdfGastosPorTicket lanza PROCESANDO cuando recibe 404", async () => {
+    const { descargarPdfGastosPorTicket } = await import("@/services/gastosApi");
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
+      ok: false,
+      status: 404,
+    } as Response);
+
+    await expect(descargarPdfGastosPorTicket("ticket-pending")).rejects.toThrow("PROCESANDO");
+  });
+
+  it("descargarPdfGastosPorTicket devuelve blob cuando recibe 200", async () => {
+    const { descargarPdfGastosPorTicket } = await import("@/services/gastosApi");
+    const mockBlob = new Blob(["%PDF-1.4"], { type: "application/pdf" });
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      blob: async () => mockBlob,
+    } as Response);
+
+    const result = await descargarPdfGastosPorTicket("ticket-ready");
+    expect(result).toBe(mockBlob);
+  });
+
+  it("esperarYDescargarPdf reintenta en 404 hasta que el PDF este disponible", async () => {
+    const { esperarYDescargarPdf } = await import("@/services/gastosApi");
+    const mockBlob = new Blob(["%PDF-1.4"], { type: "application/pdf" });
+
+    // Intento 1: 404 PROCESANDO
+    // Intento 2: 200 OK con blob
+    vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+      } as Response)
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        blob: async () => mockBlob,
+      } as Response);
+
+    const res = await esperarYDescargarPdf("ticket-retry", 3, 10);
+    expect(res.ticketId).toBe("ticket-retry");
+    expect(res.blob).toBe(mockBlob);
+  });
+
+  it("solicitarYDescargarPdfGastos orquesta la solicitud y descarga completa", async () => {
+    const { solicitarYDescargarPdfGastos } = await import("@/services/gastosApi");
+    const mockBlob = new Blob(["%PDF-1.4"], { type: "application/pdf" });
+
+    // Mock solicitud POST
+    vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 202,
+        json: async () => ({ ticketId: "uuid-abc-123", status: "PENDIENTE" }),
+      } as Response)
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        blob: async () => mockBlob,
+      } as Response);
+
+    const createObjectURLSpy = vi.fn().mockReturnValue("blob:mock-url");
+    const revokeObjectURLSpy = vi.fn();
+    globalThis.URL.createObjectURL = createObjectURLSpy;
+    globalThis.URL.revokeObjectURL = revokeObjectURLSpy;
+
+    const res = await solicitarYDescargarPdfGastos({ unidadId: "201", mes: "Agosto 2026" });
+    expect(res.ticketId).toBe("uuid-abc-123");
+    expect(createObjectURLSpy).toHaveBeenCalledWith(mockBlob);
+    expect(revokeObjectURLSpy).toHaveBeenCalledWith("blob:mock-url");
+  });
 });
+

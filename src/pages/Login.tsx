@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { IconGoogle } from "../components/icons/Icons";
+import { useAuth } from "../hooks/useAuth";
+import { iniciarSesionResidenteMock } from "../auth/mockAuth";
 import {
   buildGoogleAuthorizeUrl,
   checkCognitoReachability,
@@ -29,11 +31,25 @@ function validate(form: FormState): FieldError {
 
 export default function Login() {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
   const [form, setForm] = useState<FormState>({ email: "", password: "" });
   const [errors, setErrors] = useState<FieldError>({});
   const [isConnectingGoogle, setIsConnectingGoogle] = useState(false);
+  const [isConnectingMock, setIsConnectingMock] = useState(false);
   const submitted = useRef(false);
   const [mounted, setMounted] = useState(false);
+
+  async function handleMockLogin() {
+    setIsConnectingMock(true);
+    try {
+      const mockUser = await iniciarSesionResidenteMock();
+      setUser(mockUser);
+      navigate("/gastos");
+    } catch (err) {
+      console.error("Error al iniciar sesión mock:", err);
+      setIsConnectingMock(false);
+    }
+  }
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 10);
@@ -196,6 +212,23 @@ export default function Login() {
             <IconGoogle className="w-4 h-4" />
             {isConnectingGoogle ? "Conectando con Google…" : "Continuar con Google"}
           </button>
+
+          {import.meta.env.DEV && (
+            <div className="mt-4 pt-4 border-t border-dashed border-border text-center">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-teal-600 block mb-2">
+                Entorno Local de Pruebas
+              </span>
+              <button
+                type="button"
+                onClick={handleMockLogin}
+                disabled={isConnectingMock}
+                className="w-full bg-slate-900 hover:bg-slate-800 text-teal-300 font-semibold text-xs py-2.5 px-3 rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
+              >
+                <span>⚡</span>
+                {isConnectingMock ? "Iniciando sesión demo…" : "Ingresar como Residente Demo (Local)"}
+              </button>
+            </div>
+          )}
           <p className="mt-3 text-center text-xs leading-relaxed text-muted">
             Al continuar te pediremos aceptar los{" "}
             <Link to="/terminos" className="text-primary hover:text-accent">

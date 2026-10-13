@@ -100,7 +100,9 @@ export interface SolicitarPdfPayload {
 
 export interface SolicitarPdfResponse {
   ticketId: string;
+  ticket_id?: string;
   status: string;
+  estado?: string;
 }
 
 export async function solicitarPdfGastos(
@@ -119,7 +121,15 @@ export async function solicitarPdfGastos(
     throw new Error(`Error al solicitar PDF de gastos: HTTP ${response.status}`);
   }
 
-  return (await response.json()) as SolicitarPdfResponse;
+  const data = (await response.json()) as Record<string, unknown>;
+  const ticketId = (data.ticketId ?? data.ticket_id ?? "") as string;
+  const status = (data.status ?? data.estado ?? "PENDIENTE") as string;
+  return {
+    ticketId,
+    ticket_id: ticketId,
+    status,
+    estado: status,
+  };
 }
 
 export async function descargarPdfGastosPorTicket(ticketId: string): Promise<Blob> {

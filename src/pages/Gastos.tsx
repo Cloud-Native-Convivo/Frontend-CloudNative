@@ -269,10 +269,7 @@ export default function Gastos() {
           )}
         </div>
 
-        <HistorialPagosTable
-          historial={historial}
-          onDescargarPdf={handleDescargarPdf}
-        />
+        <HistorialPagosTable historial={historial} onDescargarPdf={handleDescargarPdf} />
       </div>
 
       <div className="bg-white py-20 px-6 border-t border-slate-200">

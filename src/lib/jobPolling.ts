@@ -8,7 +8,7 @@ export interface JobResponse<T = unknown> {
   ticket_id: string;
   modulo?: string;
   accion?: string;
-  estado: 'EN_COLA' | 'PROCESANDO' | 'COMPLETADO' | 'FALLIDO';
+  estado: "EN_COLA" | "PROCESANDO" | "COMPLETADO" | "FALLIDO";
   resultado?: T;
   error?:
     | {
@@ -30,33 +30,29 @@ export async function pollJobStatus<T = unknown>(
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const res = await fetch(statusUrl, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        Accept: 'application/json',
+        Accept: "application/json",
         ...headers,
       },
     });
 
     if (!res.ok && res.status !== 404) {
-      throw new Error(
-        `Error consultando estado del job: ${res.statusText} (${res.status})`,
-      );
+      throw new Error(`Error consultando estado del job: ${res.statusText} (${res.status})`);
     }
 
     if (res.ok) {
       const data: JobResponse<T> = await res.json();
 
-      if (data.estado === 'COMPLETADO') {
+      if (data.estado === "COMPLETADO") {
         return data.resultado as T;
       }
 
-      if (data.estado === 'FALLIDO') {
+      if (data.estado === "FALLIDO") {
         const errorMsg =
-          typeof data.error === 'string'
+          typeof data.error === "string"
             ? data.error
-            : data.error?.mensaje ||
-              data.error?.codigo ||
-              'Operación asíncrona fallida';
+            : data.error?.mensaje || data.error?.codigo || "Operación asíncrona fallida";
         throw new Error(errorMsg);
       }
     }
@@ -66,7 +62,5 @@ export async function pollJobStatus<T = unknown>(
     }
   }
 
-  throw new Error(
-    `Tiempo de espera agotado al consultar el job (${maxAttempts} intentos)`,
-  );
+  throw new Error(`Tiempo de espera agotado al consultar el job (${maxAttempts} intentos)`);
 }

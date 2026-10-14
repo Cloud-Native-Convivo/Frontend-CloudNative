@@ -189,4 +189,3 @@ export async function solicitarYDescargarPdfGastos(
   dispararDescargaArchivo(blob, filename);
   return { ticketId };
 }
-

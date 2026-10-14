@@ -10,8 +10,18 @@ updates:
       interval: weekly
     labels: ["dependencies"]
     ignore:
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-router"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "vite"
+        update-types: ["version-update:semver-major"]
       - dependency-name: "typescript"
-        versions: [">= 6.0.0"]
+        update-types: ["version-update:semver-major"]
     groups:
       react:
         patterns: ["react", "react-dom", "react-router", "@types/react", "@types/react-dom"]

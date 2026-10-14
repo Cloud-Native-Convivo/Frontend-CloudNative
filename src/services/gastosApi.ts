@@ -25,7 +25,9 @@ const rawBffUrl =
   (typeof import.meta !== "undefined" && import.meta.env?.VITE_BFF_URL) ||
   "https://11bwhgfogd.execute-api.us-east-1.amazonaws.com/api/v1";
 const API_ROOT = rawBffUrl.replace(/\/api\/v1\/?$/, "").replace(/\/+$/, "");
-const GASTOS_URL = `${API_ROOT}/api/gastos/api/v1/gastos-comunes`;
+const CONDOMINIO_ID =
+  (typeof import.meta !== "undefined" && import.meta.env?.VITE_CONDOMINIO_ID) || "1";
+const GASTOS_URL = `${API_ROOT}/api/gastos/api/v1/gastos-comunes?condominioId=${CONDOMINIO_ID}`;
 
 export async function listarGastos(): Promise<BackendGastoComun[]> {
   // Intento 1: vía panel agregado (agregador seguro para residente)

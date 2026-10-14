@@ -41,6 +41,23 @@ npm run test:e2e:ui     # Playwright UI mode con time-travel y DOM snapshots (-u
 npm run test:e2e:debug  # Playwright Inspector interactivo paso a paso (-debug)
 ```
 
+### Verificación Preventiva Local Pre-push
+
+Antes de abrir un Pull Request o enviar commits al repositorio remoto, ejecutar las validaciones preventivas:
+
+```bash
+# 1. Ejecutar suite de pruebas unitarias y convención Gitmoji
+npm test
+
+# 2. Verificar tipos de TypeScript
+npm run typecheck
+
+# 3. Linter y formato estático
+npm run lint
+```
+
+> **Nota de CI**: `tests/lib/gitCommitConvention.test.ts` valida automáticamente que todos los mensajes de commit respeten el formato Gitmoji + Conventional Commits (`pr-quality.yml`).
+
 ## Documentación
 
 - [`src/docs/plan_pruebas.md`](./src/docs/plan_pruebas.md) — Plan de pruebas formal (ISO/IEC/IEEE 29119-3), diseño de casos de caja negra y caja blanca, y matriz de trazabilidad.

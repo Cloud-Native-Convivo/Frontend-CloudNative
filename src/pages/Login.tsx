@@ -225,7 +225,9 @@ export default function Login() {
                 className="w-full bg-slate-900 hover:bg-slate-800 text-teal-300 font-semibold text-xs py-2.5 px-3 rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
               >
                 <span>⚡</span>
-                {isConnectingMock ? "Iniciando sesión demo…" : "Ingresar como Residente Demo (Local)"}
+                {isConnectingMock
+                  ? "Iniciando sesión demo…"
+                  : "Ingresar como Residente Demo (Local)"}
               </button>
             </div>
           )}

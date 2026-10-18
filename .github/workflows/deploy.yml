@@ -42,10 +42,10 @@ jobs:
       - name: Build
         env:
           DEPLOY_BASE: ${{ github.event.repository.name }}
-          VITE_COGNITO_DOMAIN: ${{ vars.VITE_COGNITO_DOMAIN || secrets.VITE_COGNITO_DOMAIN || 'convivo-residentes.auth.us-east-1.amazoncognito.com' }}
-          VITE_COGNITO_CLIENT_ID: ${{ vars.VITE_COGNITO_CLIENT_ID || secrets.VITE_COGNITO_CLIENT_ID || '1h4j5k6l7m8n9o0p' }}
-          VITE_COGNITO_REDIRECT_URI: ${{ vars.VITE_COGNITO_REDIRECT_URI || secrets.VITE_COGNITO_REDIRECT_URI || 'https://Cloud-Native-Convivo.github.io/Frontend-CloudNative' }}
-          VITE_BFF_URL: ${{ secrets.VITE_BFF_URL || vars.VITE_BFF_URL || 'https://3d2ods6had.execute-api.us-east-1.amazonaws.com/api/v1' }}
+          VITE_COGNITO_DOMAIN: ${{ vars.VITE_COGNITO_DOMAIN || secrets.VITE_COGNITO_DOMAIN || 'convivo-residentes-483608221696.auth.us-east-1.amazoncognito.com' }}
+          VITE_COGNITO_CLIENT_ID: ${{ vars.VITE_COGNITO_CLIENT_ID || secrets.VITE_COGNITO_CLIENT_ID || '3v2jpve5i16bnc720kjipgfhna' }}
+          VITE_COGNITO_REDIRECT_URI: ${{ vars.VITE_COGNITO_REDIRECT_URI || secrets.VITE_COGNITO_REDIRECT_URI || 'https://cloud-native-convivo.github.io/Frontend-CloudNative/auth/callback' }}
+          VITE_BFF_URL: ${{ secrets.VITE_BFF_URL || vars.VITE_BFF_URL || 'https://11bwhgfogd.execute-api.us-east-1.amazonaws.com/api/v1' }}
         run: npm run build
 
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

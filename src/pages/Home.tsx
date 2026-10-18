@@ -298,7 +298,7 @@ function HeroSection() {
 
             {/* Main Editorial H1 */}
             <h1 className="cv-hero-h1 font-display text-[clamp(38px,5.2vw,70px)] leading-[1.04] text-white tracking-[-0.02em] font-normal m-0 mb-6">
-              Gestión de condominios,
+              Gestión simple de condominios,
               <span className="text-primary-on-dark font-display italic font-normal block sm:inline">
                 {" "}
                 elevada al detalle.

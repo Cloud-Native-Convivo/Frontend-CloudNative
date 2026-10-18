@@ -22,7 +22,7 @@
         l.pathname.endsWith("/404") ||
         l.search.indexOf("no_redirect") !== -1;
       if (!isDirect404) {
-        var pathSegmentsToKeep = l.hostname.indexOf("github.io") !== -1 ? 1 : 0;
+        var pathSegmentsToKeep = 1; // "/Frontend-CloudNative"
         l.replace(
           l.protocol +
             "//" +

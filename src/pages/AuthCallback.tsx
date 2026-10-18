@@ -46,10 +46,16 @@ export default function AuthCallback() {
           unidad: claims["custom:unidad"] ?? "Sin unidad asignada",
           role: roleFromClaims(claims),
           avatar: claims.picture,
+          condominioId: claims["custom:condominio_id"],
         };
         // Sin aceptación vigente no se guarda sesión: primero /aceptar-terminos.
         if (!aceptoTerminosVigentes(claims)) {
           navigate("/aceptar-terminos", { replace: true, state: { tokens, usuario } });
+          return;
+        }
+        // Control Anti-Bypass: si no tiene condominio o unidad asignada, completar registro primero
+        if (!usuario.condominioId || !usuario.unidad || usuario.unidad === "Sin unidad asignada") {
+          navigate("/completar-registro", { replace: true, state: { tokens, usuario } });
           return;
         }
         completarSesion(tokens, usuario, setUser, navigate);

@@ -152,7 +152,7 @@ export default function Login() {
           <Link
             to="/"
             viewTransition
-            className="group inline-flex items-center gap-3 no-underline text-white"
+            className="group inline-flex items-center gap-3 no-underline text-white rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#001714]"
             aria-label="Volver a la portada de Convivo"
           >
             <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center font-display font-bold text-white text-lg shadow-[0_4px_16px_rgba(13,148,136,0.35)] transition-transform group-hover:scale-105">
@@ -162,7 +162,7 @@ export default function Login() {
               <span className="font-display text-2xl text-white tracking-tight leading-none">
                 Convivo
               </span>
-              <span className="text-[10px] uppercase tracking-widest text-emerald-400/80 font-semibold mt-1">
+              <span className="text-[10px] uppercase tracking-widest text-emerald-300 font-semibold mt-1">
                 Portal Residencial
               </span>
             </div>
@@ -177,32 +177,30 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Center: Editorial headline, photography vignette & quote */}
-        <div className="relative z-10 my-10 space-y-8">
-          <div>
-            <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-400/90 mb-3">
-              <span className="w-4 h-px bg-emerald-400/80" />
-              <span>Copropiedad Inteligente</span>
-            </div>
-            <h1 className="font-display text-4xl xl:text-5xl text-white leading-[1.12] tracking-tight mb-4">
-              Tu condominio,
-              <br />
-              <span className="text-primary-on-dark italic font-normal">en sintonía digital.</span>
-            </h1>
-            <p className="text-white/70 text-sm xl:text-base leading-relaxed max-w-md">
-              Gestiona gastos comunes con trazabilidad bancaria, reserva quinchos y autoriza visitas
-              desde un acceso seguro y unificado.
-            </p>
+        {/* Center: Editorial headline */}
+        <div className="relative z-10 my-10 space-y-6">
+          <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-400 mb-2">
+            <span className="w-4 h-px bg-emerald-400" aria-hidden="true" />
+            <span>Copropiedad Inteligente</span>
           </div>
+          <h1 className="font-display text-4xl xl:text-5xl text-white leading-[1.12] tracking-tight">
+            Tu condominio,
+            <br />
+            <span className="text-primary-on-dark italic font-normal">en sintonía digital.</span>
+          </h1>
+          <p className="text-white/80 text-sm xl:text-base leading-relaxed max-w-md">
+            Gestiona gastos comunes con trazabilidad bancaria, reserva quinchos y autoriza visitas
+            desde un acceso seguro y unificado.
+          </p>
         </div>
 
         {/* Bottom: Security standards assurance */}
-        <div className="relative z-10 pt-6 border-t border-white/10 space-y-3">
-          <div className="flex items-center gap-2 text-xs text-white/80">
-            <IconShield className="w-4 h-4 text-emerald-400" />
+        <div className="relative z-10 pt-6 border-t border-white/10 space-y-2.5">
+          <div className="flex items-center gap-2 text-xs text-white font-medium">
+            <IconShield className="w-4 h-4 text-emerald-400 shrink-0" aria-hidden="true" />
             <span>Ley 21.442 Chile</span>
           </div>
-          <p className="text-[11px] text-white/40 leading-snug">
+          <p className="text-xs text-white/70 leading-relaxed">
             Cifrado de extremo a extremo conforme al marco normativo de copropiedad inmobiliaria.
           </p>
         </div>
@@ -220,10 +218,10 @@ export default function Login() {
           <Link
             to="/"
             viewTransition
-            className="lg:hidden inline-flex items-center gap-2.5 no-underline text-text"
+            className="lg:hidden inline-flex items-center gap-2.5 no-underline text-text rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
             aria-label="Volver a la portada de Convivo"
           >
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-display font-bold text-white text-base shadow-sm">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-display font-bold text-white text-base shadow-xs">
               C
             </div>
             <span className="font-display text-xl text-text font-bold">Convivo</span>
@@ -232,7 +230,7 @@ export default function Login() {
           <Link
             to="/"
             viewTransition
-            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-muted hover:text-text transition-colors group"
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-slate-950 transition-colors group rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
           >
             <span className="transition-transform group-hover:-translate-x-1" aria-hidden="true">
               ←
@@ -240,11 +238,11 @@ export default function Login() {
             <span>Volver al sitio</span>
           </Link>
 
-          <span className="text-xs text-muted">
+          <span className="text-xs text-slate-600">
             ¿Necesitas ayuda?{" "}
             <a
               href="mailto:soporte@convivo.cl"
-              className="text-primary font-medium hover:underline"
+              className="text-teal-800 hover:text-teal-950 font-semibold underline underline-offset-2 rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
             >
               Mesa de ayuda
             </a>
@@ -255,14 +253,14 @@ export default function Login() {
         <div className="w-full max-w-md mx-auto my-auto py-8">
           {/* Header */}
           <div className="mb-8">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 text-[11px] font-bold uppercase tracking-wider mb-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-900 text-[11px] font-bold uppercase tracking-wider mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" aria-hidden="true" />
               <span>Acceso de Residentes</span>
             </div>
             <h2 className="font-display text-text text-3xl sm:text-4xl tracking-tight mb-2">
               Bienvenido
             </h2>
-            <p className="text-muted text-sm sm:text-base leading-relaxed">
+            <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
               Ingresa con tu cuenta de residente para administrar tu departamento y espacios
               comunes.
             </p>
@@ -275,33 +273,33 @@ export default function Login() {
               onClick={handleGoogleLogin}
               disabled={isConnectingGoogle}
               aria-busy={isConnectingGoogle}
-              className="w-full relative group flex items-center justify-center gap-3 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-text font-semibold text-sm py-3.5 px-4 rounded-xl shadow-xs hover:shadow-md transition-all focus:outline-hidden focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full relative group flex items-center justify-center gap-3 bg-white hover:bg-slate-50 border border-slate-300 hover:border-slate-400 text-slate-900 font-semibold text-sm py-3.5 px-4 rounded-xl shadow-xs hover:shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
               {isConnectingGoogle ? (
                 <div
-                  className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"
+                  className="w-5 h-5 border-2 border-teal-700 border-t-transparent rounded-full animate-spin"
                   aria-hidden="true"
                 />
               ) : (
-                <IconGoogle className="w-5 h-5 shrink-0" />
+                <IconGoogle className="w-5 h-5 shrink-0" aria-hidden="true" />
               )}
-              <span className="text-sm font-semibold text-slate-800">
+              <span className="text-sm font-semibold text-slate-900">
                 {isConnectingGoogle ? "Conectando con Google…" : "Continuar con Google"}
               </span>
             </button>
-            <p className="text-center text-[11px] text-muted flex items-center justify-center gap-1.5">
-              <IconShield className="w-3.5 h-3.5 text-emerald-600" />
+            <p className="text-center text-xs text-slate-600 flex items-center justify-center gap-1.5">
+              <IconShield className="w-3.5 h-3.5 text-emerald-700 shrink-0" aria-hidden="true" />
               <span>Acceso seguro y verificado con tu cuenta de Google</span>
             </p>
           </div>
 
           {/* Editorial divider */}
-          <div className="my-7 flex items-center gap-3">
-            <div className="h-px flex-1 bg-border" />
-            <span className="text-[11px] font-bold uppercase tracking-widest text-muted/70">
+          <div className="my-7 flex items-center gap-3" aria-hidden="true">
+            <div className="h-px flex-1 bg-slate-200" />
+            <span className="text-[11px] font-bold uppercase tracking-widest text-slate-600">
               o con credenciales
             </span>
-            <div className="h-px flex-1 bg-border" />
+            <div className="h-px flex-1 bg-slate-200" />
           </div>
 
           {/* Email / Password Form */}
@@ -310,12 +308,15 @@ export default function Login() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-xs font-bold text-text uppercase tracking-wider mb-1.5"
+                className="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-1.5"
               >
                 Correo electrónico
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted/60">
+                <div
+                  className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500"
+                  aria-hidden="true"
+                >
                   <IconMail className="w-4 h-4" />
                 </div>
                 <input
@@ -327,8 +328,10 @@ export default function Login() {
                   onChange={handleChange}
                   aria-describedby={errors.email ? "email-error" : undefined}
                   aria-invalid={!!errors.email}
-                  className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl border text-sm text-text placeholder:text-muted/50 outline-hidden transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white ${
-                    errors.email ? "border-alert-red bg-red-50/50" : "border-slate-200"
+                  className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl border text-base sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-teal-700 focus:ring-2 focus:ring-teal-700/25 bg-white ${
+                    errors.email
+                      ? "border-rose-600 bg-rose-50/40 focus:border-rose-700 focus:ring-rose-700/20"
+                      : "border-slate-300 hover:border-slate-400"
                   }`}
                   placeholder="ejemplo@micondominio.cl"
                 />
@@ -337,7 +340,7 @@ export default function Login() {
                 <p
                   id="email-error"
                   role="alert"
-                  className="mt-1.5 text-xs text-alert-red flex items-center gap-1 font-medium"
+                  className="mt-1.5 text-xs text-rose-700 flex items-center gap-1 font-semibold"
                 >
                   <span aria-hidden="true">⚠</span> {errors.email}
                 </p>
@@ -349,19 +352,22 @@ export default function Login() {
               <div className="flex items-center justify-between mb-1.5">
                 <label
                   htmlFor="password"
-                  className="block text-xs font-bold text-text uppercase tracking-wider"
+                  className="block text-xs font-bold text-slate-900 uppercase tracking-wider"
                 >
                   Contraseña
                 </label>
                 <Link
                   to="/auth/recuperar-clave"
-                  className="text-xs text-primary font-medium hover:text-accent hover:underline"
+                  className="text-xs text-teal-800 font-semibold hover:text-teal-950 hover:underline rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
                 >
                   ¿Olvidaste tu clave?
                 </Link>
               </div>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted/60">
+                <div
+                  className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500"
+                  aria-hidden="true"
+                >
                   <IconLock className="w-4 h-4" />
                 </div>
                 <input
@@ -373,21 +379,24 @@ export default function Login() {
                   onChange={handleChange}
                   aria-describedby={errors.password ? "password-error" : undefined}
                   aria-invalid={!!errors.password}
-                  className={`w-full pl-10 pr-11 py-2.5 rounded-xl border text-sm text-text placeholder:text-muted/50 outline-hidden transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white ${
-                    errors.password ? "border-alert-red bg-red-50/50" : "border-slate-200"
+                  className={`w-full pl-10 pr-11 py-2.5 rounded-xl border text-base sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-teal-700 focus:ring-2 focus:ring-teal-700/25 bg-white ${
+                    errors.password
+                      ? "border-rose-600 bg-rose-50/40 focus:border-rose-700 focus:ring-rose-700/20"
+                      : "border-slate-300 hover:border-slate-400"
                   }`}
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-muted/60 hover:text-text cursor-pointer transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 rounded-md transition-colors cursor-pointer"
                   aria-label={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
+                  aria-controls="password"
                 >
                   {showPassword ? (
-                    <IconEyeOff className="w-4 h-4" />
+                    <IconEyeOff className="w-4 h-4" aria-hidden="true" />
                   ) : (
-                    <IconEye className="w-4 h-4" />
+                    <IconEye className="w-4 h-4" aria-hidden="true" />
                   )}
                 </button>
               </div>
@@ -395,7 +404,7 @@ export default function Login() {
                 <p
                   id="password-error"
                   role="alert"
-                  className="mt-1.5 text-xs text-alert-red flex items-center gap-1 font-medium"
+                  className="mt-1.5 text-xs text-rose-700 flex items-center gap-1 font-semibold"
                 >
                   <span aria-hidden="true">⚠</span> {errors.password}
                 </p>
@@ -409,16 +418,16 @@ export default function Login() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded-sm border-slate-300 text-primary focus:ring-primary/20 accent-primary cursor-pointer"
+                  className="w-4 h-4 rounded-sm border-slate-400 text-teal-700 focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2 accent-teal-700 cursor-pointer"
                 />
-                <span className="text-xs text-muted">Recordar mi dispositivo</span>
+                <span className="text-xs text-slate-700 font-medium">Recordar mi dispositivo</span>
               </label>
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-primary hover:bg-accent text-white font-bold text-sm py-3.5 rounded-xl shadow-[0_4px_16px_rgba(13,148,136,0.25)] hover:shadow-[0_6px_20px_rgba(13,148,136,0.35)] transition-all cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              className="w-full bg-primary hover:bg-accent text-white font-bold text-sm py-3.5 rounded-xl shadow-[0_4px_16px_rgba(13,148,136,0.25)] hover:shadow-[0_6px_20px_rgba(13,148,136,0.35)] transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2"
             >
               Ingresar
             </button>
@@ -429,7 +438,7 @@ export default function Login() {
             <div className="mt-6 p-4 rounded-xl bg-slate-900 border border-slate-800 text-left">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-teal-400 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400" aria-hidden="true" />
                   Entorno Local de Pruebas
                 </span>
                 <span className="text-[10px] text-slate-400 font-mono">DEV MODE</span>
@@ -442,9 +451,9 @@ export default function Login() {
                 type="button"
                 onClick={handleMockLogin}
                 disabled={isConnectingMock}
-                className="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs py-2.5 px-3 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
+                className="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs py-2.5 px-3 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
               >
-                <span>⚡</span>
+                <span aria-hidden="true">⚡</span>
                 <span>
                   {isConnectingMock
                     ? "Iniciando sesión demo…"
@@ -455,12 +464,12 @@ export default function Login() {
           )}
 
           {/* Legal disclaimer */}
-          <p className="mt-6 text-center text-xs leading-relaxed text-muted">
+          <p className="mt-6 text-center text-xs leading-relaxed text-slate-600">
             Al continuar te pediremos aceptar los{" "}
             <Link
               to="/terminos"
               viewTransition
-              className="text-primary hover:text-accent font-medium underline underline-offset-2"
+              className="text-teal-800 hover:text-teal-950 font-semibold underline underline-offset-2 rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
             >
               Términos de uso
             </Link>{" "}
@@ -468,7 +477,7 @@ export default function Login() {
             <Link
               to="/privacidad"
               viewTransition
-              className="text-primary hover:text-accent font-medium underline underline-offset-2"
+              className="text-teal-800 hover:text-teal-950 font-semibold underline underline-offset-2 rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
             >
               Política de privacidad
             </Link>
@@ -476,32 +485,44 @@ export default function Login() {
           </p>
 
           {/* Registration link */}
-          <div className="mt-6 pt-5 border-t border-border flex items-center justify-between text-xs">
-            <span className="text-muted">¿Eres nuevo en tu edificio?</span>
+          <div className="mt-6 pt-5 border-t border-slate-200 flex items-center justify-between text-xs">
+            <span className="text-slate-600">¿Eres nuevo en tu edificio?</span>
             <Link
               to="/crear-cuenta"
               viewTransition
-              className="inline-flex items-center gap-1 text-primary font-bold hover:text-accent transition-colors"
+              className="inline-flex items-center gap-1 text-teal-800 font-bold hover:text-teal-950 hover:underline transition-colors rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
             >
               <span>Crear cuenta</span>
-              <IconChevronRight className="w-3.5 h-3.5" />
+              <IconChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
             </Link>
           </div>
         </div>
 
         {/* Bottom micro-footer */}
-        <div className="w-full max-w-md mx-auto pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-muted/70">
+        <div className="w-full max-w-md mx-auto pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-600">
           <span>Convivo © 2026 · Chile</span>
           <div className="flex items-center gap-3">
-            <Link to="/privacidad" viewTransition className="hover:text-text">
+            <Link
+              to="/privacidad"
+              viewTransition
+              className="hover:text-slate-900 rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
+            >
               Privacidad
             </Link>
-            <span>·</span>
-            <Link to="/terminos" viewTransition className="hover:text-text">
+            <span aria-hidden="true">·</span>
+            <Link
+              to="/terminos"
+              viewTransition
+              className="hover:text-slate-900 rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
+            >
               Términos
             </Link>
-            <span>·</span>
-            <Link to="/precios" viewTransition className="hover:text-text">
+            <span aria-hidden="true">·</span>
+            <Link
+              to="/precios"
+              viewTransition
+              className="hover:text-slate-900 rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
+            >
               Planes
             </Link>
           </div>

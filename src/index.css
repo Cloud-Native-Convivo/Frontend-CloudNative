@@ -22,6 +22,11 @@
   --sileo-state-info: #0284c7;
 }
 
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
 /* ── Hero entrance animations ─────────────────────────────────────── */
 @keyframes cvFadeSlideUp {
   from {

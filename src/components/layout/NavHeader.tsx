@@ -19,13 +19,6 @@ const ROLE_BG: Record<Role, string> = {
   comite: "bg-amber-600",
 };
 
-const ROLE_TEXT: Record<Role, string> = {
-  residente: "text-primary",
-  conserje: "text-blue-500",
-  admin: "text-violet-600",
-  comite: "text-amber-600",
-};
-
 interface NavHeaderProps {
   ribbonH: number;
   navH: number;
@@ -35,15 +28,9 @@ interface NavHeaderProps {
     icon: React.ReactElement;
   }[];
   role: Role | null;
-  setRole: (r: Role) => void;
   user: User | null;
   onLogout: () => void;
 }
-
-// Roles elegibles desde el switcher demo (sin login). "residente" queda
-// afuera a propósito: tiene login real por Cognito (cognitoAuth.ts) y no
-// debe poder simularse sin loguearse de verdad.
-const DEMO_ROLES: Role[] = ["conserje", "admin", "comite"];
 
 function UserAvatar({ user }: { user: User }) {
   if (user.avatar) {
@@ -68,90 +55,15 @@ function UserAvatar({ user }: { user: User }) {
   );
 }
 
-function RoleSwitcherDropdown({
-  role,
-  setRole,
-  user,
-  isOpen,
-  onToggle,
-  onClose,
-}: {
-  role: Role | null;
-  setRole: (r: Role) => void;
-  user: User | null;
-  isOpen: boolean;
-  onToggle: () => void;
-  onClose: () => void;
-}) {
-  return (
-    <div className="relative">
-      <button
-        onClick={onToggle}
-        className={`flex items-center gap-[6px] text-[12px] font-bold text-white px-[12px] py-[7px] rounded-[7px] border-none cursor-pointer transition-opacity duration-150 hover:opacity-85 ${role ? ROLE_BG[role] : "bg-muted"}`}
-        title="Cambiar rol (demo)"
-        aria-expanded={isOpen}
-        aria-haspopup="menu"
-      >
-        <span className="text-[10px] opacity-75 font-semibold">ROL:</span>
-        {role ? ROLE_LABELS[role] : "Elegir"}
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          className="w-[10px] h-[10px] opacity-70"
-        >
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
-      </button>
-      {isOpen && (
-        <div className="absolute top-[calc(100%+6px)] right-0 bg-white border border-border rounded-[10px] shadow-[0_4px_20px_rgba(0,0,0,0.1)] p-1 z-[100] min-w-[160px]">
-          <div className="text-[10px] font-bold text-slate-400 tracking-wide px-[12px] pt-[6px] pb-[4px]">
-            Demo · Cambiar rol
-          </div>
-          {DEMO_ROLES.map((r) => (
-            <button
-              key={r}
-              onClick={() => {
-                setRole(r);
-                onClose();
-              }}
-              className={`flex items-center gap-[8px] w-full px-[12px] py-[8px] border-none cursor-pointer rounded-[7px] text-[13px] transition-colors duration-150 hover:bg-slate-50 ${
-                r === role
-                  ? `bg-teal-50 font-bold ${ROLE_TEXT[r]}`
-                  : "bg-transparent font-medium text-text"
-              }`}
-            >
-              <span className={`w-[8px] h-[8px] rounded-full shrink-0 ${ROLE_BG[r]}`} />
-              {ROLE_LABELS[r]}
-            </button>
-          ))}
-          {user && (
-            <div className="border-t border-slate-100 my-1 px-[12px] pt-[4px] pb-[6px]">
-              <p className="text-[11px] text-slate-400 leading-[1.4] m-0">
-                {user.nombre}
-                <br />
-                {user.unidad}
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
 function MobileMenuDropdown({
   isOpen,
   navLinks,
   role,
-  setRole,
   onClose,
 }: {
   isOpen: boolean;
   navLinks: NavHeaderProps["navLinks"];
   role: Role | null;
-  setRole: (r: Role) => void;
   onClose: () => void;
 }) {
   if (!isOpen) return null;
@@ -162,6 +74,7 @@ function MobileMenuDropdown({
           key={l.path}
           to={l.path}
           viewTransition
+          onClick={onClose}
           className={({ isActive }) =>
             `flex items-center gap-[10px] py-[11px] px-[8px] text-[14px] font-medium no-underline border-b border-slate-100 ${
               isActive ? "text-primary" : "text-text"
@@ -171,22 +84,16 @@ function MobileMenuDropdown({
           {l.icon} {l.label}
         </NavLink>
       ))}
-      <div className="mt-2 flex gap-2">
-        {DEMO_ROLES.map((r) => (
-          <button
-            key={r}
-            onClick={() => {
-              setRole(r);
-              onClose();
-            }}
-            className={`flex-1 py-2 px-1 text-[12px] font-bold rounded-lg border-none cursor-pointer ${
-              r === role ? `${ROLE_BG[r]} text-white` : "bg-slate-100 text-muted"
-            }`}
+      {role && (
+        <div className="mt-3 px-2 flex items-center justify-between">
+          <span className="text-[12px] text-muted">Rol:</span>
+          <span
+            className={`text-[11px] font-bold text-white px-[8px] py-[2px] rounded-[6px] ${ROLE_BG[role]}`}
           >
-            {ROLE_LABELS[r]}
-          </button>
-        ))}
-      </div>
+            {ROLE_LABELS[role]}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
@@ -196,13 +103,11 @@ export function NavHeader({
   navH,
   navLinks,
   role,
-  setRole,
   user,
   onLogout,
 }: NavHeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [roleSwitcherOpen, setRoleSwitcherOpen] = useState(false);
   const location = useLocation();
   const isHome = location.pathname === "/";
 
@@ -264,15 +169,14 @@ export function NavHeader({
           {/* Avatar del usuario */}
           {user && <UserAvatar user={user} />}
 
-          {/* Role switcher (demo) */}
-          <RoleSwitcherDropdown
-            role={role}
-            setRole={setRole}
-            user={user}
-            isOpen={roleSwitcherOpen}
-            onToggle={() => setRoleSwitcherOpen((o) => !o)}
-            onClose={() => setRoleSwitcherOpen(false)}
-          />
+          {/* Badge del rol (informativo, sin switcher) */}
+          {role && (
+            <span
+              className={`text-[11px] font-bold text-white px-[8px] py-[3px] rounded-[6px] ${ROLE_BG[role]}`}
+            >
+              {ROLE_LABELS[role]}
+            </span>
+          )}
 
           {user ? (
             <button
@@ -329,7 +233,6 @@ export function NavHeader({
         isOpen={mobileOpen}
         navLinks={navLinks}
         role={role}
-        setRole={setRole}
         onClose={() => setMobileOpen(false)}
       />
     </nav>

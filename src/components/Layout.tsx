@@ -98,7 +98,7 @@ const NAV_LINKS_BY_ROLE: Record<
 };
 
 export default function Layout() {
-  const { role, setRole, user, setUser } = useAuth();
+  const { role, user, setUser } = useAuth();
   const [ribbonVisible, setRibbonVisible] = useState(true);
   const location = useLocation();
   const isHome = location.pathname === "/";
@@ -131,7 +131,6 @@ export default function Layout() {
         navH={NAV_H}
         navLinks={navLinks}
         role={role}
-        setRole={setRole}
         user={user}
         onLogout={() => setUser(null)}
       />

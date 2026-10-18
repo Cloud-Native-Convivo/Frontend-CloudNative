@@ -13,6 +13,8 @@ const userSchema = z.object({
   unidad: z.string(),
   role: z.enum(["residente", "conserje", "admin", "comite"] as const),
   avatar: z.string().optional(),
+  condominioId: z.string().optional(),
+  condominioNombre: z.string().optional(),
 });
 
 function getItem(storage: Storage, key: string): string | null {
@@ -86,3 +88,13 @@ export function clearStoredAuth(): void {
     // ignore
   }
 }
+
+export function getCondominioIdActual(): string {
+  const usuario = getStoredUser();
+  const idRaw =
+    usuario?.condominioId ||
+    (typeof import.meta !== "undefined" && import.meta.env?.VITE_CONDOMINIO_ID) ||
+    "1";
+  return encodeURIComponent(String(idRaw).trim());
+}
+

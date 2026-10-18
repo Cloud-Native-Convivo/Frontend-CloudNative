@@ -1,12 +1,11 @@
 import { fetchConAuth } from "../auth/tokenManager";
+import { getCondominioIdActual } from "../utils/authStorage";
 import type { BackendReserva } from "./espaciosApi";
 
 const rawBffUrl =
   (typeof import.meta !== "undefined" && import.meta.env?.VITE_BFF_URL) ||
   "https://11bwhgfogd.execute-api.us-east-1.amazonaws.com/api/v1";
 const API_BASE_URL = rawBffUrl.replace(/\/espacios-comunes\/?$/, "").replace(/\/+$/, "");
-const CONDOMINIO_ID =
-  (typeof import.meta !== "undefined" && import.meta.env?.VITE_CONDOMINIO_ID) || "1";
 
 // Contrato real de GET /api/v1/panel (TD-26, bff PR #3): agrega reservas
 // (ms-espacios-comunes) y gastos (ms-gastos-comunes). ms-gastos-comunes no
@@ -19,7 +18,7 @@ export interface BackendPanelResponse {
 }
 
 export async function obtenerPanel(): Promise<BackendPanelResponse> {
-  const response = await fetchConAuth(`${API_BASE_URL}/panel?condominioId=${CONDOMINIO_ID}`);
+  const response = await fetchConAuth(`${API_BASE_URL}/panel?condominioId=${getCondominioIdActual()}`);
   if (!response.ok) {
     throw new Error(`Error al obtener panel: HTTP ${response.status}`);
   }

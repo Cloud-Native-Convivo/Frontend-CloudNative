@@ -4,7 +4,8 @@
 // vars VITE_COGNITO_* son placeholders hasta que exista un `terraform apply`
 // real (ver .env.example).
 
-const PKCE_VERIFIER_KEY = "convivo.pkce_verifier";
+export const PKCE_VERIFIER_KEY = "convivo.pkce_verifier";
+export const OAUTH_STATE_KEY = "convivo.oauth_state";
 
 function base64UrlEncodeBytes(bytes: Uint8Array): string {
   let binary = "";
@@ -14,6 +15,18 @@ function base64UrlEncodeBytes(bytes: Uint8Array): string {
 
 export function generateCodeVerifier(): string {
   return base64UrlEncodeBytes(crypto.getRandomValues(new Uint8Array(32)));
+}
+
+export function generateOAuthState(): string {
+  return base64UrlEncodeBytes(crypto.getRandomValues(new Uint8Array(16)));
+}
+
+export function validateAndClearOAuthState(receivedState: string | null): boolean {
+  if (typeof window === "undefined") return false;
+  const stored = sessionStorage.getItem(OAUTH_STATE_KEY);
+  sessionStorage.removeItem(OAUTH_STATE_KEY);
+  if (!stored || !receivedState) return false;
+  return stored === receivedState;
 }
 
 export async function generateCodeChallenge(verifier: string): Promise<string> {
@@ -55,6 +68,9 @@ export async function buildGoogleAuthorizeUrl(): Promise<string> {
   sessionStorage.setItem(PKCE_VERIFIER_KEY, verifier);
   const challenge = await generateCodeChallenge(verifier);
 
+  const state = generateOAuthState();
+  sessionStorage.setItem(OAUTH_STATE_KEY, state);
+
   const params = new URLSearchParams({
     client_id: import.meta.env.VITE_COGNITO_CLIENT_ID,
     response_type: "code",
@@ -64,6 +80,7 @@ export async function buildGoogleAuthorizeUrl(): Promise<string> {
     identity_provider: "Google", // salta el selector propio de Cognito, va directo a Google
     code_challenge: challenge,
     code_challenge_method: "S256",
+    state,
   });
 
   return `https://${import.meta.env.VITE_COGNITO_DOMAIN}/oauth2/authorize?${params.toString()}`;

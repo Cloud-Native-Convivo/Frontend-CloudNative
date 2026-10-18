@@ -12,6 +12,9 @@ import {
   aceptoTerminosVigentes,
   cognitoRegion,
   registrarAceptacionTerminos,
+  OAUTH_STATE_KEY,
+  generateOAuthState,
+  validateAndClearOAuthState,
 } from "@/auth/cognitoAuth";
 
 beforeEach(() => {
@@ -82,7 +85,9 @@ describe("buildGoogleAuthorizeUrl", () => {
     expect(url.searchParams.get("identity_provider")).toBe("Google");
     expect(url.searchParams.get("code_challenge_method")).toBe("S256");
     expect(url.searchParams.get("code_challenge")).toBeTruthy();
+    expect(url.searchParams.get("state")).toBeTruthy();
     expect(sessionStorage.getItem("convivo.pkce_verifier")).toBeTruthy();
+    expect(sessionStorage.getItem(OAUTH_STATE_KEY)).toBe(url.searchParams.get("state"));
   });
 
   it("lanza un error si la configuración de Cognito no está disponible", async () => {
@@ -90,6 +95,28 @@ describe("buildGoogleAuthorizeUrl", () => {
     await expect(buildGoogleAuthorizeUrl()).rejects.toThrow(
       "La configuración de AWS Cognito no está disponible en este entorno.",
     );
+  });
+});
+
+describe("generateOAuthState y validateAndClearOAuthState", () => {
+  it("genera un string aleatorio base64url sin caracteres inseguros", () => {
+    const state = generateOAuthState();
+    expect(state.length).toBeGreaterThanOrEqual(20);
+    expect(state).not.toMatch(/[+/=]/);
+  });
+
+  it("valida exitosamente cuando el state coincide y lo limpia de sessionStorage", () => {
+    sessionStorage.setItem(OAUTH_STATE_KEY, "test-state-123");
+    expect(validateAndClearOAuthState("test-state-123")).toBe(true);
+    expect(sessionStorage.getItem(OAUTH_STATE_KEY)).toBeNull();
+  });
+
+  it("retorna false y limpia storage si el state es null o no coincide", () => {
+    sessionStorage.setItem(OAUTH_STATE_KEY, "test-state-123");
+    expect(validateAndClearOAuthState("wrong-state")).toBe(false);
+    expect(sessionStorage.getItem(OAUTH_STATE_KEY)).toBeNull();
+
+    expect(validateAndClearOAuthState(null)).toBe(false);
   });
 });
 

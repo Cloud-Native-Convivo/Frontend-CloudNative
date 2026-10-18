@@ -39,14 +39,19 @@ export function StepUnit({
     <div className="space-y-4">
       <Field label="Condominio" id="condominioId" error={errors.condominioId}>
         {cargando ? (
-          <div className="text-xs text-muted py-2">Cargando condominios disponibles…</div>
+          <div role="status" aria-live="polite" className="text-xs text-muted py-2">
+            Cargando condominios disponibles…
+          </div>
         ) : errorCarga ? (
-          <div className="p-3 bg-red-50 border border-alert-red rounded-lg space-y-2">
-            <p className="text-xs text-alert-red font-medium">{errorCarga}</p>
+          <div role="alert" className="p-3 bg-red-50 border border-alert-red rounded-lg space-y-2">
+            <p className="text-xs text-alert-red font-medium">
+              <span aria-hidden="true">⚠ </span>
+              {errorCarga}
+            </p>
             <button
               type="button"
               onClick={cargarCondominios}
-              className="text-xs font-bold text-primary hover:underline cursor-pointer"
+              className="inline-flex items-center min-h-[32px] text-xs font-bold text-primary hover:underline cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
             >
               Reintentar
             </button>

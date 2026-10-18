@@ -102,20 +102,25 @@ export default function CompletarRegistro() {
         </div>
 
         {cargando ? (
-          <div className="py-12 text-center text-sm text-muted">Cargando condominios disponibles…</div>
+          <div role="status" aria-live="polite" className="py-12 text-center text-sm text-muted">
+            Cargando condominios disponibles…
+          </div>
         ) : errorCarga ? (
-          <div className="p-4 bg-red-50 border border-alert-red rounded-xl text-center space-y-3">
-            <p className="text-xs text-alert-red font-medium">{errorCarga}</p>
+          <div role="alert" className="p-4 bg-red-50 border border-alert-red rounded-xl text-center space-y-3">
+            <p className="text-xs text-alert-red font-medium">
+              <span aria-hidden="true">⚠ </span>
+              {errorCarga}
+            </p>
             <button
               type="button"
               onClick={cargarCondominios}
-              className="inline-flex px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-accent transition-colors"
+              className="inline-flex items-center justify-center min-h-[36px] px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
               Reintentar
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
             <div>
               <label htmlFor="condominioId" className="block text-xs font-semibold text-text mb-1">
                 Condominio
@@ -126,6 +131,7 @@ export default function CompletarRegistro() {
                 onChange={(e) => setCondominioId(e.target.value)}
                 aria-label="Condominio"
                 aria-invalid={!!errores.condominioId}
+                aria-describedby={errores.condominioId ? "condominioId-error" : undefined}
                 className={inputClass(errores.condominioId)}
               >
                 <option value="">Selecciona tu condominio</option>
@@ -136,7 +142,9 @@ export default function CompletarRegistro() {
                 ))}
               </select>
               {errores.condominioId && (
-                <p className="text-xs text-alert-red mt-1">{errores.condominioId}</p>
+                <p id="condominioId-error" role="alert" className="text-xs text-alert-red mt-1 flex items-center gap-1">
+                  <span aria-hidden="true">⚠</span> {errores.condominioId}
+                </p>
               )}
             </div>
 
@@ -150,6 +158,7 @@ export default function CompletarRegistro() {
                 onChange={(e) => setTorre(e.target.value)}
                 aria-label="Torre"
                 aria-invalid={!!errores.torre}
+                aria-describedby={errores.torre ? "torre-error" : undefined}
                 className={inputClass(errores.torre)}
               >
                 <option value="">Selecciona torre</option>
@@ -157,7 +166,11 @@ export default function CompletarRegistro() {
                 <option value="Torre B">Torre B</option>
                 <option value="Torre C">Torre C</option>
               </select>
-              {errores.torre && <p className="text-xs text-alert-red mt-1">{errores.torre}</p>}
+              {errores.torre && (
+                <p id="torre-error" role="alert" className="text-xs text-alert-red mt-1 flex items-center gap-1">
+                  <span aria-hidden="true">⚠</span> {errores.torre}
+                </p>
+              )}
             </div>
 
             <div>
@@ -170,6 +183,7 @@ export default function CompletarRegistro() {
                 onChange={(e) => setPiso(e.target.value)}
                 aria-label="Piso"
                 aria-invalid={!!errores.piso}
+                aria-describedby={errores.piso ? "piso-error" : undefined}
                 className={inputClass(errores.piso)}
               >
                 <option value="">Selecciona piso</option>
@@ -179,7 +193,11 @@ export default function CompletarRegistro() {
                   </option>
                 ))}
               </select>
-              {errores.piso && <p className="text-xs text-alert-red mt-1">{errores.piso}</p>}
+              {errores.piso && (
+                <p id="piso-error" role="alert" className="text-xs text-alert-red mt-1 flex items-center gap-1">
+                  <span aria-hidden="true">⚠</span> {errores.piso}
+                </p>
+              )}
             </div>
 
             <div>
@@ -194,14 +212,19 @@ export default function CompletarRegistro() {
                 placeholder="Ej: 1204"
                 aria-label="Número de unidad"
                 aria-invalid={!!errores.numero}
+                aria-describedby={errores.numero ? "numero-error" : undefined}
                 className={inputClass(errores.numero)}
               />
-              {errores.numero && <p className="text-xs text-alert-red mt-1">{errores.numero}</p>}
+              {errores.numero && (
+                <p id="numero-error" role="alert" className="text-xs text-alert-red mt-1 flex items-center gap-1">
+                  <span aria-hidden="true">⚠</span> {errores.numero}
+                </p>
+              )}
             </div>
 
             <button
               type="submit"
-              className="w-full mt-2 py-3 bg-primary hover:bg-accent text-white font-bold text-sm rounded-xl transition-colors cursor-pointer shadow-sm"
+              className="w-full mt-2 min-h-[44px] py-3 bg-primary hover:bg-accent text-white font-bold text-sm rounded-xl transition-colors cursor-pointer shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
               Guardar y continuar
             </button>

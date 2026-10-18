@@ -68,7 +68,12 @@ function MobileMenuDropdown({
 }) {
   if (!isOpen) return null;
   return (
-    <div className="absolute top-full inset-x-0 bg-white border-b border-border px-4 pt-2 pb-4 z-[49]">
+    <div
+      id="mobile-navigation"
+      role="region"
+      aria-label="Navegación móvil"
+      className="absolute top-full inset-x-0 bg-white border-b border-border px-4 pt-2 pb-4 z-[49]"
+    >
       {navLinks.map((l) => (
         <NavLink
           key={l.path}
@@ -172,6 +177,8 @@ export function NavHeader({
           {/* Badge del rol (informativo, sin switcher) */}
           {role && (
             <span
+              role="status"
+              aria-label={`Rol activo: ${ROLE_LABELS[role]}`}
               className={`text-[11px] font-bold text-white px-[8px] py-[3px] rounded-[6px] ${ROLE_BG[role]}`}
             >
               {ROLE_LABELS[role]}
@@ -216,9 +223,10 @@ export function NavHeader({
         <button
           className="nav-burger bg-transparent border-none cursor-pointer p-1 text-text hidden"
           aria-label={mobileOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
+          aria-controls="mobile-navigation"
           onClick={() => setMobileOpen((o) => !o)}
           aria-expanded={mobileOpen}
-          aria-haspopup="menu"
+          aria-haspopup="true"
         >
           {mobileOpen ? (
             <IconX className="w-[22px] h-[22px]" />

@@ -1,6 +1,6 @@
 import { render, screen, act } from "@testing-library/react";
 import { describe, expect, it, beforeEach } from "vitest";
-import { AuthProvider } from "@/hooks/AuthProvider";
+import { AuthProvider } from "@/context/AuthProvider";
 import { useAuth } from "@/hooks/useAuth";
 
 function TestConsumer() {

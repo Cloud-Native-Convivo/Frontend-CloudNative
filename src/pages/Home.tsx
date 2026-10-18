@@ -265,6 +265,8 @@ const METRICS = [
 
 function HeroSection() {
   const [previewMode, setPreviewMode] = useState<"residente" | "comite">("residente");
+  const { user } = useAuth();
+  const targetGastos = user ? "/gastos" : "/login";
 
   return (
     <section className="relative min-h-[92vh] flex items-center overflow-hidden bg-text">
@@ -422,7 +424,7 @@ function HeroSection() {
                         $65.000 CLP
                       </div>
                       <Link
-                        to="/gastos"
+                        to={targetGastos}
                         className="text-xs text-primary-on-dark font-semibold underline underline-offset-2 hover:text-white"
                       >
                         Pagar en línea →

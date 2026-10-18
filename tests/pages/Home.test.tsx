@@ -40,6 +40,7 @@ describe("Home Page (Editorial Residencial)", () => {
     // Default: Vista Residente
     expect(screen.getByText(/Quincho Los Aromos/i)).toBeInTheDocument();
     expect(screen.getByText(/\$65\.000 CLP/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Pagar en línea →/i })).toHaveAttribute("href", "/login");
 
     // Switch to Vista Comité
     const comiteBtn = screen.getByRole("button", { name: /^Comité$/i });

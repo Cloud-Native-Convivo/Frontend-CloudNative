@@ -46,4 +46,36 @@ describe("ProtectedRoute", () => {
     expect(screen.queryByText("contenido protegido")).not.toBeInTheDocument();
     expect(screen.getByText("inicio")).toBeInTheDocument();
   });
+
+  it("redirige a la ruta personalizada (ej. /login) cuando se especifica redirectTo y no hay sesión", () => {
+    render(
+      <AuthContext.Provider
+        value={{
+          user: null,
+          role: null,
+          setRole: () => {},
+          setUser: () => {},
+        }}
+      >
+        <MemoryRouter initialEntries={["/gastos"]}>
+          <Routes>
+            <Route path="/login" element={<p>pantalla de login</p>} />
+            <Route
+              element={
+                <ProtectedRoute
+                  allowedRoles={["residente", "admin", "conserje", "comite"]}
+                  redirectTo="/login"
+                />
+              }
+            >
+              <Route path="/gastos" element={<p>gastos comunes</p>} />
+            </Route>
+          </Routes>
+        </MemoryRouter>
+      </AuthContext.Provider>,
+    );
+
+    expect(screen.queryByText("gastos comunes")).not.toBeInTheDocument();
+    expect(screen.getByText("pantalla de login")).toBeInTheDocument();
+  });
 });

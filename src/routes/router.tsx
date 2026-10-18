@@ -67,7 +67,7 @@ const router = createBrowserRouter(
 
         // Residente only
         {
-          element: <ProtectedRoute allowedRoles={["residente"]} />,
+          element: <ProtectedRoute allowedRoles={["residente"]} redirectTo="/login" />,
           children: [
             // recharts es pesada — lazy-load para no meterla en el chunk principal.
             {
@@ -82,17 +82,36 @@ const router = createBrowserRouter(
 
         // All authenticated roles
         {
-          path: "espacios",
-          lazy: () => import("../pages/EspaciosComunes").then((m) => ({ Component: m.default })),
-        },
-        {
-          path: "gastos",
-          lazy: () => import("../pages/Gastos").then((m) => ({ Component: m.default })),
+          element: (
+            <ProtectedRoute
+              allowedRoles={["residente", "admin", "conserje", "comite"]}
+              redirectTo="/login"
+            />
+          ),
+          children: [
+            {
+              path: "espacios",
+              lazy: () =>
+                import("../pages/EspaciosComunes").then((m) => ({ Component: m.default })),
+            },
+            {
+              path: "gastos",
+              lazy: () => import("../pages/Gastos").then((m) => ({ Component: m.default })),
+            },
+            {
+              path: "visitas",
+              lazy: () => import("../pages/Visitas").then((m) => ({ Component: m.default })),
+            },
+            {
+              path: "incidentes",
+              lazy: () => import("../pages/Incidentes").then((m) => ({ Component: m.default })),
+            },
+          ],
         },
 
         // Residente + Admin
         {
-          element: <ProtectedRoute allowedRoles={["residente", "admin"]} />,
+          element: <ProtectedRoute allowedRoles={["residente", "admin"]} redirectTo="/login" />,
           children: [
             {
               path: "reservas",
@@ -101,21 +120,11 @@ const router = createBrowserRouter(
           ],
         },
 
-        // Visitas: all roles — content adapts per role
-        {
-          path: "visitas",
-          lazy: () => import("../pages/Visitas").then((m) => ({ Component: m.default })),
-        },
-
-        // Incidentes: all roles — residente reports, conserje/admin manage
-        {
-          path: "incidentes",
-          lazy: () => import("../pages/Incidentes").then((m) => ({ Component: m.default })),
-        },
-
         // Conserje + Admin + Comité
         {
-          element: <ProtectedRoute allowedRoles={["conserje", "admin", "comite"]} />,
+          element: (
+            <ProtectedRoute allowedRoles={["conserje", "admin", "comite"]} redirectTo="/login" />
+          ),
           children: [
             {
               path: "registro",
@@ -126,7 +135,7 @@ const router = createBrowserRouter(
 
         // Admin only
         {
-          element: <ProtectedRoute allowedRoles={["admin"]} />,
+          element: <ProtectedRoute allowedRoles={["admin"]} redirectTo="/login" />,
           children: [
             // recharts es pesada — lazy-load para no meterla en el chunk principal.
             {

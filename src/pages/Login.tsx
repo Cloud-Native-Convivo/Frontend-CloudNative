@@ -1,6 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
-import { IconGoogle } from "../components/icons/Icons";
+import {
+  IconGoogle,
+  IconEye,
+  IconEyeOff,
+  IconLock,
+  IconMail,
+  IconShield,
+  IconCheck,
+  IconChevronRight,
+} from "../components/icons/Icons";
 import { useAuth } from "../hooks/useAuth";
 import { rutaPrincipalPorRol } from "../auth/sesion";
 import { iniciarSesionResidenteMock } from "../auth/mockAuth";
@@ -22,11 +31,16 @@ interface FieldError {
 
 function validate(form: FormState): FieldError {
   const errors: FieldError = {};
-  if (!form.email.trim()) errors.email = "El correo es obligatorio.";
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+  if (!form.email.trim()) {
+    errors.email = "El correo es obligatorio.";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
     errors.email = "Ingresa un correo válido.";
-  if (!form.password) errors.password = "La contraseña es obligatoria.";
-  else if (form.password.length < 6) errors.password = "Mínimo 6 caracteres.";
+  }
+  if (!form.password) {
+    errors.password = "La contraseña es obligatoria.";
+  } else if (form.password.length < 6) {
+    errors.password = "Mínimo 6 caracteres.";
+  }
   return errors;
 }
 
@@ -35,6 +49,8 @@ export default function Login() {
   const { user, setUser } = useAuth();
   const [form, setForm] = useState<FormState>({ email: "", password: "" });
   const [errors, setErrors] = useState<FieldError>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [isConnectingGoogle, setIsConnectingGoogle] = useState(false);
   const [isConnectingMock, setIsConnectingMock] = useState(false);
   const submitted = useRef(false);
@@ -52,6 +68,11 @@ export default function Login() {
     }
   }, [user, navigate]);
 
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 15);
+    return () => clearTimeout(t);
+  }, []);
+
   async function handleMockLogin() {
     setIsConnectingMock(true);
     try {
@@ -63,11 +84,6 @@ export default function Login() {
       setIsConnectingMock(false);
     }
   }
-
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 10);
-    return () => clearTimeout(t);
-  }, []);
 
   async function handleGoogleLogin() {
     setIsConnectingGoogle(true);
@@ -101,181 +117,426 @@ export default function Login() {
     const errs = validate(form);
     setErrors(errs);
     if (Object.keys(errs).length === 0) {
-      // auth logic goes here
+      // In a production environment with direct username/password SRP
     }
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Brand panel */}
-      <div
-        className={`hidden lg:flex flex-col justify-between w-105 shrink-0 bg-text p-12 transition-all duration-300 ease-out motion-reduce:transition-none ${mounted ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`}
+    <div className="min-h-screen flex flex-col lg:flex-row bg-[#FAFAF7]">
+      {/* ── Left Hero Architectural Showcase ─────────────────────────────── */}
+      <aside
+        aria-label="Panel institucional de Convivo"
+        className={`relative hidden lg:flex flex-col justify-between w-full lg:w-[460px] xl:w-[540px] shrink-0 bg-[#001714] text-white p-10 xl:p-14 overflow-hidden transition-all duration-500 ease-out ${
+          mounted ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6"
+        }`}
       >
-        <div>
-          <span className="text-primary font-display text-2xl">Convivo</span>
-        </div>
-        <div>
-          <h1 className="font-display text-white text-4xl leading-tight mb-4">
-            Tu condominio,
-            <br />
-            conectado.
-          </h1>
-          <p className="text-white/60 text-base leading-relaxed">
-            Plataforma digital de gestión para comunidades residenciales en Chile.
-          </p>
-        </div>
-        <p className="text-xs text-white/50">Residentes ingresan con su cuenta de Google.</p>
-      </div>
+        {/* Ambient atmospheric layers */}
+        <div
+          className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-emerald-500/20 blur-[90px] pointer-events-none"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute top-1/2 -right-20 w-96 h-96 rounded-full bg-teal-600/15 blur-[110px] pointer-events-none"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute -bottom-24 left-1/4 w-72 h-72 rounded-full bg-amber-500/10 blur-[80px] pointer-events-none"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.04] bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px]"
+          aria-hidden="true"
+        />
 
-      {/* Form panel */}
-      <div
-        className={`flex-1 flex items-center justify-center p-6 bg-white transition-all duration-300 delay-100 ease-out motion-reduce:transition-none ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-      >
-        <div className="w-full max-w-sm">
-          {/* Mobile logo */}
-          <div className="lg:hidden mb-8 text-center">
-            <span className="text-primary font-display text-2xl">Convivo</span>
+        {/* Top: Logo & System status beacon */}
+        <div className="relative z-10 flex items-center justify-between">
+          <Link
+            to="/"
+            viewTransition
+            className="group inline-flex items-center gap-3 no-underline text-white"
+            aria-label="Volver a la portada de Convivo"
+          >
+            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center font-display font-bold text-white text-lg shadow-[0_4px_16px_rgba(13,148,136,0.35)] transition-transform group-hover:scale-105">
+              C
+            </div>
+            <div className="flex flex-col">
+              <span className="font-display text-2xl text-white tracking-tight leading-none">
+                Convivo
+              </span>
+              <span className="text-[10px] uppercase tracking-widest text-emerald-400/80 font-semibold mt-1">
+                Portal Residencial
+              </span>
+            </div>
+          </Link>
+
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-[11px] font-medium text-emerald-300 backdrop-blur-sm">
+            <span
+              className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"
+              aria-hidden="true"
+            />
+            <span>Conserjería en línea</span>
+          </div>
+        </div>
+
+        {/* Center: Editorial headline, photography vignette & quote */}
+        <div className="relative z-10 my-10 space-y-8">
+          <div>
+            <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-400/90 mb-3">
+              <span className="w-4 h-px bg-emerald-400/80" />
+              <span>Copropiedad Inteligente</span>
+            </div>
+            <h1 className="font-display text-4xl xl:text-5xl text-white leading-[1.12] tracking-tight mb-4">
+              Tu condominio,
+              <br />
+              <span className="text-primary-on-dark italic font-normal">en sintonía digital.</span>
+            </h1>
+            <p className="text-white/70 text-sm xl:text-base leading-relaxed max-w-md">
+              Gestiona gastos comunes con trazabilidad bancaria, reserva quinchos y autoriza visitas
+              desde un acceso seguro y unificado.
+            </p>
           </div>
 
-          <h2 className="font-display text-text text-3xl mb-1">Bienvenido</h2>
-          <p className="text-muted text-sm mb-8">Ingresa a tu cuenta de residente</p>
+          {/* Testimonial & Architectural card */}
+          <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-5 backdrop-blur-md relative overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-8 h-8 rounded-lg bg-emerald-900/60 border border-emerald-400/30 flex items-center justify-center text-xs font-bold text-emerald-300">
+                PK
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-white">Edificio Parque Kennedy</p>
+                <p className="text-[11px] text-white/50">Las Condes · 142 Unidades</p>
+              </div>
+            </div>
+            <p className="text-xs text-white/80 italic leading-relaxed mb-3">
+              «La transparencia en los gastos y la agilidad para emitir invitaciones QR
+              transformaron por completo la convivencia de nuestra comunidad.»
+            </p>
+            <div className="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-white/50">
+              <span>Loreto Valenzuela · Comité</span>
+              <span className="text-emerald-400 font-semibold flex items-center gap-1">
+                <IconCheck className="w-3.5 h-3.5" /> Verificado
+              </span>
+            </div>
+          </div>
+        </div>
 
-          <form onSubmit={handleSubmit} noValidate className="space-y-5">
-            {/* Email */}
+        {/* Bottom: Security standards assurance */}
+        <div className="relative z-10 pt-6 border-t border-white/10 space-y-3">
+          <div className="flex flex-wrap items-center gap-4 text-xs text-white/60">
+            <span className="flex items-center gap-1.5 text-white/80">
+              <IconShield className="w-4 h-4 text-emerald-400" />
+              <span>Cognito PKCE</span>
+            </span>
+            <span className="w-1 h-1 rounded-full bg-white/20" />
+            <span>Ley 21.442 Chile</span>
+            <span className="w-1 h-1 rounded-full bg-white/20" />
+            <span>AWS us-east-1</span>
+          </div>
+          <p className="text-[11px] text-white/40 leading-snug">
+            Cifrado de extremo a extremo conforme al marco normativo de copropiedad inmobiliaria.
+          </p>
+        </div>
+      </aside>
+
+      {/* ── Right Access Concierge Form ──────────────────────────────────── */}
+      <main
+        className={`flex-1 flex flex-col justify-between p-6 sm:p-10 lg:p-14 transition-all duration-500 delay-100 ease-out ${
+          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+        }`}
+      >
+        {/* Top utility bar */}
+        <div className="flex items-center justify-between w-full max-w-md mx-auto">
+          {/* Mobile Logo */}
+          <Link
+            to="/"
+            viewTransition
+            className="lg:hidden inline-flex items-center gap-2.5 no-underline text-text"
+            aria-label="Volver a la portada de Convivo"
+          >
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-display font-bold text-white text-base shadow-sm">
+              C
+            </div>
+            <span className="font-display text-xl text-text font-bold">Convivo</span>
+          </Link>
+
+          <Link
+            to="/"
+            viewTransition
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-muted hover:text-text transition-colors group"
+          >
+            <span className="transition-transform group-hover:-translate-x-1" aria-hidden="true">
+              ←
+            </span>
+            <span>Volver al sitio</span>
+          </Link>
+
+          <span className="text-xs text-muted">
+            ¿Necesitas ayuda?{" "}
+            <a
+              href="mailto:soporte@convivo.cl"
+              className="text-primary font-medium hover:underline"
+            >
+              Mesa de ayuda
+            </a>
+          </span>
+        </div>
+
+        {/* Center Form Section */}
+        <div className="w-full max-w-md mx-auto my-auto py-8">
+          {/* Header */}
+          <div className="mb-8">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 text-[11px] font-bold uppercase tracking-wider mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+              <span>Acceso de Residentes</span>
+            </div>
+            <h2 className="font-display text-text text-3xl sm:text-4xl tracking-tight mb-2">
+              Bienvenido
+            </h2>
+            <p className="text-muted text-sm sm:text-base leading-relaxed">
+              Ingresa con tu cuenta de residente para administrar tu departamento y espacios
+              comunes.
+            </p>
+          </div>
+
+          {/* Primary Action: Google SSO button */}
+          <div className="space-y-3">
+            <button
+              type="button"
+              onClick={handleGoogleLogin}
+              disabled={isConnectingGoogle}
+              aria-busy={isConnectingGoogle}
+              className="w-full relative group flex items-center justify-center gap-3 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-text font-semibold text-sm py-3.5 px-4 rounded-xl shadow-xs hover:shadow-md transition-all focus:outline-hidden focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+            >
+              {isConnectingGoogle ? (
+                <div
+                  className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"
+                  aria-hidden="true"
+                />
+              ) : (
+                <IconGoogle className="w-5 h-5 shrink-0" />
+              )}
+              <span className="text-sm font-semibold text-slate-800">
+                {isConnectingGoogle ? "Conectando con Google…" : "Continuar con Google"}
+              </span>
+            </button>
+            <p className="text-center text-[11px] text-muted flex items-center justify-center gap-1.5">
+              <IconShield className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Acceso seguro federado con Google y AWS Cognito PKCE</span>
+            </p>
+          </div>
+
+          {/* Editorial divider */}
+          <div className="my-7 flex items-center gap-3">
+            <div className="h-px flex-1 bg-border" />
+            <span className="text-[11px] font-bold uppercase tracking-widest text-muted/70">
+              o con credenciales
+            </span>
+            <div className="h-px flex-1 bg-border" />
+          </div>
+
+          {/* Email / Password Form */}
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
+            {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-text mb-1.5">
+              <label
+                htmlFor="email"
+                className="block text-xs font-bold text-text uppercase tracking-wider mb-1.5"
+              >
                 Correo electrónico
               </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                value={form.email}
-                onChange={handleChange}
-                aria-describedby={errors.email ? "email-error" : undefined}
-                aria-invalid={!!errors.email}
-                className={`w-full px-3.5 py-2.5 rounded-lg border text-sm text-text placeholder:text-muted/60 outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 ${
-                  errors.email ? "border-alert-red bg-red-50" : "border-border bg-white"
-                }`}
-                placeholder="nombre@correo.cl"
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted/60">
+                  <IconMail className="w-4 h-4" />
+                </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  aria-describedby={errors.email ? "email-error" : undefined}
+                  aria-invalid={!!errors.email}
+                  className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl border text-sm text-text placeholder:text-muted/50 outline-hidden transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white ${
+                    errors.email ? "border-alert-red bg-red-50/50" : "border-slate-200"
+                  }`}
+                  placeholder="ejemplo@micondominio.cl"
+                />
+              </div>
               {errors.email && (
                 <p
                   id="email-error"
                   role="alert"
-                  className="mt-1.5 text-xs text-alert-red flex items-center gap-1"
+                  className="mt-1.5 text-xs text-alert-red flex items-center gap-1 font-medium"
                 >
                   <span aria-hidden="true">⚠</span> {errors.email}
                 </p>
               )}
             </div>
 
-            {/* Password */}
+            {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-text mb-1.5">
-                Contraseña
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                value={form.password}
-                onChange={handleChange}
-                aria-describedby={errors.password ? "password-error" : undefined}
-                aria-invalid={!!errors.password}
-                className={`w-full px-3.5 py-2.5 rounded-lg border text-sm text-text placeholder:text-muted/60 outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 ${
-                  errors.password ? "border-alert-red bg-red-50" : "border-border bg-white"
-                }`}
-                placeholder="••••••••"
-              />
+              <div className="flex items-center justify-between mb-1.5">
+                <label
+                  htmlFor="password"
+                  className="block text-xs font-bold text-text uppercase tracking-wider"
+                >
+                  Contraseña
+                </label>
+                <Link
+                  to="/auth/recuperar-clave"
+                  className="text-xs text-primary font-medium hover:text-accent hover:underline"
+                >
+                  ¿Olvidaste tu clave?
+                </Link>
+              </div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-muted/60">
+                  <IconLock className="w-4 h-4" />
+                </div>
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  value={form.password}
+                  onChange={handleChange}
+                  aria-describedby={errors.password ? "password-error" : undefined}
+                  aria-invalid={!!errors.password}
+                  className={`w-full pl-10 pr-11 py-2.5 rounded-xl border text-sm text-text placeholder:text-muted/50 outline-hidden transition-all focus:border-primary focus:ring-2 focus:ring-primary/20 bg-white ${
+                    errors.password ? "border-alert-red bg-red-50/50" : "border-slate-200"
+                  }`}
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-muted/60 hover:text-text cursor-pointer transition-colors"
+                  aria-label={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
+                >
+                  {showPassword ? (
+                    <IconEyeOff className="w-4 h-4" />
+                  ) : (
+                    <IconEye className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
               {errors.password && (
                 <p
                   id="password-error"
                   role="alert"
-                  className="mt-1.5 text-xs text-alert-red flex items-center gap-1"
+                  className="mt-1.5 text-xs text-alert-red flex items-center gap-1 font-medium"
                 >
                   <span aria-hidden="true">⚠</span> {errors.password}
                 </p>
               )}
             </div>
 
+            {/* Remember Me Checkbox */}
+            <div className="flex items-center justify-between pt-1">
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded-sm border-slate-300 text-primary focus:ring-primary/20 accent-primary cursor-pointer"
+                />
+                <span className="text-xs text-muted">Recordar mi dispositivo</span>
+              </label>
+            </div>
+
+            {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-primary hover:bg-accent text-white font-bold text-sm py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              className="w-full bg-primary hover:bg-accent text-white font-bold text-sm py-3.5 rounded-xl shadow-[0_4px_16px_rgba(13,148,136,0.25)] hover:shadow-[0_6px_20px_rgba(13,148,136,0.35)] transition-all cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
               Ingresar
             </button>
           </form>
 
-          <div className="mt-5 flex items-center gap-3">
-            <div className="h-px flex-1 bg-border" />
-            <span className="text-xs text-muted">o continúa con</span>
-            <div className="h-px flex-1 bg-border" />
-          </div>
-
-          <button
-            type="button"
-            onClick={handleGoogleLogin}
-            disabled={isConnectingGoogle}
-            aria-busy={isConnectingGoogle}
-            className="mt-5 w-full flex items-center justify-center gap-2 bg-white border border-border text-text font-semibold text-sm py-3 rounded-lg transition-colors hover:bg-primary/5 hover:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            <IconGoogle className="w-4 h-4" />
-            {isConnectingGoogle ? "Conectando con Google…" : "Continuar con Google"}
-          </button>
-
+          {/* Dev Mode Local Mock Login */}
           {import.meta.env.DEV && (
-            <div className="mt-4 pt-4 border-t border-dashed border-border text-center">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-teal-600 block mb-2">
-                Entorno Local de Pruebas
-              </span>
+            <div className="mt-6 p-4 rounded-xl bg-slate-900 border border-slate-800 text-left">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-teal-400 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
+                  Entorno Local de Pruebas
+                </span>
+                <span className="text-[10px] text-slate-400 font-mono">DEV MODE</span>
+              </div>
+              <p className="text-xs text-slate-300 mb-3 leading-relaxed">
+                Inicia sesión al instante con un perfil simulado de residente activo sin conectar a
+                Cognito.
+              </p>
               <button
                 type="button"
                 onClick={handleMockLogin}
                 disabled={isConnectingMock}
-                className="w-full bg-slate-900 hover:bg-slate-800 text-teal-300 font-semibold text-xs py-2.5 px-3 rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
+                className="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs py-2.5 px-3 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
               >
                 <span>⚡</span>
-                {isConnectingMock
-                  ? "Iniciando sesión demo…"
-                  : "Ingresar como Residente Demo (Local)"}
+                <span>
+                  {isConnectingMock
+                    ? "Iniciando sesión demo…"
+                    : "Ingresar como Residente Demo (Local)"}
+                </span>
               </button>
             </div>
           )}
-          <p className="mt-3 text-center text-xs leading-relaxed text-muted">
+
+          {/* Legal disclaimer */}
+          <p className="mt-6 text-center text-xs leading-relaxed text-muted">
             Al continuar te pediremos aceptar los{" "}
-            <Link to="/terminos" className="text-primary hover:text-accent">
+            <Link
+              to="/terminos"
+              viewTransition
+              className="text-primary hover:text-accent font-medium underline underline-offset-2"
+            >
               Términos de uso
             </Link>{" "}
             y la{" "}
-            <Link to="/privacidad" className="text-primary hover:text-accent">
+            <Link
+              to="/privacidad"
+              viewTransition
+              className="text-primary hover:text-accent font-medium underline underline-offset-2"
+            >
               Política de privacidad
             </Link>
             .
           </p>
 
-          <p className="mt-6 text-center text-sm text-muted">
-            ¿Eres nuevo?{" "}
+          {/* Registration link */}
+          <div className="mt-6 pt-5 border-t border-border flex items-center justify-between text-xs">
+            <span className="text-muted">¿Eres nuevo en tu edificio?</span>
             <Link
               to="/crear-cuenta"
-              className="text-primary font-semibold hover:text-accent transition-colors"
+              viewTransition
+              className="inline-flex items-center gap-1 text-primary font-bold hover:text-accent transition-colors"
             >
-              Crear cuenta
-            </Link>
-          </p>
-
-          <div className="mt-8 pt-6 border-t border-border">
-            <Link
-              to="/"
-              className="text-xs text-muted hover:text-text transition-colors flex items-center justify-center gap-1"
-            >
-              <span aria-hidden="true">←</span> Volver al sitio
+              <span>Crear cuenta</span>
+              <IconChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
-      </div>
+
+        {/* Bottom micro-footer */}
+        <div className="w-full max-w-md mx-auto pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-muted/70">
+          <span>Convivo © 2026 · Chile</span>
+          <div className="flex items-center gap-3">
+            <Link to="/privacidad" viewTransition className="hover:text-text">
+              Privacidad
+            </Link>
+            <span>·</span>
+            <Link to="/terminos" viewTransition className="hover:text-text">
+              Términos
+            </Link>
+            <span>·</span>
+            <Link to="/precios" viewTransition className="hover:text-text">
+              Planes
+            </Link>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

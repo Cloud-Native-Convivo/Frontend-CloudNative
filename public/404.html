@@ -2,62 +2,637 @@
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <title>Convivo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>404 — Unidad no encontrada | Convivo</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gloock&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <script>
-      // GitHub Pages sirve este archivo para cualquier ruta que no sea un
-      // archivo físico (ej. /login, /auth/callback) — reescribe la URL en
-      // un query param y redirige a la raíz, donde index.html la decodifica
-      // y restaura antes de que React Router monte. Técnica estándar:
-      // https://github.com/rafgraph/spa-github-pages
-      var pathSegmentsToKeep = 1; // "/Frontend-CloudNative" (project page)
+      // Redirección SPA para GitHub Pages (rafgraph/spa-github-pages):
+      // Si la URL corresponde a una ruta interna (ej. /gastos, /mi-dashboard),
+      // reescribe en un query param y redirige a la raíz para que React Router la monte.
+      // Si la URL se carga directamente como 404.html o trae ?no_redirect=1, se preserva la vista editorial.
       var l = window.location;
-      l.replace(
-        l.protocol +
-          "//" +
-          l.hostname +
-          (l.port ? ":" + l.port : "") +
-          l.pathname.split("/").slice(0, 1 + pathSegmentsToKeep).join("/") +
-          "/?/" +
-          l.pathname
-            .slice(1)
-            .split("/")
-            .slice(pathSegmentsToKeep)
-            .join("/")
-            .replace(/&/g, "~and~") +
-          (l.search ? "&" + l.search.slice(1).replace(/&/g, "~and~") : "") +
-          l.hash,
-      );
+      var isDirect404 =
+        l.pathname.endsWith("/404.html") ||
+        l.pathname.endsWith("/404") ||
+        l.search.indexOf("no_redirect") !== -1;
+      if (!isDirect404) {
+        var pathSegmentsToKeep = l.hostname.indexOf("github.io") !== -1 ? 1 : 0;
+        l.replace(
+          l.protocol +
+            "//" +
+            l.hostname +
+            (l.port ? ":" + l.port : "") +
+            l.pathname.split("/").slice(0, 1 + pathSegmentsToKeep).join("/") +
+            "/?/" +
+            l.pathname
+              .slice(1)
+              .split("/")
+              .slice(pathSegmentsToKeep)
+              .join("/")
+              .replace(/&/g, "~and~") +
+            (l.search ? "&" + l.search.slice(1).replace(/&/g, "~and~") : "") +
+            l.hash,
+        );
+      }
     </script>
-  </head>
-  <body>
-    <!-- Visible solo el instante previo al redirect (o si JS está desactivado).
-         Estilos inline: este archivo es passthrough estático de public/, no
-         pasa por Vite ni Tailwind. Colores de src/index.css. -->
     <style>
-      body {
+      :root {
+        --color-bg-base: #001714;
+        --color-bg-surface: #002621;
+        --color-primary: #0d9488;
+        --color-primary-light: #2dd4bf;
+        --color-primary-glow: rgba(13, 148, 136, 0.35);
+        --color-amber: #f59e0b;
+        --color-amber-light: #fbbf24;
+        --color-amber-glow: rgba(245, 158, 11, 0.28);
+        --color-text-main: #ffffff;
+        --color-text-muted: rgba(255, 255, 255, 0.72);
+        --color-border: rgba(255, 255, 255, 0.14);
+        --color-border-focus: rgba(245, 158, 11, 0.5);
+      }
+
+      * {
+        box-sizing: border-box;
         margin: 0;
+        padding: 0;
+      }
+
+      body {
         min-height: 100vh;
+        background-color: var(--color-bg-base);
+        background-image:
+          radial-gradient(circle at 85% 15%, var(--color-amber-glow) 0%, transparent 45%),
+          radial-gradient(circle at 15% 85%, var(--color-primary-glow) 0%, transparent 50%),
+          linear-gradient(135deg, #00120f 0%, #00221d 45%, #001815 100%);
+        color: var(--color-text-main);
+        font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
         display: flex;
         flex-direction: column;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Subtle architectural grid pattern overlay */
+      body::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-size: 40px 40px;
+        background-image:
+          linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .container {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px 24px 48px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ─── Header ───────────────────────────────────────── */
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--color-border);
+        margin-bottom: 48px;
+      }
+
+      .logo-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        color: var(--color-text-main);
+      }
+
+      .logo-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--color-primary) 0%, #047857 100%);
+        display: flex;
         align-items: center;
         justify-content: center;
-        gap: 12px;
-        background: #ffffff;
-        color: #00201b;
-        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        box-shadow: 0 4px 14px rgba(13, 148, 136, 0.4);
+      }
+
+      .logo-icon svg {
+        width: 18px;
+        height: 18px;
+        fill: white;
+      }
+
+      .logo-text {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .logo-title {
+        font-family: "Gloock", Georgia, serif;
+        font-size: 20px;
+        line-height: 1.1;
+        letter-spacing: -0.01em;
+      }
+
+      .logo-subtitle {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--color-primary-light);
+        font-weight: 600;
+      }
+
+      .header-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgba(245, 158, 11, 0.12);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        color: var(--color-amber-light);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .pulse-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--color-amber);
+        position: relative;
+      }
+
+      .pulse-dot::after {
+        content: "";
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        background-color: var(--color-amber);
+        opacity: 0.5;
+        animation: pulse 2s infinite ease-out;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(0.8);
+          opacity: 0.8;
+        }
+        100% {
+          transform: scale(2.4);
+          opacity: 0;
+        }
+      }
+
+      /* ─── Main Content Grid ────────────────────────────── */
+      main {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 40px;
+        align-items: center;
+      }
+
+      @media (min-width: 960px) {
+        main {
+          grid-template-columns: 1.15fr 460px;
+          gap: 60px;
+        }
+      }
+
+      /* ─── Left Column (Editorial Content) ──────────────── */
+      .editorial-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: var(--color-amber-light);
+        margin-bottom: 16px;
+      }
+
+      .editorial-badge::before {
+        content: "◆";
+        font-size: 9px;
+        color: var(--color-amber);
+      }
+
+      h1.headline {
+        font-family: "Gloock", Georgia, serif;
+        font-size: clamp(34px, 4.4vw, 56px);
+        line-height: 1.08;
+        font-weight: 400;
+        letter-spacing: -0.02em;
+        margin-bottom: 20px;
+        color: var(--color-text-main);
+      }
+
+      .headline .fire-text {
+        font-family: "Gloock", Georgia, serif;
+        font-style: italic;
+        color: var(--color-amber-light);
+        text-shadow: 0 0 25px rgba(245, 158, 11, 0.4);
+        display: block;
+      }
+
+      @media (min-width: 600px) {
+        .headline .fire-text {
+          display: inline;
+        }
+      }
+
+      p.narrative {
+        font-size: clamp(15px, 1.3vw, 17px);
+        line-height: 1.7;
+        color: var(--color-text-muted);
+        font-weight: 300;
+        max-width: 580px;
+        margin-bottom: 32px;
+      }
+
+      /* Incident Card Details */
+      .incident-card {
+        background: rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--color-border);
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-bottom: 36px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 16px;
+      }
+
+      .incident-stat {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .incident-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: rgba(255, 255, 255, 0.5);
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      .incident-value {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--color-text-main);
+      }
+
+      .incident-value.highlight {
+        color: var(--color-amber-light);
+      }
+
+      /* Buttons & Actions */
+      .actions-cluster {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        align-items: center;
+        margin-bottom: 28px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 14px 26px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        cursor: pointer;
+        border: none;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--color-primary) 0%, #0f766e 100%);
+        color: white;
+        box-shadow: 0 10px 24px rgba(13, 148, 136, 0.35);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 30px rgba(13, 148, 136, 0.45);
+        background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--color-text-main);
+        border: 1px solid var(--color-border);
+        backdrop-filter: blur(10px);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.14);
+        border-color: rgba(255, 255, 255, 0.28);
+        transform: translateY(-1px);
+      }
+
+      /* Quick Links Pills */
+      .quick-links {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .quick-links a {
+        color: var(--color-primary-light);
+        text-decoration: none;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background: rgba(13, 148, 136, 0.1);
+        border: 1px solid rgba(13, 148, 136, 0.2);
+        transition: all 0.15s ease;
+      }
+
+      .quick-links a:hover {
+        background: rgba(13, 148, 136, 0.2);
+        color: #ffffff;
+      }
+
+      /* ─── Right Column (The Architectural Frame) ───────── */
+      .frame-wrapper {
+        position: relative;
+      }
+
+      /* Ambient flame back-glow behind the GIF frame */
+      .frame-glow {
+        position: absolute;
+        inset: -20px;
+        background: radial-gradient(
+          circle,
+          rgba(245, 158, 11, 0.3) 0%,
+          rgba(13, 148, 136, 0.15) 50%,
+          transparent 70%
+        );
+        filter: blur(35px);
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .frame-card {
+        position: relative;
+        z-index: 2;
+        background: rgba(18, 30, 27, 0.85);
+        border: 1px solid rgba(245, 158, 11, 0.35);
+        border-radius: 20px;
+        padding: 16px;
+        box-shadow:
+          0 20px 50px rgba(0, 0, 0, 0.5),
+          0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+        backdrop-filter: blur(20px);
+        overflow: hidden;
+      }
+
+      .frame-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 12px;
+        margin-bottom: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 11px;
+      }
+
+      .frame-tag {
+        font-family: monospace;
+        font-weight: 700;
+        color: var(--color-amber-light);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .frame-stamp {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 10px;
+      }
+
+      .gif-container {
+        position: relative;
+        width: 100%;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background-color: #12100e;
+        aspect-ratio: 16 / 10;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) inset;
+      }
+
+      .gif-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.4s ease;
+      }
+
+      .frame-card:hover .gif-container img {
+        transform: scale(1.02);
+      }
+
+      .frame-caption {
+        margin-top: 14px;
+        font-size: 12px;
+        line-height: 1.5;
+        color: rgba(255, 255, 255, 0.7);
+        font-style: italic;
         text-align: center;
       }
-      .marca {
-        color: #0d9488;
-        font-size: 24px;
-        font-weight: 700;
+
+      .frame-caption strong {
+        color: var(--color-amber-light);
+        font-style: normal;
       }
-      .msg {
-        color: #64748b;
-        font-size: 14px;
+
+      /* ─── Footer ───────────────────────────────────────── */
+      footer {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--color-border);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.5);
+        text-align: center;
+      }
+
+      @media (min-width: 680px) {
+        footer {
+          flex-direction: row;
+          text-align: left;
+        }
+      }
+
+      .footer-hallmark {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .footer-hallmark svg {
+        width: 14px;
+        height: 14px;
+        fill: var(--color-primary-light);
       }
     </style>
-    <span class="marca">Convivo</span>
-    <p class="msg">Redirigiendo…</p>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Top Bar -->
+      <header>
+        <a href="./" class="logo-group" aria-label="Ir al inicio de Convivo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"
+              />
+            </svg>
+          </div>
+          <div class="logo-text">
+            <span class="logo-title">Convivo</span>
+            <span class="logo-subtitle">Gestión Residencial</span>
+          </div>
+        </a>
+
+        <div class="header-status">
+          <span class="pulse-dot"></span>
+          <span>Novedad en Conserjería</span>
+        </div>
+      </header>
+
+      <!-- Main Section -->
+      <main>
+        <!-- Left: Text & Recovery Navigation -->
+        <div>
+          <div class="editorial-badge">Error 404 · Registro Extraviado</div>
+
+          <h1 class="headline">
+            Todo está bajo control...
+            <span class="fire-text">excepto que esta página no existe.</span>
+          </h1>
+
+          <p class="narrative">
+            Revisamos la torre de departamentos, consultamos el libro de novedades en
+            conserjería y verificamos los planos del condominio. Concluimos que esta
+            dirección se quemó o nunca fue construida.
+          </p>
+
+          <!-- Incident Card Details -->
+          <div class="incident-card">
+            <div class="incident-stat">
+              <span class="incident-label">Código</span>
+              <span class="incident-value">ERR-404-COPROPIEDAD</span>
+            </div>
+            <div class="incident-stat">
+              <span class="incident-label">Estado</span>
+              <span class="incident-value highlight">En llamas (pero serenos)</span>
+            </div>
+            <div class="incident-stat">
+              <span class="incident-label">Protocolo</span>
+              <span class="incident-value">Evacuar a zona segura</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="actions-cluster">
+            <a href="./" class="btn btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              <span>Volver al inicio seguro</span>
+            </a>
+            <a href="./login" class="btn btn-secondary">
+              <span>Iniciar sesión</span>
+            </a>
+          </div>
+
+          <!-- Quick Navigation Link Pills -->
+          <div class="quick-links">
+            <span>Rutas disponibles:</span>
+            <a href="./gastos">Gastos comunes</a>
+            <a href="./espacios">Espacios</a>
+            <a href="./tablon">Tablón</a>
+            <a href="./precios">Planes</a>
+          </div>
+        </div>
+
+        <!-- Right: Framed "This Is Fine" Architectural Feature -->
+        <div class="frame-wrapper">
+          <div class="frame-glow"></div>
+          <div class="frame-card">
+            <div class="frame-header">
+              <span class="frame-tag">FIG. 404 · ESTADO ACTUAL</span>
+              <span class="frame-stamp">CÁMARA CONSERJERÍA 24/7</span>
+            </div>
+
+            <div class="gif-container">
+              <img
+                src="This Is Fine GIF.gif"
+                alt="Conserjería confirmando que todo está bajo control frente al fuego"
+                loading="eager"
+              />
+            </div>
+
+            <p class="frame-caption">
+              <strong>«This is fine.»</strong> — Bitácora fotográfica de conserjería mientras
+              el comité revisa el plano del edificio.
+            </p>
+          </div>
+        </div>
+      </main>
+
+      <!-- Footer -->
+      <footer>
+        <div class="footer-hallmark">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"
+            />
+          </svg>
+          <span>Cumplimiento Ley 21.442 de Copropiedad Inmobiliaria</span>
+        </div>
+        <div>Convivo · Santiago de Chile</div>
+      </footer>
+    </div>
   </body>
 </html>

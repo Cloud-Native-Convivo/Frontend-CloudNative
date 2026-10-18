@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter, Routes, Route } from "react-router";
+import { MemoryRouter } from "react-router";
 import AuthCallback from "@/pages/AuthCallback";
 import { AuthProvider } from "@/context/AuthProvider";
 import * as cognitoAuth from "@/auth/cognitoAuth";

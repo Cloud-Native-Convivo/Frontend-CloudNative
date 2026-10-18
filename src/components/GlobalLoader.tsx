@@ -4,19 +4,25 @@ export function GlobalLoader({ onComplete }: { onComplete: () => void }) {
   const [isFading, setIsFading] = useState(false);
   const [progress, setProgress] = useState(false);
 
+  // react-doctor-disable-next-line react-doctor/effect-needs-cleanup -- timerId limpiado en return de useEffect
   useEffect(() => {
+    let timerId: ReturnType<typeof setTimeout> | undefined;
     const finishLoading = () => {
       setProgress(true);
       setIsFading(true);
-      setTimeout(onComplete, 300);
+      timerId = setTimeout(onComplete, 300);
     };
 
     if (document.readyState === "complete") {
       finishLoading();
     } else {
       window.addEventListener("load", finishLoading);
-      return () => window.removeEventListener("load", finishLoading);
     }
+
+    return () => {
+      window.removeEventListener("load", finishLoading);
+      clearTimeout(timerId);
+    };
   }, [onComplete]);
 
   return (

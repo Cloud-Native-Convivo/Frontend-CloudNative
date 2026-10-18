@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Field } from "./FormFields";
 import { inputClass, type StepUnitForm, type StepAccountForm, type StepErrors } from "./types";
 import { obtenerCondominios } from "../../services/condominiosApi";
@@ -17,25 +17,34 @@ export function StepUnit({
   const [condominios, setCondominios] = useState<CondominioItem[]>([]);
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState<string | null>(null);
-
-  const cargarCondominios = useCallback(async () => {
-    setCargando(true);
-    setErrorCarga(null);
-    try {
-      const items = await obtenerCondominios();
-      setCondominios(items);
-    } catch {
-      setErrorCarga(
-        "No pudimos cargar los condominios disponibles. Verifica tu conexión o intenta nuevamente.",
-      );
-    } finally {
-      setCargando(false);
-    }
-  }, []);
+  const [recargarTrigger, setRecargarTrigger] = useState(0);
 
   useEffect(() => {
-    void cargarCondominios();
-  }, [cargarCondominios]);
+    let activo = true;
+    obtenerCondominios()
+      .then((items) => {
+        if (!activo) return;
+        setCondominios(items);
+        setCargando(false);
+      })
+      .catch(() => {
+        if (!activo) return;
+        setErrorCarga(
+          "No pudimos cargar los condominios disponibles. Verifica tu conexión o intenta nuevamente.",
+        );
+        setCargando(false);
+      });
+
+    return () => {
+      activo = false;
+    };
+  }, [recargarTrigger]);
+
+  const reintentar = () => {
+    setErrorCarga(null);
+    setCargando(true);
+    setRecargarTrigger((prev) => prev + 1);
+  };
 
   return (
     <div className="space-y-4">
@@ -52,7 +61,7 @@ export function StepUnit({
             </p>
             <button
               type="button"
-              onClick={cargarCondominios}
+              onClick={reintentar}
               className="inline-flex items-center min-h-[32px] text-xs font-bold text-primary hover:underline cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
             >
               Reintentar

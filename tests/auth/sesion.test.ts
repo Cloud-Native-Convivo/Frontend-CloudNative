@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { completarSesion, rutaPrincipalPorRol } from "@/auth/sesion";
 import type { User } from "@/types";
 import type { CognitoTokens } from "@/auth/cognitoAuth";

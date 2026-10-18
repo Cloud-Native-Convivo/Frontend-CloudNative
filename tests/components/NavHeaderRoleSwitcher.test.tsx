@@ -19,6 +19,7 @@ describe("NavHeader role switcher removal", () => {
           ribbonH={0}
           navH={64}
           navLinks={[{ label: "Espacios", path: "/espacios", icon: <span>icon</span> }]}
+          // eslint-disable-next-line jsx-a11y/aria-role -- prop del componente NavHeader, no atributo ARIA del DOM
           role="residente"
           user={dummyUser}
           onLogout={vi.fn()}

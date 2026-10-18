@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
-import { AuthProvider } from "@/hooks/AuthProvider";
+import { AuthProvider } from "@/context/AuthProvider";
 import CompletarRegistro from "@/pages/CompletarRegistro";
 import * as condominiosApi from "@/services/condominiosApi";
 import * as sesionModule from "@/auth/sesion";

@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { AuthProvider } from "@/hooks/AuthProvider";
+import { AuthProvider } from "@/context/AuthProvider";
 import AceptarTerminos from "@/pages/AceptarTerminos";
 import { registrarAceptacionTerminos } from "@/auth/cognitoAuth";
 

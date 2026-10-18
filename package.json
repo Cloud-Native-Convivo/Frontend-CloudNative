@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "cuelume": "^0.2.2",
-    "glob": "^13.0.6",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-router": "^8.4.0",

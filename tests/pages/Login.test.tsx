@@ -36,7 +36,7 @@ describe("Login Page (Editorial Concierge)", () => {
       screen.getByText(/Ingresa con tu cuenta de residente para administrar tu departamento/i),
     ).toBeInTheDocument();
     expect(screen.getByText(/Conserjería en línea/i)).toBeInTheDocument();
-    expect(screen.getByText(/Edificio Parque Kennedy/i)).toBeInTheDocument();
+    expect(screen.getByText(/Ley 21\.442 Chile/i)).toBeInTheDocument();
   });
 
   it("ofrece el botón principal de autenticación federada con Google SSO", () => {
@@ -45,7 +45,9 @@ describe("Login Page (Editorial Concierge)", () => {
     const googleBtn = screen.getByRole("button", { name: /Continuar con Google/i });
     expect(googleBtn).toBeInTheDocument();
     expect(googleBtn).not.toBeDisabled();
-    expect(screen.getByText(/AWS Cognito PKCE/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Acceso seguro y verificado con tu cuenta de Google/i),
+    ).toBeInTheDocument();
   });
 
   it("valida campos de correo y contraseña al enviar el formulario vacío", () => {

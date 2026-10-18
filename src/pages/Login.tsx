@@ -7,7 +7,6 @@ import {
   IconLock,
   IconMail,
   IconShield,
-  IconCheck,
   IconChevronRight,
 } from "../components/icons/Icons";
 import { useAuth } from "../hooks/useAuth";
@@ -195,42 +194,13 @@ export default function Login() {
               desde un acceso seguro y unificado.
             </p>
           </div>
-
-          {/* Testimonial & Architectural card */}
-          <div className="rounded-2xl bg-white/[0.04] border border-white/10 p-5 backdrop-blur-md relative overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-emerald-900/60 border border-emerald-400/30 flex items-center justify-center text-xs font-bold text-emerald-300">
-                PK
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-white">Edificio Parque Kennedy</p>
-                <p className="text-[11px] text-white/50">Las Condes · 142 Unidades</p>
-              </div>
-            </div>
-            <p className="text-xs text-white/80 italic leading-relaxed mb-3">
-              «La transparencia en los gastos y la agilidad para emitir invitaciones QR
-              transformaron por completo la convivencia de nuestra comunidad.»
-            </p>
-            <div className="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-white/50">
-              <span>Loreto Valenzuela · Comité</span>
-              <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                <IconCheck className="w-3.5 h-3.5" /> Verificado
-              </span>
-            </div>
-          </div>
         </div>
 
         {/* Bottom: Security standards assurance */}
         <div className="relative z-10 pt-6 border-t border-white/10 space-y-3">
-          <div className="flex flex-wrap items-center gap-4 text-xs text-white/60">
-            <span className="flex items-center gap-1.5 text-white/80">
-              <IconShield className="w-4 h-4 text-emerald-400" />
-              <span>Cognito PKCE</span>
-            </span>
-            <span className="w-1 h-1 rounded-full bg-white/20" />
+          <div className="flex items-center gap-2 text-xs text-white/80">
+            <IconShield className="w-4 h-4 text-emerald-400" />
             <span>Ley 21.442 Chile</span>
-            <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span>AWS us-east-1</span>
           </div>
           <p className="text-[11px] text-white/40 leading-snug">
             Cifrado de extremo a extremo conforme al marco normativo de copropiedad inmobiliaria.
@@ -321,7 +291,7 @@ export default function Login() {
             </button>
             <p className="text-center text-[11px] text-muted flex items-center justify-center gap-1.5">
               <IconShield className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Acceso seguro federado con Google y AWS Cognito PKCE</span>
+              <span>Acceso seguro y verificado con tu cuenta de Google</span>
             </p>
           </div>
 
@@ -465,8 +435,8 @@ export default function Login() {
                 <span className="text-[10px] text-slate-400 font-mono">DEV MODE</span>
               </div>
               <p className="text-xs text-slate-300 mb-3 leading-relaxed">
-                Inicia sesión al instante con un perfil simulado de residente activo sin conectar a
-                Cognito.
+                Inicia sesión al instante con un perfil simulado de residente activo para pruebas
+                locales.
               </p>
               <button
                 type="button"

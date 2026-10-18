@@ -36,7 +36,9 @@ export default function CompletarRegistro() {
       const items = await obtenerCondominios();
       setCondominios(items);
     } catch {
-      setErrorCarga("No pudimos cargar los condominios disponibles. Verifica tu conexión o intenta nuevamente.");
+      setErrorCarga(
+        "No pudimos cargar los condominios disponibles. Verifica tu conexión o intenta nuevamente.",
+      );
     } finally {
       setCargando(false);
     }
@@ -106,7 +108,10 @@ export default function CompletarRegistro() {
             Cargando condominios disponibles…
           </div>
         ) : errorCarga ? (
-          <div role="alert" className="p-4 bg-red-50 border border-alert-red rounded-xl text-center space-y-3">
+          <div
+            role="alert"
+            className="p-4 bg-red-50 border border-alert-red rounded-xl text-center space-y-3"
+          >
             <p className="text-xs text-alert-red font-medium">
               <span aria-hidden="true">⚠ </span>
               {errorCarga}
@@ -142,7 +147,11 @@ export default function CompletarRegistro() {
                 ))}
               </select>
               {errores.condominioId && (
-                <p id="condominioId-error" role="alert" className="text-xs text-alert-red mt-1 flex items-center gap-1">
+                <p
+                  id="condominioId-error"
+                  role="alert"
+                  className="text-xs text-alert-red mt-1 flex items-center gap-1"
+                >
                   <span aria-hidden="true">⚠</span> {errores.condominioId}
                 </p>
               )}
@@ -167,7 +176,11 @@ export default function CompletarRegistro() {
                 <option value="Torre C">Torre C</option>
               </select>
               {errores.torre && (
-                <p id="torre-error" role="alert" className="text-xs text-alert-red mt-1 flex items-center gap-1">
+                <p
+                  id="torre-error"
+                  role="alert"
+                  className="text-xs text-alert-red mt-1 flex items-center gap-1"
+                >
                   <span aria-hidden="true">⚠</span> {errores.torre}
                 </p>
               )}
@@ -194,7 +207,11 @@ export default function CompletarRegistro() {
                 ))}
               </select>
               {errores.piso && (
-                <p id="piso-error" role="alert" className="text-xs text-alert-red mt-1 flex items-center gap-1">
+                <p
+                  id="piso-error"
+                  role="alert"
+                  className="text-xs text-alert-red mt-1 flex items-center gap-1"
+                >
                   <span aria-hidden="true">⚠</span> {errores.piso}
                 </p>
               )}
@@ -216,7 +233,11 @@ export default function CompletarRegistro() {
                 className={inputClass(errores.numero)}
               />
               {errores.numero && (
-                <p id="numero-error" role="alert" className="text-xs text-alert-red mt-1 flex items-center gap-1">
+                <p
+                  id="numero-error"
+                  role="alert"
+                  className="text-xs text-alert-red mt-1 flex items-center gap-1"
+                >
                   <span aria-hidden="true">⚠</span> {errores.numero}
                 </p>
               )}

@@ -18,7 +18,9 @@ export interface BackendPanelResponse {
 }
 
 export async function obtenerPanel(): Promise<BackendPanelResponse> {
-  const response = await fetchConAuth(`${API_BASE_URL}/panel?condominioId=${getCondominioIdActual()}`);
+  const response = await fetchConAuth(
+    `${API_BASE_URL}/panel?condominioId=${getCondominioIdActual()}`,
+  );
   if (!response.ok) {
     throw new Error(`Error al obtener panel: HTTP ${response.status}`);
   }

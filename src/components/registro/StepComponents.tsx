@@ -25,7 +25,9 @@ export function StepUnit({
       const items = await obtenerCondominios();
       setCondominios(items);
     } catch {
-      setErrorCarga("No pudimos cargar los condominios disponibles. Verifica tu conexión o intenta nuevamente.");
+      setErrorCarga(
+        "No pudimos cargar los condominios disponibles. Verifica tu conexión o intenta nuevamente.",
+      );
     } finally {
       setCargando(false);
     }

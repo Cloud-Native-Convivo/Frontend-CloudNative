@@ -97,4 +97,3 @@ export function getCondominioIdActual(): string {
     "1";
   return encodeURIComponent(String(idRaw).trim());
 }
-

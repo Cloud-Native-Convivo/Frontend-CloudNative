@@ -103,14 +103,7 @@ function MobileMenuDropdown({
   );
 }
 
-export function NavHeader({
-  ribbonH,
-  navH,
-  navLinks,
-  role,
-  user,
-  onLogout,
-}: NavHeaderProps) {
+export function NavHeader({ ribbonH, navH, navLinks, role, user, onLogout }: NavHeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();

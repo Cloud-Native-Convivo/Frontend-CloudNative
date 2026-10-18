@@ -59,7 +59,7 @@ describe("AuthCallback component", () => {
   });
 
   it("redirige a /auth/error?reason=csrf_detected si el state es invalido o falta", async () => {
-    sessionStorage.setItem("convivo.oauth_state", "expected-state-999");
+    sessionStorage.setItem(cognitoAuth.LOGIN_NONCE_KEY, "expected-state-999");
     const exchangeSpy = vi.spyOn(cognitoAuth, "exchangeCodeForTokens");
 
     renderCallback("/auth/callback?code=valid-code&state=wrong-state");
@@ -71,11 +71,11 @@ describe("AuthCallback component", () => {
     });
 
     expect(exchangeSpy).not.toHaveBeenCalled();
-    expect(sessionStorage.getItem("convivo.oauth_state")).toBeNull();
+    expect(sessionStorage.getItem(cognitoAuth.LOGIN_NONCE_KEY)).toBeNull();
   });
 
   it("procede al intercambio de tokens si code y state son validos", async () => {
-    sessionStorage.setItem("convivo.oauth_state", "valid-state-123");
+    sessionStorage.setItem(cognitoAuth.LOGIN_NONCE_KEY, "valid-state-123");
     vi.spyOn(cognitoAuth, "exchangeCodeForTokens").mockResolvedValue({
       id_token: "fake.id.token",
       access_token: "fake.access.token",

@@ -28,11 +28,7 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
-            if (
-              id.includes("recharts") ||
-              id.includes("d3-") ||
-              id.includes("victory-vendor")
-            ) {
+            if (id.includes("recharts") || id.includes("d3-") || id.includes("victory-vendor")) {
               return "charts-vendor";
             }
             if (/[\\/](react|react-dom|react-router)[\\/]/.test(id)) {

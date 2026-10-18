@@ -12,7 +12,10 @@ export default function ProtectedRoute({ allowedRoles, redirectTo = "/" }: Prote
   if (!role || !allowedRoles.includes(role)) return <Navigate to={redirectTo} replace />;
 
   // Control Anti-Bypass: residente debe tener onboarding completo (condominioId y unidad asignada)
-  if (role === "residente" && (!user?.condominioId || !user?.unidad || user.unidad === "Sin unidad asignada")) {
+  if (
+    role === "residente" &&
+    (!user?.condominioId || !user?.unidad || user.unidad === "Sin unidad asignada")
+  ) {
     return <Navigate to="/completar-registro" replace />;
   }
 

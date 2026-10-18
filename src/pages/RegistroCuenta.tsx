@@ -14,6 +14,7 @@ import { StepUnit, StepAccount, StepReglamento } from "../components/registro/St
 export default function RegistroCuenta() {
   const [step, setStep] = useState<Step>(1);
   const [unitForm, setUnitForm] = useState<StepUnitForm>({
+    condominioId: "",
     torre: "",
     piso: "",
     numero: "",

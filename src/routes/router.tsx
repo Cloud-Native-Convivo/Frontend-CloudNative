@@ -45,14 +45,6 @@ const router = createBrowserRouter(
         // Public / all roles
         { index: true, Component: Home },
         {
-          path: "tablon",
-          lazy: () => import("../pages/Tablon").then((m) => ({ Component: m.default })),
-        },
-        {
-          path: "canales",
-          lazy: () => import("../pages/Canales").then((m) => ({ Component: m.default })),
-        },
-        {
           path: "precios",
           lazy: () => import("../pages/Precios").then((m) => ({ Component: m.default })),
         },
@@ -97,6 +89,14 @@ const router = createBrowserRouter(
             {
               path: "gastos",
               lazy: () => import("../pages/Gastos").then((m) => ({ Component: m.default })),
+            },
+            {
+              path: "tablon",
+              lazy: () => import("../pages/Tablon").then((m) => ({ Component: m.default })),
+            },
+            {
+              path: "canales",
+              lazy: () => import("../pages/Canales").then((m) => ({ Component: m.default })),
             },
             {
               path: "visitas",

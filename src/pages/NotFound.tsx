@@ -1,7 +1,11 @@
+import { useContext } from "react";
 import { Link } from "react-router";
+import { AuthContext } from "../context/authContext";
 import { IconHome, IconChevronRight, IconShield } from "../components/icons/Icons";
 
 export default function NotFound() {
+  const auth = useContext(AuthContext);
+  const user = auth?.user ?? null;
   const gifSrc = `${import.meta.env.BASE_URL}This Is Fine GIF.gif`;
 
   return (
@@ -111,34 +115,76 @@ export default function NotFound() {
             {/* Quick Links Recovery Dock */}
             <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-white/10 w-full text-xs text-white/60">
               <span className="font-medium mr-1">Rutas disponibles:</span>
-              <Link
-                to="/gastos"
-                viewTransition
-                className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
-              >
-                Gastos comunes
-              </Link>
-              <Link
-                to="/espacios"
-                viewTransition
-                className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
-              >
-                Espacios comunes
-              </Link>
-              <Link
-                to="/tablon"
-                viewTransition
-                className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
-              >
-                Tablón de avisos
-              </Link>
-              <Link
-                to="/precios"
-                viewTransition
-                className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
-              >
-                Planes
-              </Link>
+              {user ? (
+                <>
+                  <Link
+                    to="/mi-dashboard"
+                    viewTransition
+                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    Mi panel
+                  </Link>
+                  <Link
+                    to="/gastos"
+                    viewTransition
+                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    Gastos comunes
+                  </Link>
+                  <Link
+                    to="/espacios"
+                    viewTransition
+                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    Espacios comunes
+                  </Link>
+                  <Link
+                    to="/tablon"
+                    viewTransition
+                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    Tablón de avisos
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/"
+                    viewTransition
+                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    Inicio
+                  </Link>
+                  <Link
+                    to="/precios"
+                    viewTransition
+                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    Planes
+                  </Link>
+                  <Link
+                    to="/privacidad"
+                    viewTransition
+                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    Privacidad
+                  </Link>
+                  <Link
+                    to="/terminos"
+                    viewTransition
+                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    Términos
+                  </Link>
+                  <Link
+                    to="/crear-cuenta"
+                    viewTransition
+                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                  >
+                    Crear cuenta
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 

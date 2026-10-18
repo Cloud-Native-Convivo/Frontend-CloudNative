@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Link } from "react-router";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router";
+import { useAuth } from "../hooks/useAuth";
+import { rutaPrincipalPorRol } from "../auth/sesion";
 import {
   IconCalendar,
   IconDollar,
@@ -583,9 +585,22 @@ function FinalCTA() {
   );
 }
 
-// ─── Main export ──────────────────────────────────────────────────────────────
-
 export default function Home() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user) return;
+    if (
+      user.role === "residente" &&
+      (!user.condominioId || !user.unidad || user.unidad === "Sin unidad asignada")
+    ) {
+      navigate("/completar-registro", { replace: true });
+    } else {
+      navigate(rutaPrincipalPorRol(user.role), { replace: true });
+    }
+  }, [user, navigate]);
+
   return (
     <div>
       <HeroSection />

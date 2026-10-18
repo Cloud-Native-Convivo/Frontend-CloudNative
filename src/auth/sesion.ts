@@ -1,11 +1,24 @@
 import type { NavigateFunction } from "react-router";
-import type { User } from "../types";
+import type { Role, User } from "../types";
 import type { CognitoTokens } from "./cognitoAuth";
 import { notify } from "../utils/notify";
 import { setStoredUser } from "../utils/authStorage";
 import { guardarTokens } from "./tokenManager";
 
-/** Guarda la sesión ya autorizada (ID, access y refresh token) y entra al dashboard del residente. */
+export function rutaPrincipalPorRol(role: Role): string {
+  switch (role) {
+    case "admin":
+      return "/dashboard";
+    case "conserje":
+    case "comite":
+      return "/espacios";
+    case "residente":
+    default:
+      return "/mi-dashboard";
+  }
+}
+
+/** Guarda la sesión ya autorizada (ID, access y refresh token) y entra al dashboard del rol correspondiente. */
 export function completarSesion(
   tokens: CognitoTokens,
   usuario: User,
@@ -16,5 +29,5 @@ export function completarSesion(
   guardarTokens(tokens);
   setUser(usuario);
   notify.success({ title: "Sesión iniciada correctamente" });
-  navigate("/mi-dashboard", { replace: true });
+  navigate(rutaPrincipalPorRol(usuario.role), { replace: true });
 }

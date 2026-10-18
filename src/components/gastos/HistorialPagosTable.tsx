@@ -43,7 +43,9 @@ export function HistorialPagosTable({ historial, onDescargarPdf }: HistorialPago
             {historial.map((row) => (
               <tr key={row.mes} className="border-b border-slate-100 hover:bg-slate-50/60">
                 <td className="py-3.5 text-[14px] font-semibold text-text">{row.mes}</td>
-                <td className="py-3.5 text-[14px] text-slate-600 text-right tabular-nums">{row.total}</td>
+                <td className="py-3.5 text-[14px] text-slate-600 text-right tabular-nums">
+                  {row.total}
+                </td>
                 <td className="py-3.5">
                   <span
                     className={`text-[12px] font-bold px-2.5 py-1 rounded-full ${row.colorClass}`}

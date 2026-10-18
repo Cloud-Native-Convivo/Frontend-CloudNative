@@ -341,6 +341,7 @@ function ModuleTabs() {
               src={m.img}
               alt={m.imgAlt}
               loading="lazy"
+              decoding="async"
               width="800"
               height="560"
               className="w-full h-full object-cover"
@@ -498,6 +499,7 @@ function FeatureSections() {
               src={s1.img}
               alt={s1.imgAlt}
               loading="lazy"
+              decoding="async"
               width="800"
               height="560"
               className="w-full h-full object-cover object-top"
@@ -512,6 +514,7 @@ function FeatureSections() {
               src={s2.img}
               alt={s2.imgAlt}
               loading="lazy"
+              decoding="async"
               width="800"
               height="560"
               className="w-full h-full object-cover"

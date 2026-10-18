@@ -49,3 +49,6 @@ playwright/.cache/
 
 # Graphify output
 graphify-out/
+
+# Superpowers execution artifacts
+.superpowers/

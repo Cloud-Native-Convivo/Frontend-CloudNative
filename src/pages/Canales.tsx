@@ -289,6 +289,8 @@ export default function Canales() {
                 <img
                   src={section.imgUrl}
                   alt={section.title}
+                  width="700"
+                  height="500"
                   className="w-full h-[380px] object-cover rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
                   loading="lazy"
                   decoding="async"
@@ -311,6 +313,8 @@ export default function Canales() {
                 <img
                   src={section.imgUrl}
                   alt={section.title}
+                  width="700"
+                  height="500"
                   className="w-full h-[380px] object-cover rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
                   loading="lazy"
                   decoding="async"

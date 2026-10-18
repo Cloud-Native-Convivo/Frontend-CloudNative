@@ -5,4 +5,12 @@ export interface User {
   unidad: string;
   role: Role;
   avatar?: string;
+  condominioId?: string;
+  condominioNombre?: string;
+}
+
+export interface CondominioItem {
+  id: string | number;
+  nombre: string;
+  direccion?: string;
 }

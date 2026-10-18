@@ -1,17 +1,19 @@
 import { useEffect, useRef } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import {
   aceptoTerminosVigentes,
   decodeIdToken,
   exchangeCodeForTokens,
   roleFromClaims,
+  validateAndClearOAuthState,
 } from "../auth/cognitoAuth";
 import { completarSesion } from "../auth/sesion";
 import type { User } from "../types";
 
 export default function AuthCallback() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setUser } = useAuth();
   const ran = useRef(false);
 
@@ -25,9 +27,10 @@ export default function AuthCallback() {
     // setState va todo dentro de esta función async, nunca directo en el
     // cuerpo del efecto (react-hooks/set-state-in-effect).
     async function procesarCallback() {
-      const params = new URLSearchParams(window.location.search);
+      const params = new URLSearchParams(location.search || window.location.search);
       const errorParam = params.get("error");
       const code = params.get("code");
+      const stateParam = params.get("state");
 
       if (errorParam) {
         navigate("/auth/error?reason=oauth_error", { replace: true });
@@ -35,6 +38,10 @@ export default function AuthCallback() {
       }
       if (!code) {
         navigate("/auth/error?reason=exchange_failed", { replace: true });
+        return;
+      }
+      if (!validateAndClearOAuthState(stateParam)) {
+        navigate("/auth/error?reason=csrf_detected", { replace: true });
         return;
       }
 
@@ -46,10 +53,16 @@ export default function AuthCallback() {
           unidad: claims["custom:unidad"] ?? "Sin unidad asignada",
           role: roleFromClaims(claims),
           avatar: claims.picture,
+          condominioId: claims["custom:condominio_id"],
         };
         // Sin aceptación vigente no se guarda sesión: primero /aceptar-terminos.
         if (!aceptoTerminosVigentes(claims)) {
           navigate("/aceptar-terminos", { replace: true, state: { tokens, usuario } });
+          return;
+        }
+        // Control Anti-Bypass: si no tiene condominio o unidad asignada, completar registro primero
+        if (!usuario.condominioId || !usuario.unidad || usuario.unidad === "Sin unidad asignada") {
+          navigate("/completar-registro", { replace: true, state: { tokens, usuario } });
           return;
         }
         completarSesion(tokens, usuario, setUser, navigate);

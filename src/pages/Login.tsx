@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { IconGoogle } from "../components/icons/Icons";
 import { useAuth } from "../hooks/useAuth";
+import { rutaPrincipalPorRol } from "../auth/sesion";
 import { iniciarSesionResidenteMock } from "../auth/mockAuth";
 import {
   buildGoogleAuthorizeUrl,
@@ -31,7 +32,7 @@ function validate(form: FormState): FieldError {
 
 export default function Login() {
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { user, setUser } = useAuth();
   const [form, setForm] = useState<FormState>({ email: "", password: "" });
   const [errors, setErrors] = useState<FieldError>({});
   const [isConnectingGoogle, setIsConnectingGoogle] = useState(false);
@@ -39,12 +40,24 @@ export default function Login() {
   const submitted = useRef(false);
   const [mounted, setMounted] = useState(false);
 
+  useEffect(() => {
+    if (!user) return;
+    if (
+      user.role === "residente" &&
+      (!user.condominioId || !user.unidad || user.unidad === "Sin unidad asignada")
+    ) {
+      navigate("/completar-registro", { replace: true });
+    } else {
+      navigate(rutaPrincipalPorRol(user.role), { replace: true });
+    }
+  }, [user, navigate]);
+
   async function handleMockLogin() {
     setIsConnectingMock(true);
     try {
       const mockUser = await iniciarSesionResidenteMock();
       setUser(mockUser);
-      navigate("/gastos");
+      navigate(rutaPrincipalPorRol(mockUser.role), { replace: true });
     } catch (err) {
       console.error("Error al iniciar sesión mock:", err);
       setIsConnectingMock(false);

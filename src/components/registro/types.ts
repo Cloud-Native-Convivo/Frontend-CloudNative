@@ -1,6 +1,8 @@
 export type Step = 1 | 2 | 3;
 
 export interface StepUnitForm {
+  condominioId: string;
+  condominioNombre?: string;
   torre: string;
   piso: string;
   numero: string;
@@ -17,9 +19,14 @@ export type StepErrors = Record<string, string>;
 
 export function validateUnit(form: StepUnitForm): StepErrors {
   const errs: StepErrors = {};
+  if (!form.condominioId) errs.condominioId = "Selecciona un condominio.";
   if (!form.torre) errs.torre = "Selecciona una torre.";
   if (!form.piso) errs.piso = "Selecciona un piso.";
-  if (!form.numero.trim()) errs.numero = "Ingresa el número de unidad.";
+  if (!form.numero.trim()) {
+    errs.numero = "Ingresa el número de unidad.";
+  } else if (!/^[a-zA-Z0-9\s\-°]+$/.test(form.numero.trim())) {
+    errs.numero = "El número contiene caracteres no permitidos.";
+  }
   return errs;
 }
 

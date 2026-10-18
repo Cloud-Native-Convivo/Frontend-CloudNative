@@ -30,6 +30,11 @@ const router = createBrowserRouter(
       lazy: () => import("../pages/RegistroCuenta").then((m) => ({ Component: m.default })),
       errorElement: <RouteError />,
     },
+    {
+      path: "/completar-registro",
+      lazy: () => import("../pages/CompletarRegistro").then((m) => ({ Component: m.default })),
+      errorElement: <RouteError />,
+    },
 
     // App routes (with Layout)
     {

@@ -1,6 +1,9 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
+import { useEffect, useState } from "react";
 import { Field } from "./FormFields";
 import { inputClass, type StepUnitForm, type StepAccountForm, type StepErrors } from "./types";
+import { obtenerCondominios } from "../../services/condominiosApi";
+import type { CondominioItem } from "../../types";
 
 export function StepUnit({
   form,
@@ -11,8 +14,78 @@ export function StepUnit({
   errors: StepErrors;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 }) {
+  const [condominios, setCondominios] = useState<CondominioItem[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [errorCarga, setErrorCarga] = useState<string | null>(null);
+  const [recargarTrigger, setRecargarTrigger] = useState(0);
+
+  useEffect(() => {
+    let activo = true;
+    obtenerCondominios()
+      .then((items) => {
+        if (!activo) return;
+        setCondominios(items);
+        setCargando(false);
+      })
+      .catch(() => {
+        if (!activo) return;
+        setErrorCarga(
+          "No pudimos cargar los condominios disponibles. Verifica tu conexión o intenta nuevamente.",
+        );
+        setCargando(false);
+      });
+
+    return () => {
+      activo = false;
+    };
+  }, [recargarTrigger]);
+
+  const reintentar = () => {
+    setErrorCarga(null);
+    setCargando(true);
+    setRecargarTrigger((prev) => prev + 1);
+  };
+
   return (
     <div className="space-y-4">
+      <Field label="Condominio" id="condominioId" error={errors.condominioId}>
+        {cargando ? (
+          <div role="status" aria-live="polite" className="text-xs text-muted py-2">
+            Cargando condominios disponibles…
+          </div>
+        ) : errorCarga ? (
+          <div role="alert" className="p-3 bg-red-50 border border-alert-red rounded-lg space-y-2">
+            <p className="text-xs text-alert-red font-medium">
+              <span aria-hidden="true">⚠ </span>
+              {errorCarga}
+            </p>
+            <button
+              type="button"
+              onClick={reintentar}
+              className="inline-flex items-center min-h-[32px] text-xs font-bold text-primary hover:underline cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              Reintentar
+            </button>
+          </div>
+        ) : (
+          <select
+            id="condominioId"
+            name="condominioId"
+            value={form.condominioId}
+            onChange={onChange}
+            aria-invalid={!!errors.condominioId}
+            aria-describedby={errors.condominioId ? "condominioId-error" : undefined}
+            className={inputClass(errors.condominioId)}
+          >
+            <option value="">Selecciona tu condominio</option>
+            {condominios.map((c) => (
+              <option key={String(c.id)} value={String(c.id)}>
+                {c.nombre}
+              </option>
+            ))}
+          </select>
+        )}
+      </Field>
       <Field label="Torre" id="torre" error={errors.torre}>
         <select
           id="torre"

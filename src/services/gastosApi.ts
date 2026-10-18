@@ -1,5 +1,6 @@
 import { fetchConAuth } from "../auth/tokenManager";
 import { obtenerPanel } from "./panelApi";
+import { getCondominioIdActual } from "../utils/authStorage";
 
 export interface BackendGastoComun {
   id: number;
@@ -25,9 +26,10 @@ const rawBffUrl =
   (typeof import.meta !== "undefined" && import.meta.env?.VITE_BFF_URL) ||
   "https://11bwhgfogd.execute-api.us-east-1.amazonaws.com/api/v1";
 const API_ROOT = rawBffUrl.replace(/\/api\/v1\/?$/, "").replace(/\/+$/, "");
-const CONDOMINIO_ID =
-  (typeof import.meta !== "undefined" && import.meta.env?.VITE_CONDOMINIO_ID) || "1";
-const GASTOS_URL = `${API_ROOT}/api/gastos/api/v1/gastos-comunes?condominioId=${CONDOMINIO_ID}`;
+
+export function getGastosUrl(): string {
+  return `${API_ROOT}/api/gastos/api/v1/gastos-comunes?condominioId=${getCondominioIdActual()}`;
+}
 
 export async function listarGastos(): Promise<BackendGastoComun[]> {
   // Intento 1: vía panel agregado (agregador seguro para residente)
@@ -54,7 +56,7 @@ export async function listarGastos(): Promise<BackendGastoComun[]> {
   // intento 1 (agregador opcional), si esto también falla hay que propagar el
   // error: devolver [] acá sería indistinguible de "el residente no tiene
   // gastos", y el llamador (obtenerResumenGastos) lo leería como "al día".
-  const response = await fetchConAuth(GASTOS_URL);
+  const response = await fetchConAuth(getGastosUrl());
   if (!response.ok) {
     throw new Error(`No se pudo obtener gastos comunes: HTTP ${response.status}`);
   }

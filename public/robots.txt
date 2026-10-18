@@ -4,5 +4,9 @@ Disallow: /mi-dashboard
 Disallow: /dashboard
 Disallow: /registro
 Disallow: /auth/
+Disallow: /completar-registro
+Disallow: /aceptar-terminos
+Disallow: /crear-cuenta
+Disallow: /login
 
 Sitemap: https://cloud-native-convivo.github.io/Frontend-CloudNative/sitemap.xml

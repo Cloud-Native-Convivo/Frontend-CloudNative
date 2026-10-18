@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, startTransition } from "react";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { rutaPrincipalPorRol } from "../auth/sesion";
@@ -316,7 +316,11 @@ function ModuleTabs() {
               aria-selected={active === i}
               aria-controls={`tabpanel-${i}`}
               id={`tab-${i}`}
-              onClick={() => setActive(i)}
+              onClick={() => {
+                startTransition(() => {
+                  setActive(i);
+                });
+              }}
               className={`flex items-center gap-[7px] py-[9px] px-[18px] rounded-[10px] text-[13px] font-semibold cursor-pointer border-[1.5px] transition-colors ${
                 active === i
                   ? "border-primary bg-primary text-white"
@@ -412,9 +416,9 @@ function HowItWorks() {
                     {i + 1}
                   </span>
                 </div>
-                <h4 className="font-['Gloock',Georgia,serif] text-[17px] text-text m-0 mb-[10px] font-normal">
+                <h3 className="font-['Gloock',Georgia,serif] text-[17px] text-text m-0 mb-[10px] font-normal">
                   {p.titulo}
-                </h4>
+                </h3>
                 <p className="text-[13px] text-muted leading-[1.65] m-0">{p.desc}</p>
               </div>
             ))}

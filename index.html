@@ -8,6 +8,22 @@
       name="description"
       content="Convivo — plataforma de gestión para condominios y comunidades residenciales."
     />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://cloud-native-convivo.github.io/Frontend-CloudNative/" />
+    <meta property="og:title" content="Convivo | Gestión simple para condominios residenciales" />
+    <meta property="og:description" content="Plataforma digital para condominios en Chile. Reservas, gastos, avisos y seguridad en comunidad." />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1624204386084-dd8c05e32226?w=1200&h=630&fit=crop&auto=format" />
+    <meta property="og:locale" content="es_CL" />
+    <meta property="og:site_name" content="Convivo" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Convivo | Gestión simple para condominios residenciales" />
+    <meta name="twitter:description" content="Plataforma digital para condominios en Chile. Reservas, gastos, avisos y seguridad en comunidad." />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1624204386084-dd8c05e32226?w=1200&h=630&fit=crop&auto=format" />
     
     <!-- CSP: Restringe orígenes de scripts, estilos, fuentes y restringe plugins/base -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; connect-src 'self' https: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*; font-src 'self' data: https:; object-src 'none'; base-uri 'self';">
@@ -20,6 +36,24 @@
     <!-- LCP Optimization: Preload Hero Image -->
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1624204386084-dd8c05e32226?w=1800&h=1100&fit=crop&auto=format" fetchpriority="high">
     
+    <!-- Core Web Vitals (LCP): Prerender public navigation links via Speculation Rules API -->
+    <script type="speculationrules">
+    {
+      "prerender": [{
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": "/auth/*" } },
+            { "not": { "href_matches": "/mi-dashboard*" } },
+            { "not": { "href_matches": "/dashboard*" } },
+            { "not": { "href_matches": "/completar-registro*" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }]
+    }
+    </script>
+
     <link rel="canonical" href="https://cloud-native-convivo.github.io/Frontend-CloudNative/" />
     <title>Convivo | Gestión simple para condominios residenciales</title>
     <script type="application/ld+json">

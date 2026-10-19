@@ -140,8 +140,8 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      {/* Floating sidebar */}
-      <FloatingSidebar />
+      {/* Floating sidebar — solo para usuarios autenticados */}
+      {user && <FloatingSidebar />}
 
       {/* Footer */}
       <Footer />

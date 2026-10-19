@@ -166,9 +166,9 @@ jobs:
 
       - name: Build
         env:
-          VITE_COGNITO_DOMAIN: ${{ vars.VITE_COGNITO_DOMAIN || 'convivo-residentes.auth.us-east-1.amazoncognito.com' }}
-          VITE_COGNITO_CLIENT_ID: ${{ vars.VITE_COGNITO_CLIENT_ID || '1h4j5k6l7m8n9o0p' }}
-          VITE_COGNITO_REDIRECT_URI: ${{ vars.VITE_COGNITO_REDIRECT_URI || 'https://localhost:5173' }}
+          VITE_COGNITO_DOMAIN: ${{ vars.VITE_COGNITO_DOMAIN || secrets.VITE_COGNITO_DOMAIN }}
+          VITE_COGNITO_CLIENT_ID: ${{ vars.VITE_COGNITO_CLIENT_ID || secrets.VITE_COGNITO_CLIENT_ID }}
+          VITE_COGNITO_REDIRECT_URI: ${{ vars.VITE_COGNITO_REDIRECT_URI || secrets.VITE_COGNITO_REDIRECT_URI }}
         run: npm run build
 
       - name: Lighthouse

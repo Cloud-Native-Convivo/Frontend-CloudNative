@@ -578,7 +578,7 @@ export default function ResidenteDashboard() {
     return () => {
       activo = false;
     };
-  }, [user?.condominioId, user?.unidad, setUser]);
+  }, [user, setUser, tieneAsignacionPrevia]);
 
   // Fetch datos reales del BFF/API si están disponibles
   useEffect(() => {

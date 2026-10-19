@@ -137,9 +137,19 @@ describe("gastosApi", () => {
         blob: async () => mockBlob,
       } as Response);
 
-    const res = await esperarYDescargarPdf("ticket-retry", 3, 10);
+    const res = await esperarYDescargarPdf("ticket-retry", 3, 10, 0);
     expect(res.ticketId).toBe("ticket-retry");
     expect(res.blob).toBe(mockBlob);
+  });
+
+  it("esperarYDescargarPdf aborta de inmediato ante error no recuperable (500)", async () => {
+    const { esperarYDescargarPdf } = await import("@/services/gastosApi");
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+    } as Response);
+
+    await expect(esperarYDescargarPdf("ticket-fail", 5, 10, 0)).rejects.toThrow("HTTP 500");
   });
 
   it("solicitarYDescargarPdfGastos orquesta la solicitud y descarga completa", async () => {
@@ -164,7 +174,7 @@ describe("gastosApi", () => {
     globalThis.URL.createObjectURL = createObjectURLSpy;
     globalThis.URL.revokeObjectURL = revokeObjectURLSpy;
 
-    const res = await solicitarYDescargarPdfGastos({ unidadId: "201", mes: "Agosto 2026" });
+    const res = await solicitarYDescargarPdfGastos({ unidadId: "201", mes: "Agosto 2026" }, 0);
     expect(res.ticketId).toBe("uuid-abc-123");
     expect(createObjectURLSpy).toHaveBeenCalledWith(mockBlob);
     expect(revokeObjectURLSpy).toHaveBeenCalledWith("blob:mock-url");

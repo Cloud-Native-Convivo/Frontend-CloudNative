@@ -2,6 +2,7 @@ import { useState, useEffect, lazy, Suspense } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { obtenerPanel } from "../services/panelApi";
+import { obtenerSolicitudPropia } from "../services/condominiosApi";
 import { listarEspacios } from "../services/espaciosApi";
 import { obtenerResumenGastos } from "../services/gastosApi";
 import { CHART_COLORS } from "../components/charts/chartColors";
@@ -547,13 +548,47 @@ function RecentActivityFeed({ items }: { items: ActivityItem[] }) {
 // ── Main Page Component ───────────────────────────────────────────────────────
 
 export default function ResidenteDashboard() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
+  const tieneAsignacionPrevia = Boolean(
+    user?.condominioId && user?.unidad && user.unidad !== "Sin unidad asignada",
+  );
+  const [asignacionVerificada, setAsignacionVerificada] = useState(tieneAsignacionPrevia);
   const [notifDismissed, setNotifDismissed] = useState(false);
   const [kpis, setKpis] = useState<KpiCardData[]>(DEFAULT_KPIS);
   const [selectedVisita, setSelectedVisita] = useState<Visita | null>(null);
 
+  useEffect(() => {
+    let activo = true;
+    obtenerSolicitudPropia()
+      .then((solicitud) => {
+        if (!activo || !user) return;
+        if (solicitud?.estado === "aprobada") {
+          const condominioId = String(solicitud.condominio_id);
+          if (user.condominioId !== condominioId || user.unidad !== solicitud.unidad) {
+            setUser({ ...user, condominioId, unidad: solicitud.unidad });
+          }
+          setAsignacionVerificada(true);
+        } else if (solicitud) {
+          setAsignacionVerificada(false);
+        }
+      })
+      .catch(() => {
+        if (activo && !tieneAsignacionPrevia) setAsignacionVerificada(false);
+      });
+    return () => {
+      activo = false;
+    };
+  }, [user, setUser, tieneAsignacionPrevia]);
+
   // Fetch datos reales del BFF/API si están disponibles
   useEffect(() => {
+    if (
+      !asignacionVerificada ||
+      !user?.condominioId ||
+      !user.unidad ||
+      user.unidad === "Sin unidad asignada"
+    )
+      return;
     let active = true;
     async function fetchDashboardData() {
       try {
@@ -636,7 +671,32 @@ export default function ResidenteDashboard() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [asignacionVerificada, user?.condominioId, user?.unidad]);
+
+  if (
+    !asignacionVerificada ||
+    !user?.condominioId ||
+    !user.unidad ||
+    user.unidad === "Sin unidad asignada"
+  ) {
+    return (
+      <main className="min-h-screen bg-[#faf9f6] px-6 py-20">
+        <section className="mx-auto max-w-xl rounded-2xl border border-border bg-white p-8 shadow-sm">
+          <h1 className="font-display text-2xl text-text">Asignación pendiente</h1>
+          <p className="mt-4 text-sm text-muted">
+            Tu sesión está activa. Elige tu condominio y unidad; las funciones de la comunidad
+            estarán disponibles cuando administración confirme tu asignación.
+          </p>
+          <Link
+            to="/completar-registro"
+            className="mt-6 inline-flex min-h-[44px] items-center rounded-xl bg-primary px-5 text-sm font-semibold text-white"
+          >
+            Elegir condominio
+          </Link>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <div className="flex flex-col w-full font-body bg-[#faf9f6] min-h-screen">

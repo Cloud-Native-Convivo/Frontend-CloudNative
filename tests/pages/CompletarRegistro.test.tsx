@@ -73,11 +73,28 @@ describe("CompletarRegistro Onboarding Page", () => {
     });
   });
 
-  it("al enviar formulario válido invoca completarSesion con el condominioId y unidad asignada", async () => {
+  it("permite iniciar sesión sin asignación cuando falla el catálogo", async () => {
+    vi.spyOn(condominiosApi, "obtenerCondominios").mockRejectedValue(new Error("Sin catálogo"));
+    const completar = vi.spyOn(sesionModule, "completarSesion").mockImplementation(() => {});
+
+    renderPagina();
+    fireEvent.click(await screen.findByRole("button", { name: /continuar sin asignación/i }));
+
+    expect(completar).toHaveBeenCalledWith(
+      mockPendingState.tokens,
+      expect.objectContaining({ nombre: "Google User", unidad: "Sin unidad asignada" }),
+      expect.any(Function),
+      expect.any(Function),
+    );
+    expect(completar.mock.calls[0][1].condominioId).toBeUndefined();
+  });
+
+  it("al elegir condominio solicita asignación sin habilitar acceso comunitario", async () => {
     vi.spyOn(condominiosApi, "obtenerCondominios").mockResolvedValueOnce([
       { id: "42", nombre: "Condominio Valparaíso" },
     ]);
     const spyCompletarSesion = vi.spyOn(sesionModule, "completarSesion").mockImplementation(() => {});
+    const solicitar = vi.spyOn(condominiosApi, "solicitarAsignacion").mockResolvedValue({ estado: "pendiente" });
 
     renderPagina();
 
@@ -92,13 +109,17 @@ describe("CompletarRegistro Onboarding Page", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /guardar y continuar/i }));
 
-    await waitFor(() => {
-      expect(spyCompletarSesion).toHaveBeenCalledTimes(1);
-    });
+    await waitFor(() => expect(solicitar).toHaveBeenCalledWith({ condominio_id: 42, unidad: "Torre B · Piso 5 · Unidad 504" }));
+    expect(spyCompletarSesion).not.toHaveBeenCalled();
+    expect(await screen.findByText(/solicitud pendiente/i)).toBeInTheDocument();
+  });
 
-    const [, usuarioGuardado] = spyCompletarSesion.mock.calls[0];
-    expect(usuarioGuardado.condominioId).toBe("42");
-    expect(usuarioGuardado.condominioNombre).toBe("Condominio Valparaíso");
-    expect(usuarioGuardado.unidad).toBe("Torre B · Piso 5 · Unidad 504");
+  it("no consulta el catálogo si no hay sesión pendiente ni usuario activo", async () => {
+    const obtener = vi.spyOn(condominiosApi, "obtenerCondominios");
+
+    renderPagina(null);
+
+    await screen.findByText("pantalla login");
+    expect(obtener).not.toHaveBeenCalled();
   });
 });

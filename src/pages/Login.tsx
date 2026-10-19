@@ -57,14 +57,7 @@ export default function Login() {
 
   useEffect(() => {
     if (!user) return;
-    if (
-      user.role === "residente" &&
-      (!user.condominioId || !user.unidad || user.unidad === "Sin unidad asignada")
-    ) {
-      navigate("/completar-registro", { replace: true });
-    } else {
-      navigate(rutaPrincipalPorRol(user.role), { replace: true });
-    }
+    navigate(rutaPrincipalPorRol(user.role), { replace: true });
   }, [user, navigate]);
 
   useEffect(() => {

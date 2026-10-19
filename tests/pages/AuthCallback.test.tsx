@@ -96,4 +96,17 @@ describe("AuthCallback component", () => {
       expect(mockNavigate).toHaveBeenCalledWith("/mi-dashboard", { replace: true });
     });
   });
+
+  it("inicia sesión con residente sin condominio tras aceptar términos", async () => {
+    sessionStorage.setItem(cognitoAuth.LOGIN_NONCE_KEY, "estado-sin-asignacion");
+    vi.spyOn(cognitoAuth, "exchangeCodeForTokens").mockResolvedValue({
+      id_token: "fake.id.token", access_token: "fake.access.token", expires_in: 3600, token_type: "Bearer",
+    });
+    vi.spyOn(cognitoAuth, "decodeIdToken").mockReturnValue({
+      sub: "nuevo", name: "Ana", "custom:terminos_version": "2026-09-30",
+    });
+    renderCallback("/auth/callback?code=code&state=estado-sin-asignacion");
+    await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith("/mi-dashboard", { replace: true }));
+    expect(mockNavigate).not.toHaveBeenCalledWith("/completar-registro", expect.anything());
+  });
 });

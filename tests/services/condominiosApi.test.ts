@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { obtenerCondominios } from "@/services/condominiosApi";
+import { obtenerCondominios, obtenerSolicitudPropia } from "@/services/condominiosApi";
 
 describe("condominiosApi", () => {
   beforeEach(() => {
@@ -48,5 +48,16 @@ describe("condominiosApi", () => {
     vi.spyOn(globalThis, "fetch").mockRejectedValueOnce(new Error("Network Error"));
 
     await expect(obtenerCondominios()).rejects.toThrow("Network Error");
+  });
+
+  it("consulta la asignación propia sin inventar un condominio por defecto", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({ ok: true, json: async () => null } as Response);
+    expect(await obtenerSolicitudPropia()).toBeNull();
+    expect(fetchSpy.mock.calls[0][0]).toMatch(/\/condominios\/solicitudes\/me$/);
+  });
+
+  it("retorna null cuando la consulta de asignación propia responde HTTP 404", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({ ok: false, status: 404 } as Response);
+    expect(await obtenerSolicitudPropia()).toBeNull();
   });
 });

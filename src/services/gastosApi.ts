@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../api/client";
 import { fetchConAuth } from "../auth/tokenManager";
 import { obtenerPanel } from "./panelApi";
 import { getCondominioIdActual } from "../utils/authStorage";
@@ -22,10 +23,7 @@ export interface GastosResumen {
   gastos: BackendGastoComun[];
 }
 
-const rawBffUrl =
-  (typeof import.meta !== "undefined" && import.meta.env?.VITE_BFF_URL) ||
-  "https://11bwhgfogd.execute-api.us-east-1.amazonaws.com/api/v1";
-const API_ROOT = rawBffUrl.replace(/\/api\/v1\/?$/, "").replace(/\/+$/, "");
+const API_ROOT = API_BASE_URL.replace(/\/api\/v1\/?$/, "").replace(/\/+$/, "");
 
 export function getGastosUrl(): string {
   return `${API_ROOT}/api/gastos/api/v1/gastos-comunes?condominioId=${getCondominioIdActual()}`;
@@ -153,9 +151,15 @@ export async function descargarPdfGastosPorTicket(ticketId: string): Promise<Blo
 
 export async function esperarYDescargarPdf(
   ticketId: string,
-  maxIntentos = 15,
-  intervaloMs = 1500,
+  maxIntentos = 25,
+  intervaloMs = 2000,
+  esperaInicialMs = 3000,
 ): Promise<{ ticketId: string; blob: Blob }> {
+  // Breve espera inicial: la generación asíncrona del PDF con RabbitMQ toma ~5-10s
+  if (esperaInicialMs > 0) {
+    await new Promise((resolve) => setTimeout(resolve, esperaInicialMs));
+  }
+
   for (let i = 0; i < maxIntentos; i++) {
     try {
       const blob = await descargarPdfGastosPorTicket(ticketId);
@@ -185,9 +189,10 @@ export function dispararDescargaArchivo(blob: Blob, nombreArchivo: string): void
 
 export async function solicitarYDescargarPdfGastos(
   payload?: SolicitarPdfPayload,
+  esperaInicialMs = 3000,
 ): Promise<{ ticketId: string }> {
   const { ticketId } = await solicitarPdfGastos(payload);
-  const { blob } = await esperarYDescargarPdf(ticketId);
+  const { blob } = await esperarYDescargarPdf(ticketId, 25, 2000, esperaInicialMs);
   const mesLimpio = payload?.mes ? payload.mes.toLowerCase().replace(/\s+/g, "-") : "periodo";
   const filename = `comprobante-gastos-${mesLimpio}-${ticketId.substring(0, 8)}.pdf`;
   dispararDescargaArchivo(blob, filename);

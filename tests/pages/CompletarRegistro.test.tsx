@@ -113,4 +113,13 @@ describe("CompletarRegistro Onboarding Page", () => {
     expect(spyCompletarSesion).not.toHaveBeenCalled();
     expect(await screen.findByText(/solicitud pendiente/i)).toBeInTheDocument();
   });
+
+  it("no consulta el catálogo si no hay sesión pendiente ni usuario activo", async () => {
+    const obtener = vi.spyOn(condominiosApi, "obtenerCondominios");
+
+    renderPagina(null);
+
+    await screen.findByText("pantalla login");
+    expect(obtener).not.toHaveBeenCalled();
+  });
 });

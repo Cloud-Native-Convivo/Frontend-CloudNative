@@ -549,7 +549,10 @@ function RecentActivityFeed({ items }: { items: ActivityItem[] }) {
 
 export default function ResidenteDashboard() {
   const { user, setUser } = useAuth();
-  const [asignacionVerificada, setAsignacionVerificada] = useState(false);
+  const tieneAsignacionPrevia = Boolean(
+    user?.condominioId && user?.unidad && user.unidad !== "Sin unidad asignada",
+  );
+  const [asignacionVerificada, setAsignacionVerificada] = useState(tieneAsignacionPrevia);
   const [notifDismissed, setNotifDismissed] = useState(false);
   const [kpis, setKpis] = useState<KpiCardData[]>(DEFAULT_KPIS);
   const [selectedVisita, setSelectedVisita] = useState<Visita | null>(null);
@@ -558,20 +561,24 @@ export default function ResidenteDashboard() {
     let activo = true;
     obtenerSolicitudPropia()
       .then((solicitud) => {
-        if (!activo || solicitud?.estado !== "aprobada" || !user) return;
-        const condominioId = String(solicitud.condominio_id);
-        if (user.condominioId !== condominioId || user.unidad !== solicitud.unidad) {
-          setUser({ ...user, condominioId, unidad: solicitud.unidad });
+        if (!activo || !user) return;
+        if (solicitud?.estado === "aprobada") {
+          const condominioId = String(solicitud.condominio_id);
+          if (user.condominioId !== condominioId || user.unidad !== solicitud.unidad) {
+            setUser({ ...user, condominioId, unidad: solicitud.unidad });
+          }
+          setAsignacionVerificada(true);
+        } else if (solicitud) {
+          setAsignacionVerificada(false);
         }
-        setAsignacionVerificada(true);
       })
       .catch(() => {
-        if (activo) setAsignacionVerificada(false);
+        if (activo && !tieneAsignacionPrevia) setAsignacionVerificada(false);
       });
     return () => {
       activo = false;
     };
-  }, [user, setUser]);
+  }, [user?.condominioId, user?.unidad, setUser]);
 
   // Fetch datos reales del BFF/API si están disponibles
   useEffect(() => {

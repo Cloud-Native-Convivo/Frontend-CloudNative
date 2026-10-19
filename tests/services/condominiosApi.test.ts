@@ -55,4 +55,9 @@ describe("condominiosApi", () => {
     expect(await obtenerSolicitudPropia()).toBeNull();
     expect(fetchSpy.mock.calls[0][0]).toMatch(/\/condominios\/solicitudes\/me$/);
   });
+
+  it("retorna null cuando la consulta de asignación propia responde HTTP 404", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({ ok: false, status: 404 } as Response);
+    expect(await obtenerSolicitudPropia()).toBeNull();
+  });
 });

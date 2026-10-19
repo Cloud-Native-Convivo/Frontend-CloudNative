@@ -1,14 +1,8 @@
+import { API_BASE_URL as BFF_BASE_URL } from "../api/client";
 import { fetchConAuth } from "../auth/tokenManager";
 import { getCondominioIdActual } from "../utils/authStorage";
 
-const rawBffUrl =
-  (typeof import.meta !== "undefined" && import.meta.env?.VITE_BFF_URL) ||
-  (import.meta.env?.DEV
-    ? "http://localhost:3000/api/v1"
-    : "https://11bwhgfogd.execute-api.us-east-1.amazonaws.com/api/v1/espacios-comunes");
-const API_BASE_URL = rawBffUrl.endsWith("/espacios-comunes")
-  ? rawBffUrl
-  : `${rawBffUrl.replace(/\/+$/, "")}/espacios-comunes`;
+const API_BASE_URL = `${BFF_BASE_URL}/espacios-comunes`;
 
 export interface BackendEspacio {
   id: number;
@@ -46,6 +40,7 @@ export async function listarEspacios(): Promise<BackendEspacio[]> {
   // segmento final vacío (AWS rechaza esa route key al crearla). El BFF
   // igual normaliza a "/espacios/" antes de reenviar al microservicio.
   const condominioId = getCondominioIdActual();
+  if (!condominioId) return [];
   const response = await fetchConAuth(`${API_BASE_URL}/espacios?condominio_id=${condominioId}`);
   if (!response.ok) {
     throw new Error(`Error al listar espacios: HTTP ${response.status}`);

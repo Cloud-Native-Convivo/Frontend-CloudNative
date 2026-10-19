@@ -43,6 +43,7 @@ export interface SolicitudAsignacion {
 
 export async function obtenerSolicitudPropia(): Promise<SolicitudAsignacion | null> {
   const respuesta = await fetchConAuth(`${API_BASE_URL}/condominios/solicitudes/me`);
+  if (respuesta.status === 404) return null;
   if (!respuesta.ok) throw new Error(`Error al consultar asignación (HTTP ${respuesta.status})`);
   return respuesta.json();
 }

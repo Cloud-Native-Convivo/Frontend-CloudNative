@@ -196,8 +196,10 @@ export default function CompletarRegistro() {
   const [estadoSolicitud, setEstadoSolicitud] = useState<string | null>(null);
 
   const pending = location.state as PendingAuth | null;
+  const tieneAcceso = Boolean(pending?.tokens?.access_token || activeUser);
 
   useEffect(() => {
+    if (!tieneAcceso) return;
     let activo = true;
     obtenerCondominios()
       .then((items) => {
@@ -216,7 +218,7 @@ export default function CompletarRegistro() {
     return () => {
       activo = false;
     };
-  }, [recargarTrigger]);
+  }, [recargarTrigger, tieneAcceso]);
 
   const reintentar = () => {
     setErrorCarga(null);
@@ -225,7 +227,7 @@ export default function CompletarRegistro() {
   };
 
   // Si no hay tokens pendientes ni usuario activo, redirigir al login
-  if (!pending?.tokens?.access_token && !activeUser) {
+  if (!tieneAcceso) {
     return <Navigate to="/login" replace />;
   }
 
@@ -237,7 +239,11 @@ export default function CompletarRegistro() {
   };
   const usuarioBase = pending?.usuario ?? activeUser!;
 
-  const handleCompletar = async (unidad: string, condominioId: string, condominioNombre?: string) => {
+  const handleCompletar = async (
+    unidad: string,
+    condominioId: string,
+    condominioNombre?: string,
+  ) => {
     try {
       const respuesta = await solicitarAsignacion({ unidad, condominio_id: Number(condominioId) });
       if (respuesta.estado === "aprobada") {
@@ -304,7 +310,9 @@ export default function CompletarRegistro() {
             onClick={continuarSinAsignacion}
             className="mt-4 w-full min-h-[44px] text-sm font-semibold text-primary underline focus:outline-none focus:ring-2 focus:ring-primary"
           >
-            Continuar sin asignación
+            {estadoSolicitud === "pendiente"
+              ? "Continuar al panel de residente"
+              : "Continuar sin asignación"}
           </button>
         )}
       </div>

@@ -91,9 +91,6 @@ export function clearStoredAuth(): void {
 
 export function getCondominioIdActual(): string {
   const usuario = getStoredUser();
-  const idRaw =
-    usuario?.condominioId ||
-    (typeof import.meta !== "undefined" && import.meta.env?.VITE_CONDOMINIO_ID) ||
-    "1";
+  const idRaw = usuario?.condominioId ?? "";
   return encodeURIComponent(String(idRaw).trim());
 }

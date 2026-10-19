@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
-import { obtenerCondominios } from "../services/condominiosApi";
+import { obtenerCondominios, solicitarAsignacion } from "../services/condominiosApi";
 import { completarSesion } from "../auth/sesion";
 import type { CognitoTokens } from "../auth/cognitoAuth";
 import type { CondominioItem, User } from "../types";
@@ -193,6 +193,7 @@ export default function CompletarRegistro() {
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState<string | null>(null);
   const [recargarTrigger, setRecargarTrigger] = useState(0);
+  const [estadoSolicitud, setEstadoSolicitud] = useState<string | null>(null);
 
   const pending = location.state as PendingAuth | null;
 
@@ -236,15 +237,23 @@ export default function CompletarRegistro() {
   };
   const usuarioBase = pending?.usuario ?? activeUser!;
 
-  const handleCompletar = (unidad: string, condominioId: string, condominioNombre?: string) => {
-    const usuarioCompleto: User = {
-      ...usuarioBase,
-      unidad,
-      condominioId,
-      condominioNombre,
-    };
+  const handleCompletar = async (unidad: string, condominioId: string, condominioNombre?: string) => {
+    try {
+      const respuesta = await solicitarAsignacion({ unidad, condominio_id: Number(condominioId) });
+      if (respuesta.estado === "aprobada") {
+        // Ya aprobada (409 o respuesta directa): completar sesión y navegar.
+        const usuario = { ...usuarioBase, unidad, condominioId: condominioId, condominioNombre };
+        completarSesion(tokens, usuario, setUser, navigate);
+        return;
+      }
+      setEstadoSolicitud(respuesta.estado);
+    } catch {
+      setEstadoSolicitud("error");
+    }
+  };
 
-    completarSesion(tokens, usuarioCompleto, setUser, navigate);
+  const continuarSinAsignacion = () => {
+    completarSesion(tokens, usuarioBase, setUser, navigate);
   };
 
   return (
@@ -281,6 +290,22 @@ export default function CompletarRegistro() {
           </div>
         ) : (
           <FormularioUnidad condominios={condominios} onSubmit={handleCompletar} />
+        )}
+        {estadoSolicitud && (
+          <p role="status" className="mt-4 text-sm text-muted">
+            {estadoSolicitud === "error"
+              ? "No pudimos enviar la solicitud. Intenta nuevamente."
+              : "Solicitud pendiente de aprobación por administración."}
+          </p>
+        )}
+        {!cargando && (
+          <button
+            type="button"
+            onClick={continuarSinAsignacion}
+            className="mt-4 w-full min-h-[44px] text-sm font-semibold text-primary underline focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            Continuar sin asignación
+          </button>
         )}
       </div>
     </div>

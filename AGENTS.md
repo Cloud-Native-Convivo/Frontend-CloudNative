@@ -71,6 +71,8 @@ npm run test
 npx vitest run src/path/to/file.test.ts
 # levantar entorno local
 npm run dev
+# levantar contra el ecosistema local del compose (verifica .env.local primero)
+npm run dev:local
 # build de producción
 npm run build
 # preview del build
@@ -82,6 +84,8 @@ npm run typecheck
 # formatear
 npm run format
 ```
+
+Entorno local: en modo desarrollo, si no hay `VITE_BFF_URL` definida (clon nuevo, sin `.env`) el fallback de `src/api/client.ts` y de `src/services/*Api.ts` resuelve a `http://localhost:3000/api/v1` con `import.meta.env.DEV`; el build de producción sigue apuntando al API Gateway de AWS. Vite da prioridad a `.env.local` sobre `.env`, y ninguno de los dos se versiona: `.env` se copia de `.env.example` y por defecto apunta a AWS, así que para trabajar contra el ecosistema local crear `.env.local` con `VITE_BFF_URL=http://localhost:3000/api/v1` (mínimo; ver bloque local de `.env.example`), o usar `npm run dev:local`, que corre `check-local-env.mjs` antes de Vite y aborta con ese mismo recordatorio si falta `.env.local` o no define `VITE_BFF_URL`. El login demo local usa `VITE_JWKS_MOCK_URL` (`ms-jwks-mock` del compose, default `http://localhost:4000`) y solo aparece en dev (`Login.tsx`, gated por `import.meta.env.DEV`). El ecosistema local lo levanta `.\start-dev.ps1` desde la raíz del workspace (panel incluido, puerto 4200); acepta `--build` manual con `docker compose build <servicio>` si tocaste un Dockerfile.
 
 ## 5. Estilo de código
 

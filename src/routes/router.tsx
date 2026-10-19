@@ -6,6 +6,8 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 import NotFound from "../pages/NotFound";
 
+const RouteHydrateFallback = () => <div className="min-h-screen bg-surface" />;
+
 const router = createBrowserRouter(
   [
     // Auth routes (no Layout wrapper)
@@ -13,26 +15,31 @@ const router = createBrowserRouter(
     {
       path: "/auth/callback",
       lazy: () => import("../pages/AuthCallback").then((m) => ({ Component: m.default })),
+      HydrateFallback: RouteHydrateFallback,
       errorElement: <RouteError />,
     },
     {
       path: "/auth/error",
       lazy: () => import("../pages/AuthError").then((m) => ({ Component: m.default })),
+      HydrateFallback: RouteHydrateFallback,
       errorElement: <RouteError />,
     },
     {
       path: "/aceptar-terminos",
       lazy: () => import("../pages/AceptarTerminos").then((m) => ({ Component: m.default })),
+      HydrateFallback: RouteHydrateFallback,
       errorElement: <RouteError />,
     },
     {
       path: "/crear-cuenta",
       lazy: () => import("../pages/RegistroCuenta").then((m) => ({ Component: m.default })),
+      HydrateFallback: RouteHydrateFallback,
       errorElement: <RouteError />,
     },
     {
       path: "/completar-registro",
       lazy: () => import("../pages/CompletarRegistro").then((m) => ({ Component: m.default })),
+      HydrateFallback: RouteHydrateFallback,
       errorElement: <RouteError />,
     },
 
@@ -40,6 +47,7 @@ const router = createBrowserRouter(
     {
       path: "/",
       Component: Layout,
+      HydrateFallback: RouteHydrateFallback,
       errorElement: <RouteError />,
       children: [
         // Public / all roles
@@ -59,7 +67,13 @@ const router = createBrowserRouter(
 
         // Residente only
         {
-          element: <ProtectedRoute allowedRoles={["residente"]} redirectTo="/login" />,
+          element: (
+            <ProtectedRoute
+              allowedRoles={["residente"]}
+              redirectTo="/login"
+              permitirSinAsignacion
+            />
+          ),
           children: [
             // recharts es pesada — lazy-load para no meterla en el chunk principal.
             {

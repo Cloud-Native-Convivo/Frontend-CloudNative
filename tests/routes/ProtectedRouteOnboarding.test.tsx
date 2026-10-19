@@ -5,7 +5,7 @@ import { AuthContext } from "@/hooks/useAuth";
 import ProtectedRoute from "@/routes/ProtectedRoute";
 import type { User, Role } from "@/types";
 
-function renderRutaProtegida(user: User | null, allowedRoles: Role[]) {
+function renderRutaProtegida(user: User | null, allowedRoles: Role[], permitirSinAsignacion = false) {
   return render(
     <AuthContext.Provider
       value={{
@@ -19,7 +19,7 @@ function renderRutaProtegida(user: User | null, allowedRoles: Role[]) {
         <Routes>
           <Route path="/" element={<p>inicio</p>} />
           <Route path="/completar-registro" element={<p>pantalla onboarding</p>} />
-          <Route element={<ProtectedRoute allowedRoles={allowedRoles} />}>
+          <Route element={<ProtectedRoute allowedRoles={allowedRoles} permitirSinAsignacion={permitirSinAsignacion} />}>
             <Route path="/dashboard-protegido" element={<p>contenido privado</p>} />
           </Route>
         </Routes>
@@ -66,5 +66,10 @@ describe("ProtectedRoute — Control Anti-Bypass de Onboarding", () => {
     renderRutaProtegida(usuarioSinUnidad, ["residente"]);
     expect(screen.queryByText("contenido privado")).not.toBeInTheDocument();
     expect(screen.getByText("pantalla onboarding")).toBeInTheDocument();
+  });
+
+  it("permite el panel a un residente sin asignación, pero no otras rutas", () => {
+    renderRutaProtegida({ nombre: "Ana", unidad: "Sin unidad asignada", role: "residente" }, ["residente"], true);
+    expect(screen.getByText("contenido privado")).toBeInTheDocument();
   });
 });

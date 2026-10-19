@@ -24,7 +24,9 @@ export interface GastosResumen {
 
 const rawBffUrl =
   (typeof import.meta !== "undefined" && import.meta.env?.VITE_BFF_URL) ||
-  "https://11bwhgfogd.execute-api.us-east-1.amazonaws.com/api/v1";
+  (import.meta.env?.DEV
+    ? "http://localhost:3000/api/v1"
+    : "https://11bwhgfogd.execute-api.us-east-1.amazonaws.com/api/v1");
 const API_ROOT = rawBffUrl.replace(/\/api\/v1\/?$/, "").replace(/\/+$/, "");
 
 export function getGastosUrl(): string {
@@ -153,9 +155,12 @@ export async function descargarPdfGastosPorTicket(ticketId: string): Promise<Blo
 
 export async function esperarYDescargarPdf(
   ticketId: string,
-  maxIntentos = 15,
-  intervaloMs = 1500,
+  maxIntentos = 25,
+  intervaloMs = 2000,
 ): Promise<{ ticketId: string; blob: Blob }> {
+  // Breve espera inicial: la generación asíncrona del PDF con RabbitMQ toma ~5-10s
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+
   for (let i = 0; i < maxIntentos; i++) {
     try {
       const blob = await descargarPdfGastosPorTicket(ticketId);

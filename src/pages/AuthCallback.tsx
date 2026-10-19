@@ -60,11 +60,6 @@ export default function AuthCallback() {
           navigate("/aceptar-terminos", { replace: true, state: { tokens, usuario } });
           return;
         }
-        // Control Anti-Bypass: si no tiene condominio o unidad asignada, completar registro primero
-        if (!usuario.condominioId || !usuario.unidad || usuario.unidad === "Sin unidad asignada") {
-          navigate("/completar-registro", { replace: true, state: { tokens, usuario } });
-          return;
-        }
         completarSesion(tokens, usuario, setUser, navigate);
       } catch {
         navigate("/auth/error?reason=exchange_failed", { replace: true });

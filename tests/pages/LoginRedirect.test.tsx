@@ -44,7 +44,7 @@ describe("Login and Home redirects for authenticated users", () => {
     expect(await screen.findByTestId("mi-dashboard-landing")).toBeInTheDocument();
   });
 
-  it("Login redirige a /completar-registro si el usuario residente tiene perfil incompleto", async () => {
+  it("Login redirige al panel pendiente si el residente no tiene asignación", async () => {
     const user: User = {
       nombre: "Residente Incompleto",
       unidad: "Sin unidad asignada",
@@ -53,7 +53,7 @@ describe("Login and Home redirects for authenticated users", () => {
 
     renderWithAuth(<Login />, user, "/login");
 
-    expect(await screen.findByTestId("completar-landing")).toBeInTheDocument();
+    expect(await screen.findByTestId("mi-dashboard-landing")).toBeInTheDocument();
   });
 
   it("Login redirige a /dashboard si el usuario es admin", async () => {

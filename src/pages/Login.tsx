@@ -118,7 +118,7 @@ export default function Login() {
       {/* ── Left Hero Architectural Showcase ─────────────────────────────── */}
       <aside
         aria-label="Panel institucional de Convivo"
-        className={`relative hidden lg:flex flex-col justify-between w-full lg:w-[460px] xl:w-[540px] shrink-0 bg-[#001714] text-white p-10 xl:p-14 overflow-hidden transition-all duration-500 ease-out ${
+        className={`relative hidden lg:flex flex-col justify-between w-full lg:w-[460px] xl:w-[540px] shrink-0 bg-[#001714] text-white p-10 xl:p-14 overflow-hidden transition-[opacity,transform] duration-500 ease-out ${
           mounted ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6"
         }`}
       >
@@ -201,7 +201,7 @@ export default function Login() {
 
       {/* ── Right Access Concierge Form ──────────────────────────────────── */}
       <main
-        className={`flex-1 flex flex-col justify-between p-6 sm:p-10 lg:p-14 transition-all duration-500 delay-100 ease-out ${
+        className={`flex-1 flex flex-col justify-between p-6 sm:p-10 lg:p-14 transition-[opacity,transform] duration-500 delay-100 ease-out ${
           mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >
@@ -266,7 +266,7 @@ export default function Login() {
               onClick={handleGoogleLogin}
               disabled={isConnectingGoogle}
               aria-busy={isConnectingGoogle}
-              className="w-full relative group flex items-center justify-center gap-3 bg-white hover:bg-slate-50 border border-slate-300 hover:border-slate-400 text-slate-900 font-semibold text-sm py-3.5 px-4 rounded-xl shadow-xs hover:shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full relative group flex items-center justify-center gap-3 bg-white hover:bg-slate-50 border border-slate-300 hover:border-slate-400 text-slate-900 font-semibold text-sm py-3.5 px-4 rounded-xl shadow-xs hover:shadow-md transition-[color,background-color,border-color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
               {isConnectingGoogle ? (
                 <div
@@ -321,7 +321,7 @@ export default function Login() {
                   onChange={handleChange}
                   aria-describedby={errors.email ? "email-error" : undefined}
                   aria-invalid={!!errors.email}
-                  className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl border text-base sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-teal-700 focus:ring-2 focus:ring-teal-700/25 bg-white ${
+                  className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl border text-base sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-[color,background-color,border-color,box-shadow] focus:border-teal-700 focus:ring-2 focus:ring-teal-700/25 bg-white ${
                     errors.email
                       ? "border-rose-600 bg-rose-50/40 focus:border-rose-700 focus:ring-rose-700/20"
                       : "border-slate-300 hover:border-slate-400"
@@ -372,7 +372,7 @@ export default function Login() {
                   onChange={handleChange}
                   aria-describedby={errors.password ? "password-error" : undefined}
                   aria-invalid={!!errors.password}
-                  className={`w-full pl-10 pr-11 py-2.5 rounded-xl border text-base sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-teal-700 focus:ring-2 focus:ring-teal-700/25 bg-white ${
+                  className={`w-full pl-10 pr-11 py-2.5 rounded-xl border text-base sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-[color,background-color,border-color,box-shadow] focus:border-teal-700 focus:ring-2 focus:ring-teal-700/25 bg-white ${
                     errors.password
                       ? "border-rose-600 bg-rose-50/40 focus:border-rose-700 focus:ring-rose-700/20"
                       : "border-slate-300 hover:border-slate-400"
@@ -420,7 +420,7 @@ export default function Login() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-primary hover:bg-accent text-white font-bold text-sm py-3.5 rounded-xl shadow-[0_4px_16px_rgba(13,148,136,0.25)] hover:shadow-[0_6px_20px_rgba(13,148,136,0.35)] transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2"
+              className="w-full bg-primary hover:bg-accent text-white font-bold text-sm py-3.5 rounded-xl shadow-[0_4px_16px_rgba(13,148,136,0.25)] hover:shadow-[0_6px_20px_rgba(13,148,136,0.35)] transition-[color,background-color,border-color,box-shadow] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2"
             >
               Ingresar
             </button>

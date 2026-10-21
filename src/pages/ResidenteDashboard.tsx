@@ -280,7 +280,7 @@ function Badge({ label, variant }: { label: string; variant: "green" | "yellow" 
 
 function KpiCard({ card }: { card: KpiCardData }) {
   return (
-    <div className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-all hover:shadow-[0_12px_28px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 relative overflow-hidden">
+    <div className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-[box-shadow,transform,background-color] hover:shadow-[0_12px_28px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 relative overflow-hidden">
       <div>
         <div className="flex items-start justify-between mb-3">
           <div className="w-9 h-9 rounded-xl bg-stone-50 border border-stone-200/60 flex items-center justify-center">
@@ -355,21 +355,21 @@ function DashboardHeroHeader({ user }: { user: ReturnType<typeof useAuth>["user"
           <div className="flex flex-wrap gap-2.5 items-center">
             <Link
               to="/espacios"
-              className="inline-flex items-center gap-2 bg-primary text-white text-xs font-semibold py-2.5 px-4 rounded-xl no-underline shadow-[0_4px_16px_rgba(13,148,136,0.25)] transition-all hover:bg-emerald-600 hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 bg-primary text-white text-xs font-semibold py-2.5 px-4 rounded-xl no-underline shadow-[0_4px_16px_rgba(13,148,136,0.25)] transition-[box-shadow,transform,background-color] hover:bg-emerald-600 hover:-translate-y-0.5"
             >
               <IconCalendar className="w-3.5 h-3.5" />
               <span>Reservar espacio</span>
             </Link>
             <Link
               to="/gastos"
-              className="inline-flex items-center gap-2 bg-white/10 text-white text-xs font-semibold py-2.5 px-4 rounded-xl no-underline border border-white/20 transition-all hover:bg-white/20"
+              className="inline-flex items-center gap-2 bg-white/10 text-white text-xs font-semibold py-2.5 px-4 rounded-xl no-underline border border-white/20 transition-[color,background-color,border-color,box-shadow] hover:bg-white/20"
             >
               <IconDollar className="w-3.5 h-3.5 text-primary-on-dark" />
               <span>Pagar gastos</span>
             </Link>
             <Link
               to="/visitas"
-              className="inline-flex items-center gap-2 bg-white/10 text-white text-xs font-semibold py-2.5 px-4 rounded-xl no-underline border border-white/20 transition-all hover:bg-white/20"
+              className="inline-flex items-center gap-2 bg-white/10 text-white text-xs font-semibold py-2.5 px-4 rounded-xl no-underline border border-white/20 transition-[color,background-color,border-color,box-shadow] hover:bg-white/20"
             >
               <IconUsers className="w-3.5 h-3.5 text-primary-on-dark" />
               <span>Pase de visita</span>
@@ -390,7 +390,7 @@ function NoticeTile({ notice }: { notice: NoticeCard }) {
   };
 
   return (
-    <article className="flex flex-col gap-2 rounded-2xl border border-stone-200/80 bg-white p-5 transition-all hover:shadow-[0_8px_24px_rgba(0,0,0,0.05)] hover:border-stone-300">
+    <article className="flex flex-col gap-2 rounded-2xl border border-stone-200/80 bg-white p-5 transition-[color,background-color,border-color,box-shadow] hover:shadow-[0_8px_24px_rgba(0,0,0,0.05)] hover:border-stone-300">
       <div className="flex items-center justify-between">
         <span
           className={`rounded-full px-2.5 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider border ${
@@ -442,7 +442,7 @@ function VisitasPassesSection({
         {visits.map((vis) => (
           <div
             key={vis.id}
-            className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-4 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-all hover:shadow-[0_10px_24px_rgba(0,0,0,0.05)]"
+            className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-4 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-[color,background-color,border-color,box-shadow] hover:shadow-[0_10px_24px_rgba(0,0,0,0.05)]"
           >
             <div>
               <div className="flex items-center justify-between mb-2">
@@ -467,7 +467,7 @@ function VisitasPassesSection({
               <button
                 type="button"
                 onClick={() => onVerQr(vis)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-xs font-semibold text-text hover:bg-primary hover:text-white hover:border-primary transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-xs font-semibold text-text hover:bg-primary hover:text-white hover:border-primary transition-[color,background-color,border-color,box-shadow] cursor-pointer"
               >
                 <span>Ver QR</span>
                 <IconChevronRight className="w-3 h-3" />
@@ -493,7 +493,7 @@ function QuickLinksDock({ links }: { links: QuickAccessItem[] }) {
           <Link
             key={link.label}
             to={link.to}
-            className="group flex flex-col items-start p-3.5 rounded-2xl border border-stone-200/80 bg-white no-underline transition-all hover:shadow-[0_8px_20px_rgba(0,0,0,0.05)] hover:border-stone-300"
+            className="group flex flex-col items-start p-3.5 rounded-2xl border border-stone-200/80 bg-white no-underline transition-[color,background-color,border-color,box-shadow] hover:shadow-[0_8px_20px_rgba(0,0,0,0.05)] hover:border-stone-300"
           >
             <div className="w-8 h-8 rounded-xl bg-teal-50 text-accent flex items-center justify-center mb-2.5 transition-transform group-hover:scale-105">
               {link.icon}

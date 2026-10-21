@@ -1,5 +1,7 @@
+import { API_BASE_URL } from "../api/client";
 import { fetchConAuth } from "../auth/tokenManager";
 import { obtenerPanel } from "./panelApi";
+import { getCondominioIdActual } from "../utils/authStorage";
 
 export interface BackendGastoComun {
   id: number;
@@ -21,11 +23,11 @@ export interface GastosResumen {
   gastos: BackendGastoComun[];
 }
 
-const rawBffUrl =
-  (typeof import.meta !== "undefined" && import.meta.env?.VITE_BFF_URL) ||
-  "https://11bwhgfogd.execute-api.us-east-1.amazonaws.com/api/v1";
-const API_ROOT = rawBffUrl.replace(/\/api\/v1\/?$/, "").replace(/\/+$/, "");
-const GASTOS_URL = `${API_ROOT}/api/gastos/api/v1/gastos-comunes`;
+const API_ROOT = API_BASE_URL.replace(/\/api\/v1\/?$/, "").replace(/\/+$/, "");
+
+export function getGastosUrl(): string {
+  return `${API_ROOT}/api/gastos/api/v1/gastos-comunes?condominioId=${getCondominioIdActual()}`;
+}
 
 export async function listarGastos(): Promise<BackendGastoComun[]> {
   // Intento 1: vía panel agregado (agregador seguro para residente)
@@ -52,7 +54,7 @@ export async function listarGastos(): Promise<BackendGastoComun[]> {
   // intento 1 (agregador opcional), si esto también falla hay que propagar el
   // error: devolver [] acá sería indistinguible de "el residente no tiene
   // gastos", y el llamador (obtenerResumenGastos) lo leería como "al día".
-  const response = await fetchConAuth(GASTOS_URL);
+  const response = await fetchConAuth(getGastosUrl());
   if (!response.ok) {
     throw new Error(`No se pudo obtener gastos comunes: HTTP ${response.status}`);
   }
@@ -91,4 +93,108 @@ export async function obtenerResumenGastos(): Promise<GastosResumen> {
     proximoVencimiento,
     gastos,
   };
+}
+
+export interface SolicitarPdfPayload {
+  unidadId?: string;
+  mes?: string;
+}
+
+export interface SolicitarPdfResponse {
+  ticketId: string;
+  ticket_id?: string;
+  status: string;
+  estado?: string;
+}
+
+export async function solicitarPdfGastos(
+  payload?: SolicitarPdfPayload,
+): Promise<SolicitarPdfResponse> {
+  const url = `${API_ROOT}/api/v1/gastos/solicitar-pdf`;
+  const response = await fetchConAuth(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload ?? {}),
+  });
+
+  if (!response.ok && response.status !== 202) {
+    throw new Error(`Error al solicitar PDF de gastos: HTTP ${response.status}`);
+  }
+
+  const data = (await response.json()) as Record<string, unknown>;
+  const ticketId = (data.ticketId ?? data.ticket_id ?? "") as string;
+  const status = (data.status ?? data.estado ?? "PENDIENTE") as string;
+  return {
+    ticketId,
+    ticket_id: ticketId,
+    status,
+    estado: status,
+  };
+}
+
+export async function descargarPdfGastosPorTicket(ticketId: string): Promise<Blob> {
+  const url = `${API_ROOT}/api/v1/gastos/pdf/${ticketId}/descargar`;
+  const response = await fetchConAuth(url);
+
+  if (response.status === 404) {
+    throw new Error("PROCESANDO");
+  }
+
+  if (!response.ok) {
+    throw new Error(`Error al descargar PDF: HTTP ${response.status}`);
+  }
+
+  return response.blob();
+}
+
+export async function esperarYDescargarPdf(
+  ticketId: string,
+  maxIntentos = 25,
+  intervaloMs = 2000,
+  esperaInicialMs = 3000,
+): Promise<{ ticketId: string; blob: Blob }> {
+  // Breve espera inicial: la generación asíncrona del PDF con RabbitMQ toma ~5-10s
+  if (esperaInicialMs > 0) {
+    await new Promise((resolve) => setTimeout(resolve, esperaInicialMs));
+  }
+
+  for (let i = 0; i < maxIntentos; i++) {
+    try {
+      const blob = await descargarPdfGastosPorTicket(ticketId);
+      return { ticketId, blob };
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message === "PROCESANDO") {
+        await new Promise((resolve) => setTimeout(resolve, intervaloMs));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error("Tiempo de espera agotado al generar el PDF de gastos");
+}
+
+export function dispararDescargaArchivo(blob: Blob, nombreArchivo: string): void {
+  if (typeof window === "undefined" || !window.URL) return;
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = nombreArchivo;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
+}
+
+export async function solicitarYDescargarPdfGastos(
+  payload?: SolicitarPdfPayload,
+  esperaInicialMs = 3000,
+): Promise<{ ticketId: string }> {
+  const { ticketId } = await solicitarPdfGastos(payload);
+  const { blob } = await esperarYDescargarPdf(ticketId, 25, 2000, esperaInicialMs);
+  const mesLimpio = payload?.mes ? payload.mes.toLowerCase().replace(/\s+/g, "-") : "periodo";
+  const filename = `comprobante-gastos-${mesLimpio}-${ticketId.substring(0, 8)}.pdf`;
+  dispararDescargaArchivo(blob, filename);
+  return { ticketId };
 }

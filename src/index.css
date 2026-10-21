@@ -22,6 +22,11 @@
   --sileo-state-info: #0284c7;
 }
 
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
 /* ── Hero entrance animations ─────────────────────────────────────── */
 @keyframes cvFadeSlideUp {
   from {
@@ -82,20 +87,15 @@
   animation: cvBlobDrift var(--drift-dur, 12s) ease-in-out infinite;
 }
 
-/* Respect reduced motion */
+/* Respect reduced motion (WCAG 2.3) */
 @media (prefers-reduced-motion: reduce) {
-  .cv-hero-badge,
-  .cv-hero-h1,
-  .cv-hero-subtitle,
-  .cv-hero-ctas,
-  .cv-hero-badges,
-  .cv-hero-card {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-  .cv-blob {
-    animation: none;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -113,7 +113,7 @@ body {
   background: #ffffff;
 }
 
-/* Accessibility: Keyboard focus indicator */
+/* Accessibility: Keyboard focus indicator & Not Obscured (WCAG 2.2 2.4.7 / 2.4.11) */
 :focus {
   outline: none;
 }
@@ -121,6 +121,13 @@ body {
   outline: 3px solid var(--color-primary);
   outline-offset: 2px;
   border-radius: 2px;
+  scroll-margin-top: 100px;
+  scroll-margin-bottom: 40px;
+}
+
+:target {
+  scroll-margin-top: 100px;
+  scroll-margin-bottom: 40px;
 }
 
 ::-webkit-scrollbar {

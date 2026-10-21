@@ -2,9 +2,25 @@ import { useState, useEffect, lazy, Suspense } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { obtenerPanel } from "../services/panelApi";
+import { obtenerSolicitudPropia } from "../services/condominiosApi";
 import { listarEspacios } from "../services/espaciosApi";
 import { obtenerResumenGastos } from "../services/gastosApi";
 import { CHART_COLORS } from "../components/charts/chartColors";
+import { QRModal } from "../components/visitas/QRModal";
+import type { Visita } from "../components/visitas/types";
+import {
+  IconCalendar,
+  IconDollar,
+  IconMail,
+  IconCheck,
+  IconChevronRight,
+  IconMessage,
+  IconTrendingUp,
+  IconPhone,
+  IconUsers,
+  IconAlertTriangle,
+  IconBell,
+} from "../components/icons/Icons";
 
 const SparkAreaChart = lazy(() => import("../components/charts/SparkAreaChart"));
 
@@ -14,9 +30,9 @@ interface SparkPoint {
   v: number;
 }
 
-interface KpiCardProps {
+interface KpiCardData {
   id: string;
-  icon: string;
+  icon: React.ReactNode;
   title: string;
   value: string;
   subtitle: string;
@@ -24,6 +40,8 @@ interface KpiCardProps {
     label: string;
     variant: "green" | "yellow" | "blue";
   };
+  actionUrl: string;
+  actionText: string;
   spark?: SparkPoint[];
   sparkColor?: string;
 }
@@ -32,363 +50,460 @@ interface NoticeCard {
   id: number;
   title: string;
   date: string;
-  category: string;
+  category: "Aviso" | "Comité" | "Comunidad" | "Urgente";
   excerpt: string;
 }
 
-interface Visit {
-  id: number;
-  nombre: string;
-  fecha: string;
-  estado: "Confirmada" | "Pendiente QR";
+interface QuickAccessItem {
+  label: string;
+  category: string;
+  icon: React.ReactNode;
+  to: string;
 }
 
 interface ActivityItem {
   id: number;
-  icon: string;
+  icon: React.ReactNode;
   description: string;
   timestamp: string;
-  color: string;
-}
-
-interface QuickLink {
-  label: string;
-  icon: string;
-  to: string;
-  bg: string;
+  iconBg: string;
   iconColor: string;
 }
 
-// ── Sub-components ───────────────────────────────────────────────────────────
+// ── Fallback Static Data ──────────────────────────────────────────────────────
 
-const BADGE_STYLES: Record<string, string> = {
-  green: "bg-primary/15 text-primary",
-  yellow: "bg-alert-yellow/20 text-text",
-  blue: "bg-blue-100 text-blue-700",
-};
-
-function Badge({ label, variant }: { label: string; variant: "green" | "yellow" | "blue" }) {
-  const styles = BADGE_STYLES;
-
-  return (
-    <span
-      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${styles[variant]}`}
-    >
-      {variant === "green" && <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />}
-      {variant === "yellow" && (
-        <span className="inline-block h-1.5 w-1.5 rounded-full bg-alert-yellow" />
-      )}
-      {label}
-    </span>
-  );
-}
-
-function KpiCard({
-  icon,
-  title,
-  value,
-  subtitle,
-  badge,
-  spark,
-  sparkColor = CHART_COLORS.primary,
-}: KpiCardProps) {
-  return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-border bg-white p-5 shadow-sm overflow-hidden relative">
-      <div className="flex items-start justify-between">
-        <span className="text-2xl leading-none">{icon}</span>
-        <Badge label={badge.label} variant={badge.variant} />
-      </div>
-      <div>
-        <p className="font-body text-xs font-medium uppercase tracking-wide text-muted">{title}</p>
-        <p className="mt-1 font-display text-xl font-semibold text-text">{value}</p>
-        <p className="mt-0.5 font-body text-sm text-muted">{subtitle}</p>
-      </div>
-      {spark && (
-        <div className="h-10 -mx-5 -mb-5 mt-1">
-          <Suspense fallback={<div className="h-full w-full bg-slate-50" />}>
-            <SparkAreaChart data={spark} title={title} sparkColor={sparkColor} />
-          </Suspense>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function NoticeTile({ notice }: { notice: NoticeCard }) {
-  return (
-    <div className="flex flex-col gap-2 rounded-xl border border-border bg-white p-4 transition-shadow hover:shadow-sm">
-      <div className="flex items-center justify-between">
-        <span className="rounded-full bg-primary/10 px-2.5 py-0.5 font-body text-xs font-semibold text-primary">
-          {notice.category}
-        </span>
-        <span className="font-body text-xs text-muted">{notice.date}</span>
-      </div>
-      <h3 className="font-display text-base font-semibold text-text">{notice.title}</h3>
-      <p className="font-body text-sm leading-relaxed text-muted line-clamp-2">{notice.excerpt}</p>
-    </div>
-  );
-}
-
-// ── Static data (fallback si GET /api/v1/panel no responde) ────────────────────
-
-const DEFAULT_KPIS: KpiCardProps[] = [
+const DEFAULT_KPIS: KpiCardData[] = [
   {
     id: "proxima-reserva",
-    icon: "📅",
-    title: "Próxima reserva",
+    icon: <IconCalendar className="w-5 h-5 text-primary" />,
+    title: "Próxima Reserva",
     value: "Quincho Los Aromos",
     subtitle: "Sáb 23 ago, 18:00 hrs",
     badge: { label: "Confirmada", variant: "green" },
+    actionUrl: "/reservas",
+    actionText: "Ver reserva",
     spark: [{ v: 1 }, { v: 2 }, { v: 1 }, { v: 3 }, { v: 2 }, { v: 4 }, { v: 3 }, { v: 5 }],
     sparkColor: CHART_COLORS.primary,
   },
   {
     id: "gastos-pendientes",
-    icon: "💰",
-    title: "Gastos pendientes",
+    icon: <IconDollar className="w-5 h-5 text-accent" />,
+    title: "Gastos Comunes",
     value: "$65.000 CLP",
     subtitle: "Vence en 5 días",
     badge: { label: "Pendiente", variant: "yellow" },
+    actionUrl: "/gastos",
+    actionText: "Pagar en línea",
     spark: [{ v: 3 }, { v: 4 }, { v: 3 }, { v: 5 }, { v: 4 }, { v: 6 }, { v: 5 }, { v: 7 }],
     sparkColor: CHART_COLORS.accent,
   },
   {
     id: "incidentes-abiertos",
-    icon: "⚠",
-    title: "Incidentes abiertos",
-    value: "1 incidente",
-    subtitle: "Filtr. desde plomería",
+    icon: <IconAlertTriangle className="w-5 h-5 text-amber-600" />,
+    title: "Incidentes Activos",
+    value: "1 reporte",
+    subtitle: "Filtración en plomería",
     badge: { label: "En revisión", variant: "yellow" },
+    actionUrl: "/incidentes",
+    actionText: "Ver seguimiento",
     spark: [{ v: 0 }, { v: 1 }, { v: 0 }, { v: 1 }, { v: 2 }, { v: 1 }, { v: 1 }, { v: 1 }],
     sparkColor: CHART_COLORS.alertYellow,
   },
   {
     id: "correspondencia",
-    icon: "📬",
+    icon: <IconMail className="w-5 h-5 text-blue-600" />,
     title: "Correspondencia",
     value: "2 paquetes",
-    subtitle: "Esperando retiro",
-    badge: { label: "Pendiente retiro", variant: "yellow" },
+    subtitle: "En conserjería central",
+    badge: { label: "Por retirar", variant: "blue" },
+    actionUrl: "/canales",
+    actionText: "Ver anexo",
     spark: [{ v: 1 }, { v: 0 }, { v: 2 }, { v: 1 }, { v: 3 }, { v: 2 }, { v: 2 }, { v: 2 }],
     sparkColor: CHART_COLORS.primary,
   },
 ];
 
-const DEFAULT_UNREAD_COUNT = 3;
-
-const notices: NoticeCard[] = [
+const NOTICES: NoticeCard[] = [
   {
     id: 1,
-    title: "Corte de agua programado — Torre A",
+    title: "Corte de agua programado — Mantención preventiva de bombas",
     date: "18 ago 2026",
     category: "Aviso",
     excerpt:
-      "Se informa a los residentes de Torre A que el jueves 21 de agosto habrá un corte de agua potable entre las 09:00 y las 14:00 hrs por mantención de la red.",
+      "Se informa a los residentes de Torre A y B que el jueves 21 de agosto se realizará mantención general del sistema de bombas entre las 09:00 y las 14:00 hrs.",
   },
   {
     id: 2,
-    title: "Resultados votación: nuevas cámaras de seguridad",
+    title: "Votación de seguridad: Ampliación del circuito cerrado de cámaras",
     date: "15 ago 2026",
     category: "Comité",
     excerpt:
-      "Con un 78% de aprobación, la asamblea aprobó la instalación de 8 cámaras adicionales en estacionamientos y accesos perimetrales.",
+      "Con un 78% de quórum favorable, la asamblea aprobó la instalación de 8 cámaras adicionales de alta definición en accesos vehiculares y estacionamientos.",
   },
   {
     id: 3,
-    title: "Torneos de tenis — inscripciones abiertas",
+    title: "Torneo de Tenis y Pádel Primavera 2026 — Inscripciones abiertas",
     date: "12 ago 2026",
     category: "Comunidad",
     excerpt:
-      "Ya están abiertas las inscripciones para el torneo de tenis interno del condominio. Plazas limitadas, inscríbete antes del 25 de agosto.",
+      "Ya se encuentran abiertas las inscripciones para el campeonato interno del condominio. Plazas limitadas por categoría; confirma tu participación antes del 25 de agosto.",
   },
 ];
 
-const visits: Visit[] = [
+const VISITAS_DEMO: Visita[] = [
   {
-    id: 1,
+    id: "vis-1",
     nombre: "Carlos Fuentes",
-    fecha: "Vie 22 ago, 15:30",
-    estado: "Confirmada",
+    documento: "18.452.123-K",
+    fecha: "2026-08-22",
+    fechaDisplay: "Vie 22 ago",
+    hora: "15:30",
+    motivo: "Reunión de trabajo",
+    estado: "confirmada",
+    codigo: "VIS-8492-CF",
+    unidad: "Torre A · Depto 402B",
   },
   {
-    id: 2,
+    id: "vis-2",
     nombre: "Delivery Falabella",
-    fecha: "Sáb 23 ago, 10:00–14:00",
-    estado: "Pendiente QR",
+    documento: "Empresa de Despacho",
+    fecha: "2026-08-23",
+    fechaDisplay: "Sáb 23 ago",
+    hora: "10:00–14:00",
+    motivo: "Entrega de encomienda",
+    estado: "pendiente_qr",
+    codigo: "DEL-3104-FB",
+    unidad: "Torre A · Depto 402B",
   },
 ];
 
-const quickLinks: QuickLink[] = [
+const QUICK_LINKS: QuickAccessItem[] = [
   {
-    label: "Espacios",
-    icon: "🏠",
+    label: "Espacios Comunes",
+    category: "Quinchos y piscina",
+    icon: <IconCalendar className="w-5 h-5" />,
     to: "/espacios",
-    bg: "bg-primary/10",
-    iconColor: "text-primary",
   },
   {
-    label: "Gastos",
-    icon: "💳",
+    label: "Gastos & Finanzas",
+    category: "WebPay y boletas",
+    icon: <IconDollar className="w-5 h-5" />,
     to: "/gastos",
-    bg: "bg-blue-50",
-    iconColor: "text-blue-600",
   },
   {
-    label: "Tablón",
-    icon: "📋",
+    label: "Tablón Oficial",
+    category: "Avisos del comité",
+    icon: <IconMessage className="w-5 h-5" />,
     to: "/tablon",
-    bg: "bg-amber-50",
-    iconColor: "text-amber-600",
   },
   {
-    label: "Dashboard",
-    icon: "📊",
+    label: "Transparencia",
+    category: "Balance de cuentas",
+    icon: <IconTrendingUp className="w-5 h-5" />,
     to: "/dashboard",
-    bg: "bg-purple-50",
-    iconColor: "text-purple-600",
   },
   {
-    label: "Canales",
-    icon: "💬",
+    label: "Conserjería",
+    category: "Anexo e intercom",
+    icon: <IconPhone className="w-5 h-5" />,
     to: "/canales",
-    bg: "bg-teal-50",
-    iconColor: "text-teal-600",
   },
   {
-    label: "Registro",
-    icon: "📝",
-    to: "/registro",
-    bg: "bg-slate-100",
-    iconColor: "text-slate-600",
+    label: "Control de Acceso",
+    category: "Pases QR de visitas",
+    icon: <IconUsers className="w-5 h-5" />,
+    to: "/visitas",
   },
 ];
 
-const activity: ActivityItem[] = [
+const RECENT_ACTIVITY: ActivityItem[] = [
   {
     id: 1,
-    icon: "✓",
-    description: "Reserva confirmada — Quincho Los Aromos, Sáb 23 ago",
+    icon: <IconCheck className="w-4 h-4" />,
+    description: "Reserva confirmada — Quincho Los Aromos para Sáb 23 ago",
     timestamp: "Hace 2 horas",
-    color: "bg-primary text-white",
+    iconBg: "bg-emerald-100",
+    iconColor: "text-emerald-700",
   },
   {
     id: 2,
-    icon: "💳",
-    description: "Gasto común de julio pagado — $58.500 CLP",
+    icon: <IconDollar className="w-4 h-4" />,
+    description: "Gasto común de junio pagado mediante WebPay — $58.500 CLP",
     timestamp: "Hace 3 días",
-    color: "bg-blue-500 text-white",
+    iconBg: "bg-teal-100",
+    iconColor: "text-accent",
   },
   {
     id: 3,
-    icon: "📢",
-    description: "Nuevo aviso del comité: Resultados votación cámaras",
+    icon: <IconBell className="w-4 h-4" />,
+    description: "Nuevo comunicado publicado: Resultados votación de cámaras",
     timestamp: "Hace 4 días",
-    color: "bg-alert-yellow text-text",
+    iconBg: "bg-amber-100",
+    iconColor: "text-amber-700",
   },
   {
     id: 4,
-    icon: "🚪",
-    description: "Visita registrada — Carlos Fuentes, Vie 22 ago",
+    icon: <IconUsers className="w-4 h-4" />,
+    description: "Pase QR emitido para Carlos Fuentes (Acceso Viernes)",
     timestamp: "Hace 5 días",
-    color: "bg-slate-400 text-white",
+    iconBg: "bg-slate-100",
+    iconColor: "text-slate-700",
   },
 ];
 
-function DashboardHeroHeader({ user }: { user: ReturnType<typeof useAuth>["user"] }) {
+// ── Sub-components ───────────────────────────────────────────────────────────
+
+function Badge({ label, variant }: { label: string; variant: "green" | "yellow" | "blue" }) {
+  const styles = {
+    green: "bg-emerald-50 text-emerald-800 border-emerald-200/80",
+    yellow: "bg-amber-50 text-amber-800 border-amber-200/80",
+    blue: "bg-blue-50 text-blue-800 border-blue-200/80",
+  };
+
   return (
-    <div className="bg-text px-6 py-10 md:px-10">
-      <div className="mx-auto max-w-6xl">
-        <h1 className="font-display text-3xl font-semibold text-white md:text-4xl">
-          Buenos días, {user?.nombre.split(" ")[0] ?? "Residente"}
-        </h1>
-        <p className="mt-1 font-body text-sm text-white/60">{user?.unidad ?? ""}</p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            to="/espacios"
-            className="rounded-full border border-white/40 px-4 py-2 font-body text-sm font-medium text-white transition-colors hover:bg-white/10"
-          >
-            Reservar espacio
-          </Link>
-          <Link
-            to="/gastos"
-            className="rounded-full border border-white/40 px-4 py-2 font-body text-sm font-medium text-white transition-colors hover:bg-white/10"
-          >
-            Pagar gastos
-          </Link>
-          <a
-            href="#incidentes"
-            className="rounded-full border border-white/40 px-4 py-2 font-body text-sm font-medium text-white transition-colors hover:bg-white/10"
-          >
-            Reportar incidente
-          </a>
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${styles[variant]}`}
+    >
+      <span
+        className={`inline-block h-1.5 w-1.5 rounded-full ${
+          variant === "green"
+            ? "bg-emerald-500"
+            : variant === "yellow"
+              ? "bg-amber-500"
+              : "bg-blue-500"
+        }`}
+      />
+      {label}
+    </span>
+  );
+}
+
+function KpiCard({ card }: { card: KpiCardData }) {
+  return (
+    <div className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-[box-shadow,transform,background-color] hover:shadow-[0_12px_28px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 relative overflow-hidden">
+      <div>
+        <div className="flex items-start justify-between mb-3">
+          <div className="w-9 h-9 rounded-xl bg-stone-50 border border-stone-200/60 flex items-center justify-center">
+            {card.icon}
+          </div>
+          <Badge label={card.badge.label} variant={card.badge.variant} />
+        </div>
+        <p className="font-mono text-[11px] font-bold uppercase tracking-wider text-muted">
+          {card.title}
+        </p>
+        <p className="mt-1 font-display text-2xl font-normal text-text tabular-nums leading-tight">
+          {card.value}
+        </p>
+        <p className="mt-1 font-body text-xs text-muted leading-relaxed">{card.subtitle}</p>
+      </div>
+
+      <div className="mt-4 pt-3.5 border-t border-stone-100 flex items-center justify-between">
+        <Link
+          to={card.actionUrl}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-accent transition-colors"
+        >
+          <span>{card.actionText}</span>
+          <IconChevronRight className="w-3.5 h-3.5" />
+        </Link>
+        {card.spark && (
+          <div className="w-20 h-6">
+            <Suspense fallback={<div className="h-full w-full bg-stone-50" />}>
+              <SparkAreaChart
+                data={card.spark}
+                title={card.title}
+                sparkColor={card.sparkColor ?? CHART_COLORS.primary}
+              />
+            </Suspense>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function DashboardHeroHeader({ user }: { user: ReturnType<typeof useAuth>["user"] }) {
+  const primerNombre = user?.nombre.split(" ")[0] ?? "Residente";
+  const unidadDisplay =
+    user?.unidad && user.unidad !== "Sin unidad asignada" ? user.unidad : "Unidad no asignada";
+
+  return (
+    <div className="bg-text text-white px-6 py-10 md:py-12 md:px-10 border-b border-white/10 relative overflow-hidden">
+      {/* Ambient background glow */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-primary/10 blur-[100px] pointer-events-none" />
+
+      <div className="mx-auto max-w-6xl relative z-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            {/* Top metadata badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[11px] font-mono tracking-wider text-primary-on-dark uppercase mb-3.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary-on-dark" />
+              <span>FOLIO RESIDENCIAL ACTIVO</span>
+              <span className="text-white/40">·</span>
+              <span>{unidadDisplay}</span>
+            </div>
+
+            <h1 className="font-display text-[clamp(28px,4vw,44px)] font-normal text-white m-0 leading-tight">
+              Buenos días, {primerNombre}
+            </h1>
+            <p className="mt-1.5 font-body text-sm text-white/70 font-light max-w-xl">
+              Bienvenido al portal de tu comunidad. Revisa tus gastos comunes, agenda tus reservas
+              de quincho y gestiona tus visitas en tiempo real.
+            </p>
+          </div>
+
+          {/* Quick Action Dock */}
+          <div className="flex flex-wrap gap-2.5 items-center">
+            <Link
+              to="/espacios"
+              className="inline-flex items-center gap-2 bg-primary text-white text-xs font-semibold py-2.5 px-4 rounded-xl no-underline shadow-[0_4px_16px_rgba(13,148,136,0.25)] transition-[box-shadow,transform,background-color] hover:bg-emerald-600 hover:-translate-y-0.5"
+            >
+              <IconCalendar className="w-3.5 h-3.5" />
+              <span>Reservar espacio</span>
+            </Link>
+            <Link
+              to="/gastos"
+              className="inline-flex items-center gap-2 bg-white/10 text-white text-xs font-semibold py-2.5 px-4 rounded-xl no-underline border border-white/20 transition-[color,background-color,border-color,box-shadow] hover:bg-white/20"
+            >
+              <IconDollar className="w-3.5 h-3.5 text-primary-on-dark" />
+              <span>Pagar gastos</span>
+            </Link>
+            <Link
+              to="/visitas"
+              className="inline-flex items-center gap-2 bg-white/10 text-white text-xs font-semibold py-2.5 px-4 rounded-xl no-underline border border-white/20 transition-[color,background-color,border-color,box-shadow] hover:bg-white/20"
+            >
+              <IconUsers className="w-3.5 h-3.5 text-primary-on-dark" />
+              <span>Pase de visita</span>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function DashboardVisitasSection({ visits: items }: { visits: Visit[] }) {
+function NoticeTile({ notice }: { notice: NoticeCard }) {
+  const categoryStyles = {
+    Aviso: "bg-blue-50 text-blue-700 border-blue-200/60",
+    Comité: "bg-emerald-50 text-emerald-800 border-emerald-200/60",
+    Comunidad: "bg-purple-50 text-purple-700 border-purple-200/60",
+    Urgente: "bg-rose-50 text-rose-700 border-rose-200/60",
+  };
+
   return (
-    <section id="incidentes">
+    <article className="flex flex-col gap-2 rounded-2xl border border-stone-200/80 bg-white p-5 transition-[color,background-color,border-color,box-shadow] hover:shadow-[0_8px_24px_rgba(0,0,0,0.05)] hover:border-stone-300">
+      <div className="flex items-center justify-between">
+        <span
+          className={`rounded-full px-2.5 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider border ${
+            categoryStyles[notice.category] ?? "bg-stone-50 text-stone-700 border-stone-200"
+          }`}
+        >
+          {notice.category}
+        </span>
+        <span className="font-mono text-xs text-muted">{notice.date}</span>
+      </div>
+      <h3 className="font-display text-base font-normal text-text m-0 leading-snug">
+        {notice.title}
+      </h3>
+      <p className="font-body text-xs leading-relaxed text-muted font-light m-0 line-clamp-2">
+        {notice.excerpt}
+      </p>
+    </article>
+  );
+}
+
+function VisitasPassesSection({
+  visits,
+  onVerQr,
+}: {
+  visits: Visita[];
+  onVerQr: (visita: Visita) => void;
+}) {
+  return (
+    <section>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="font-display text-xl font-semibold text-text">Visitas próximas</h2>
-        <Link to="/visitas" className="font-body text-sm font-medium text-primary hover:underline">
-          Gestionar
+        <div>
+          <h2 className="font-display text-xl font-normal text-text m-0">
+            Pases de Visita Próximos
+          </h2>
+          <p className="text-xs text-muted font-light mt-0.5">
+            Accesos temporales registrados en conserjería
+          </p>
+        </div>
+        <Link
+          to="/visitas"
+          className="font-body text-xs font-semibold text-primary hover:text-accent flex items-center gap-1"
+        >
+          <span>Gestionar pases</span>
+          <IconChevronRight className="w-3 h-3" />
         </Link>
       </div>
-      <div className="overflow-hidden rounded-xl border border-border bg-white">
-        <table className="w-full font-body text-sm">
-          <thead>
-            <tr className="border-b border-border bg-slate-50 text-left">
-              <th className="px-4 py-3 font-semibold text-muted">Nombre</th>
-              <th className="px-4 py-3 font-semibold text-muted">Fecha</th>
-              <th className="px-4 py-3 font-semibold text-muted">Estado</th>
-              <th className="px-4 py-3 font-semibold text-muted">Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((visit, i) => (
-              <tr key={visit.id} className={i < items.length - 1 ? "border-b border-border" : ""}>
-                <td className="px-4 py-3 font-medium text-text">{visit.nombre}</td>
-                <td className="px-4 py-3 text-muted">{visit.fecha}</td>
-                <td className="px-4 py-3">
-                  {visit.estado === "Confirmada" ? (
-                    <Badge label="Confirmada" variant="green" />
-                  ) : (
-                    <Badge label="Pendiente QR" variant="yellow" />
-                  )}
-                </td>
-                <td className="px-4 py-3">
-                  <button className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-text transition-colors hover:border-primary hover:text-primary">
-                    Ver QR
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {visits.map((vis) => (
+          <div
+            key={vis.id}
+            className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-4 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-[color,background-color,border-color,box-shadow] hover:shadow-[0_10px_24px_rgba(0,0,0,0.05)]"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-mono text-[11px] text-muted tracking-wider uppercase">
+                  {vis.fechaDisplay}
+                </span>
+                <Badge
+                  label={vis.estado === "confirmada" ? "Confirmada" : "Pendiente QR"}
+                  variant={vis.estado === "confirmada" ? "green" : "yellow"}
+                />
+              </div>
+              <h3 className="font-display text-base font-normal text-text m-0">{vis.nombre}</h3>
+              <p className="font-body text-xs text-muted font-light mt-0.5">
+                {vis.hora} · {vis.motivo}
+              </p>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between">
+              <span className="font-mono text-[11px] text-stone-400 font-semibold">
+                {vis.codigo}
+              </span>
+              <button
+                type="button"
+                onClick={() => onVerQr(vis)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-xs font-semibold text-text hover:bg-primary hover:text-white hover:border-primary transition-[color,background-color,border-color,box-shadow] cursor-pointer"
+              >
+                <span>Ver QR</span>
+                <IconChevronRight className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );
 }
 
-function DashboardQuickLinksSection({ quickLinks: links }: { quickLinks: QuickLink[] }) {
+function QuickLinksDock({ links }: { links: QuickAccessItem[] }) {
   return (
     <section>
-      <h2 className="mb-4 font-display text-xl font-semibold text-text">Accesos rápidos</h2>
+      <div className="mb-4">
+        <h2 className="font-display text-xl font-normal text-text m-0">Accesos Directos</h2>
+        <p className="text-xs text-muted font-light mt-0.5">Servicios de tu comunidad a un clic</p>
+      </div>
+
       <div className="grid grid-cols-2 gap-3">
         {links.map((link) => (
           <Link
             key={link.label}
             to={link.to}
-            className="flex flex-col items-center gap-2 rounded-xl border border-border bg-white p-4 text-center transition-shadow hover:shadow-sm"
+            className="group flex flex-col items-start p-3.5 rounded-2xl border border-stone-200/80 bg-white no-underline transition-[color,background-color,border-color,box-shadow] hover:shadow-[0_8px_20px_rgba(0,0,0,0.05)] hover:border-stone-300"
           >
-            <span
-              className={`flex h-10 w-10 items-center justify-center rounded-full text-xl ${link.bg} ${link.iconColor}`}
-            >
+            <div className="w-8 h-8 rounded-xl bg-teal-50 text-accent flex items-center justify-center mb-2.5 transition-transform group-hover:scale-105">
               {link.icon}
+            </div>
+            <span className="font-body text-xs font-semibold text-text group-hover:text-primary transition-colors">
+              {link.label}
             </span>
-            <span className="font-body text-xs font-semibold text-text">{link.label}</span>
+            <span className="font-body text-[11px] text-muted font-light leading-tight mt-0.5">
+              {link.category}
+            </span>
           </Link>
         ))}
       </div>
@@ -396,22 +511,31 @@ function DashboardQuickLinksSection({ quickLinks: links }: { quickLinks: QuickLi
   );
 }
 
-function DashboardActivitySection({ activity: items }: { activity: ActivityItem[] }) {
+function RecentActivityFeed({ items }: { items: ActivityItem[] }) {
   return (
     <section>
-      <h2 className="mb-4 font-display text-xl font-semibold text-text">Actividad reciente</h2>
-      <div className="rounded-xl border border-border bg-white p-4">
-        <ul className="flex flex-col gap-4">
-          {items.map((item) => (
-            <li key={item.id} className="flex items-start gap-3">
-              <span
-                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm ${item.color}`}
+      <div className="mb-4">
+        <h2 className="font-display text-xl font-normal text-text m-0">Actividad Reciente</h2>
+        <p className="text-xs text-muted font-light mt-0.5">Historial cronológico de tu unidad</p>
+      </div>
+
+      <div className="rounded-2xl border border-stone-200/80 bg-white p-5 shadow-[0_4px_16px_rgba(0,0,0,0.02)]">
+        <ul className="flex flex-col gap-4 list-none m-0 p-0">
+          {items.map((item, idx) => (
+            <li key={item.id} className="flex items-start gap-3 relative">
+              {idx < items.length - 1 && (
+                <div className="absolute top-7 left-3.5 bottom-0 w-[1px] bg-stone-200 -z-0" />
+              )}
+              <div
+                className={`w-7 h-7 shrink-0 rounded-full flex items-center justify-center relative z-10 ${item.iconBg} ${item.iconColor}`}
               >
                 {item.icon}
-              </span>
+              </div>
               <div className="flex flex-col gap-0.5">
-                <p className="font-body text-sm leading-snug text-text">{item.description}</p>
-                <p className="font-body text-xs text-muted">{item.timestamp}</p>
+                <p className="font-body text-xs font-medium text-text leading-snug m-0">
+                  {item.description}
+                </p>
+                <p className="font-mono text-[11px] text-muted m-0">{item.timestamp}</p>
               </div>
             </li>
           ))}
@@ -421,17 +545,50 @@ function DashboardActivitySection({ activity: items }: { activity: ActivityItem[
   );
 }
 
-// ── Page component ────────────────────────────────────────────────────────────
+// ── Main Page Component ───────────────────────────────────────────────────────
 
 export default function ResidenteDashboard() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
+  const tieneAsignacionPrevia = Boolean(
+    user?.condominioId && user?.unidad && user.unidad !== "Sin unidad asignada",
+  );
+  const [asignacionVerificada, setAsignacionVerificada] = useState(tieneAsignacionPrevia);
   const [notifDismissed, setNotifDismissed] = useState(false);
-  const unreadCount = DEFAULT_UNREAD_COUNT;
-  const [kpis, setKpis] = useState<KpiCardProps[]>(DEFAULT_KPIS);
+  const [kpis, setKpis] = useState<KpiCardData[]>(DEFAULT_KPIS);
+  const [selectedVisita, setSelectedVisita] = useState<Visita | null>(null);
 
-  // GET /api/v1/panel (TD-26) solo agrega reservas y gastos -- no cubre
-  // Actualiza "Próxima reserva" y "Gastos pendientes" con datos reales del BFF/API
   useEffect(() => {
+    let activo = true;
+    obtenerSolicitudPropia()
+      .then((solicitud) => {
+        if (!activo || !user) return;
+        if (solicitud?.estado === "aprobada") {
+          const condominioId = String(solicitud.condominio_id);
+          if (user.condominioId !== condominioId || user.unidad !== solicitud.unidad) {
+            setUser({ ...user, condominioId, unidad: solicitud.unidad });
+          }
+          setAsignacionVerificada(true);
+        } else if (solicitud) {
+          setAsignacionVerificada(false);
+        }
+      })
+      .catch(() => {
+        if (activo && !tieneAsignacionPrevia) setAsignacionVerificada(false);
+      });
+    return () => {
+      activo = false;
+    };
+  }, [user, setUser, tieneAsignacionPrevia]);
+
+  // Fetch datos reales del BFF/API si están disponibles
+  useEffect(() => {
+    if (
+      !asignacionVerificada ||
+      !user?.condominioId ||
+      !user.unidad ||
+      user.unidad === "Sin unidad asignada"
+    )
+      return;
     let active = true;
     async function fetchDashboardData() {
       try {
@@ -507,45 +664,76 @@ export default function ResidenteDashboard() {
           }),
         );
       } catch {
-        // Fallback elegante a los datos de demo si el BFF no está disponible
+        // Fallback elegante a datos estáticos
       }
     }
     void fetchDashboardData();
     return () => {
       active = false;
     };
-  }, []);
+  }, [asignacionVerificada, user?.condominioId, user?.unidad]);
+
+  if (
+    !asignacionVerificada ||
+    !user?.condominioId ||
+    !user.unidad ||
+    user.unidad === "Sin unidad asignada"
+  ) {
+    return (
+      <main className="min-h-screen bg-[#faf9f6] px-6 py-20">
+        <section className="mx-auto max-w-xl rounded-2xl border border-border bg-white p-8 shadow-sm">
+          <h1 className="font-display text-2xl text-text">Asignación pendiente</h1>
+          <p className="mt-4 text-sm text-muted">
+            Tu sesión está activa. Elige tu condominio y unidad; las funciones de la comunidad
+            estarán disponibles cuando administración confirme tu asignación.
+          </p>
+          <Link
+            to="/completar-registro"
+            className="mt-6 inline-flex min-h-[44px] items-center rounded-xl bg-primary px-5 text-sm font-semibold text-white"
+          >
+            Elegir condominio
+          </Link>
+        </section>
+      </main>
+    );
+  }
 
   return (
-    <div className="flex flex-col gap-0 font-body">
-      {/* ── Page header ── */}
+    <div className="flex flex-col w-full font-body bg-[#faf9f6] min-h-screen">
+      {/* ── Page Header ── */}
       <DashboardHeroHeader user={user} />
 
-      {/* ── Content area ── */}
-      <div className="bg-slate-50 px-6 py-8 md:px-10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-8">
-          {/* ── Notifications banner ── */}
-          {!notifDismissed && unreadCount > 0 && (
-            <div className="flex items-center justify-between rounded-xl bg-alert-yellow px-4 py-3">
-              <div className="flex items-center gap-2">
-                <span className="text-text" aria-hidden="true">
-                  🔔
-                </span>
-                <span className="font-body text-sm font-semibold text-text">
-                  {unreadCount} notificaciones no leídas
-                </span>
-              </div>
+      {/* ── Content Area ── */}
+      <main className="px-6 py-10 md:px-10">
+        <div className="mx-auto flex max-w-6xl flex-col gap-10">
+          {/* ── Notification Banner (Editorial Style) ── */}
+          {!notifDismissed && (
+            <div className="flex items-center justify-between rounded-2xl border border-amber-200/90 bg-amber-50/90 px-5 py-3.5 shadow-sm text-text">
               <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0 text-amber-700">
+                  <IconBell className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="font-semibold text-xs tracking-wider uppercase text-amber-900 block">
+                    Avisos del Comité
+                  </span>
+                  <span className="font-body text-xs text-amber-800 font-light">
+                    Tienes 3 comunicados nuevos pendientes de lectura en el tablón oficial.
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
                 <Link
                   to="/tablon"
-                  className="font-body text-sm font-semibold text-text underline underline-offset-2 hover:no-underline"
+                  className="font-body text-xs font-bold text-amber-900 underline underline-offset-2 hover:no-underline"
                 >
-                  Ver todas
+                  Ver todos
                 </Link>
                 <button
+                  type="button"
                   onClick={() => setNotifDismissed(true)}
-                  aria-label="Cerrar notificaciones"
-                  className="flex h-6 w-6 items-center justify-center rounded-full text-text/60 transition-colors hover:bg-text/10 hover:text-text"
+                  aria-label="Cerrar aviso de notificaciones"
+                  className="flex h-6 w-6 items-center justify-center rounded-full text-amber-700 hover:bg-amber-200/60 transition-colors cursor-pointer"
                 >
                   ✕
                 </button>
@@ -553,70 +741,90 @@ export default function ResidenteDashboard() {
             </div>
           )}
 
-          {/* ── KPI cards ── */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {kpis.map((kpi) => (
-              <KpiCard key={kpi.id} {...kpi} />
-            ))}
-          </div>
+          {/* ── KPI Cards ── */}
+          <section>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {kpis.map((card) => (
+                <KpiCard key={card.id} card={card} />
+              ))}
+            </div>
+          </section>
 
-          {/* ── Main content grid ── */}
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {/* Left column (wider) */}
-            <div className="flex flex-col gap-8 md:col-span-2">
-              {/* Tablón notices */}
+          {/* ── Main Content Grid (Asymmetric Editorial Spread) ── */}
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.25fr_1fr]">
+            {/* Left Column: Tablón Gazette + Guest Passes */}
+            <div className="flex flex-col gap-10">
+              {/* Tablón Notices */}
               <section>
                 <div className="mb-4 flex items-center justify-between">
-                  <h2 className="font-display text-xl font-semibold text-text">
-                    Últimas publicaciones del tablón
-                  </h2>
+                  <div>
+                    <h2 className="font-display text-xl font-normal text-text m-0">
+                      Gaceta & Comunicados
+                    </h2>
+                    <p className="text-xs text-muted font-light mt-0.5">
+                      Publicaciones oficiales del comité de administración
+                    </p>
+                  </div>
                   <Link
                     to="/tablon"
-                    className="font-body text-sm font-medium text-primary hover:underline"
+                    className="font-body text-xs font-semibold text-primary hover:text-accent flex items-center gap-1"
                   >
-                    Ver todas
+                    <span>Ver tablón</span>
+                    <IconChevronRight className="w-3 h-3" />
                   </Link>
                 </div>
-                <div className="flex flex-col gap-3">
-                  {notices.map((notice) => (
-                    <NoticeTile key={notice.id} notice={notice} />
+
+                <div className="flex flex-col gap-3.5">
+                  {NOTICES.map((n) => (
+                    <NoticeTile key={n.id} notice={n} />
                   ))}
                 </div>
               </section>
 
-              {/* Visitas próximas */}
-              <DashboardVisitasSection visits={visits} />
+              {/* Visitas & QR Passes */}
+              <VisitasPassesSection
+                visits={VISITAS_DEMO}
+                onVerQr={(visita) => setSelectedVisita(visita)}
+              />
             </div>
 
-            {/* Right column */}
-            <div className="flex flex-col gap-8">
-              {/* Accesos rápidos */}
-              <DashboardQuickLinksSection quickLinks={quickLinks} />
-
-              {/* Actividad reciente */}
-              <DashboardActivitySection activity={activity} />
+            {/* Right Column: Quick Access Dock + Recent Activity */}
+            <div className="flex flex-col gap-10">
+              <QuickLinksDock links={QUICK_LINKS} />
+              <RecentActivityFeed items={RECENT_ACTIVITY} />
             </div>
           </div>
 
-          {/* ── Bottom CTA ── */}
-          <div className="flex items-center justify-between rounded-2xl border border-primary/20 bg-primary/5 px-6 py-5">
+          {/* ── Concierge Support Card (Bottom Banner) ── */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
             <div>
-              <h3 className="font-display text-lg font-semibold text-text">
-                ¿Tienes dudas sobre los gastos?
+              <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-primary">
+                CONSERJERÍA & ASISTENCIA 24/7
+              </span>
+              <h3 className="font-display text-lg font-normal text-text m-0 mt-0.5">
+                ¿Necesitas reportar una urgencia o consultar una encomienda?
               </h3>
-              <p className="mt-0.5 font-body text-sm text-muted">
-                Revisa el detalle de gastos comunes y el registro de mantenciones.
+              <p className="font-body text-xs text-muted font-light m-0 mt-1">
+                La caseta de conserjería se encuentra conectada en el intercomunicador anexo 100.
               </p>
             </div>
-            <Link
-              to="/gastos"
-              className="shrink-0 rounded-full bg-primary px-5 py-2.5 font-body text-sm font-semibold text-white transition-colors hover:bg-accent"
-            >
-              Ver gastos
-            </Link>
+            <div className="flex items-center gap-3 shrink-0">
+              <Link
+                to="/canales"
+                className="inline-flex items-center gap-2 rounded-xl bg-text text-white text-xs font-semibold px-4 py-2.5 transition-colors hover:bg-accent no-underline"
+              >
+                <IconPhone className="w-3.5 h-3.5 text-primary-on-dark" />
+                <span>Contactar conserjería</span>
+              </Link>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
+
+      {/* ── Interactive QR Modal ── */}
+      {selectedVisita && (
+        <QRModal visita={selectedVisita} onClose={() => setSelectedVisita(null)} />
+      )}
     </div>
   );
 }

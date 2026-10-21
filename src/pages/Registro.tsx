@@ -121,7 +121,7 @@ function RegistroCard({ registro, onOpen }: RegistroCardProps) {
             );
           })}
         </div>
-        <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-[4px] text-white text-[11px] font-medium px-2.5 py-1 rounded-full">
+        <div className="absolute top-3 right-3 bg-black/60 text-white text-[11px] font-medium px-2.5 py-1 rounded-full">
           {registro.categoria}
         </div>
       </div>
@@ -357,7 +357,7 @@ export default function Registro() {
             type="button"
             aria-label="Cerrar"
             onClick={() => setSelected(null)}
-            className="absolute inset-0 bg-text/65 backdrop-blur-md border-none p-0 cursor-default"
+            className="absolute inset-0 bg-text/65 border-none p-0 cursor-default"
           />
           <div className="relative bg-white rounded-[20px] w-full max-w-[680px] max-h-[90vh] overflow-y-auto shadow-[0_32px_80px_rgba(0,0,0,0.25)]">
             <div className="relative h-[320px] bg-slate-200 overflow-hidden rounded-[20px_20px_0_0]">

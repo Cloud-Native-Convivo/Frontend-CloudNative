@@ -48,6 +48,21 @@ describe("AuthError page", () => {
     expect(screen.getByText(/solicitud de autorización fue cancelada o no pudo validarse/i)).toBeInTheDocument();
   });
 
+  it("muestra mensaje descriptivo de seguridad cuando reason=csrf_detected", () => {
+    render(
+      <MemoryRouter initialEntries={["/auth/error?reason=csrf_detected"]}>
+        <AuthError />
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByRole("heading", { name: "Error de validación de seguridad" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/No se pudo comprobar la integridad de la sesión de inicio \(CSRF\)/i),
+    ).toBeInTheDocument();
+  });
+
   it("muestra enlace para volver al login y al sitio principal", () => {
     render(
       <MemoryRouter initialEntries={["/auth/error"]}>

@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createBrowserRouter } from "react-router";
 import ProtectedRoute from "./ProtectedRoute";
 import Layout from "../components/Layout";
@@ -6,6 +7,8 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 import NotFound from "../pages/NotFound";
 
+const RouteHydrateFallback = () => <div className="min-h-screen bg-surface" />;
+
 const router = createBrowserRouter(
   [
     // Auth routes (no Layout wrapper)
@@ -13,21 +16,31 @@ const router = createBrowserRouter(
     {
       path: "/auth/callback",
       lazy: () => import("../pages/AuthCallback").then((m) => ({ Component: m.default })),
+      HydrateFallback: RouteHydrateFallback,
       errorElement: <RouteError />,
     },
     {
       path: "/auth/error",
       lazy: () => import("../pages/AuthError").then((m) => ({ Component: m.default })),
+      HydrateFallback: RouteHydrateFallback,
       errorElement: <RouteError />,
     },
     {
       path: "/aceptar-terminos",
       lazy: () => import("../pages/AceptarTerminos").then((m) => ({ Component: m.default })),
+      HydrateFallback: RouteHydrateFallback,
       errorElement: <RouteError />,
     },
     {
       path: "/crear-cuenta",
       lazy: () => import("../pages/RegistroCuenta").then((m) => ({ Component: m.default })),
+      HydrateFallback: RouteHydrateFallback,
+      errorElement: <RouteError />,
+    },
+    {
+      path: "/completar-registro",
+      lazy: () => import("../pages/CompletarRegistro").then((m) => ({ Component: m.default })),
+      HydrateFallback: RouteHydrateFallback,
       errorElement: <RouteError />,
     },
 
@@ -35,18 +48,11 @@ const router = createBrowserRouter(
     {
       path: "/",
       Component: Layout,
+      HydrateFallback: RouteHydrateFallback,
       errorElement: <RouteError />,
       children: [
         // Public / all roles
         { index: true, Component: Home },
-        {
-          path: "tablon",
-          lazy: () => import("../pages/Tablon").then((m) => ({ Component: m.default })),
-        },
-        {
-          path: "canales",
-          lazy: () => import("../pages/Canales").then((m) => ({ Component: m.default })),
-        },
         {
           path: "precios",
           lazy: () => import("../pages/Precios").then((m) => ({ Component: m.default })),
@@ -62,7 +68,13 @@ const router = createBrowserRouter(
 
         // Residente only
         {
-          element: <ProtectedRoute allowedRoles={["residente"]} />,
+          element: (
+            <ProtectedRoute
+              allowedRoles={["residente"]}
+              redirectTo="/login"
+              permitirSinAsignacion
+            />
+          ),
           children: [
             // recharts es pesada — lazy-load para no meterla en el chunk principal.
             {
@@ -77,17 +89,44 @@ const router = createBrowserRouter(
 
         // All authenticated roles
         {
-          path: "espacios",
-          lazy: () => import("../pages/EspaciosComunes").then((m) => ({ Component: m.default })),
-        },
-        {
-          path: "gastos",
-          lazy: () => import("../pages/Gastos").then((m) => ({ Component: m.default })),
+          element: (
+            <ProtectedRoute
+              allowedRoles={["residente", "admin", "conserje", "comite"]}
+              redirectTo="/login"
+            />
+          ),
+          children: [
+            {
+              path: "espacios",
+              lazy: () =>
+                import("../pages/EspaciosComunes").then((m) => ({ Component: m.default })),
+            },
+            {
+              path: "gastos",
+              lazy: () => import("../pages/Gastos").then((m) => ({ Component: m.default })),
+            },
+            {
+              path: "tablon",
+              lazy: () => import("../pages/Tablon").then((m) => ({ Component: m.default })),
+            },
+            {
+              path: "canales",
+              lazy: () => import("../pages/Canales").then((m) => ({ Component: m.default })),
+            },
+            {
+              path: "visitas",
+              lazy: () => import("../pages/Visitas").then((m) => ({ Component: m.default })),
+            },
+            {
+              path: "incidentes",
+              lazy: () => import("../pages/Incidentes").then((m) => ({ Component: m.default })),
+            },
+          ],
         },
 
         // Residente + Admin
         {
-          element: <ProtectedRoute allowedRoles={["residente", "admin"]} />,
+          element: <ProtectedRoute allowedRoles={["residente", "admin"]} redirectTo="/login" />,
           children: [
             {
               path: "reservas",
@@ -96,21 +135,11 @@ const router = createBrowserRouter(
           ],
         },
 
-        // Visitas: all roles — content adapts per role
-        {
-          path: "visitas",
-          lazy: () => import("../pages/Visitas").then((m) => ({ Component: m.default })),
-        },
-
-        // Incidentes: all roles — residente reports, conserje/admin manage
-        {
-          path: "incidentes",
-          lazy: () => import("../pages/Incidentes").then((m) => ({ Component: m.default })),
-        },
-
         // Conserje + Admin + Comité
         {
-          element: <ProtectedRoute allowedRoles={["conserje", "admin", "comite"]} />,
+          element: (
+            <ProtectedRoute allowedRoles={["conserje", "admin", "comite"]} redirectTo="/login" />
+          ),
           children: [
             {
               path: "registro",
@@ -121,7 +150,7 @@ const router = createBrowserRouter(
 
         // Admin only
         {
-          element: <ProtectedRoute allowedRoles={["admin"]} />,
+          element: <ProtectedRoute allowedRoles={["admin"]} redirectTo="/login" />,
           children: [
             // recharts es pesada — lazy-load para no meterla en el chunk principal.
             {

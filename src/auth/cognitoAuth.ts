@@ -4,7 +4,9 @@
 // vars VITE_COGNITO_* son placeholders hasta que exista un `terraform apply`
 // real (ver .env.example).
 
-const PKCE_VERIFIER_KEY = "convivo.pkce_verifier";
+export const PKCE_VERIFIER_KEY = "convivo.pkce_verifier";
+export const LOGIN_NONCE_KEY = "convivo.login_nonce";
+export const OAUTH_STATE_KEY = LOGIN_NONCE_KEY;
 
 function base64UrlEncodeBytes(bytes: Uint8Array): string {
   let binary = "";
@@ -15,6 +17,20 @@ function base64UrlEncodeBytes(bytes: Uint8Array): string {
 export function generateCodeVerifier(): string {
   return base64UrlEncodeBytes(crypto.getRandomValues(new Uint8Array(32)));
 }
+
+export function generateLoginNonce(): string {
+  return base64UrlEncodeBytes(crypto.getRandomValues(new Uint8Array(16)));
+}
+export const generateOAuthState = generateLoginNonce;
+
+export function validateAndClearLoginNonce(receivedNonce: string | null): boolean {
+  if (typeof window === "undefined") return false;
+  const stored = sessionStorage.getItem(LOGIN_NONCE_KEY);
+  sessionStorage.removeItem(LOGIN_NONCE_KEY);
+  if (!stored || !receivedNonce) return false;
+  return stored === receivedNonce;
+}
+export const validateAndClearOAuthState = validateAndClearLoginNonce;
 
 export async function generateCodeChallenge(verifier: string): Promise<string> {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier));
@@ -55,6 +71,9 @@ export async function buildGoogleAuthorizeUrl(): Promise<string> {
   sessionStorage.setItem(PKCE_VERIFIER_KEY, verifier);
   const challenge = await generateCodeChallenge(verifier);
 
+  const nonce = generateLoginNonce();
+  sessionStorage.setItem(LOGIN_NONCE_KEY, nonce);
+
   const params = new URLSearchParams({
     client_id: import.meta.env.VITE_COGNITO_CLIENT_ID,
     response_type: "code",
@@ -64,6 +83,7 @@ export async function buildGoogleAuthorizeUrl(): Promise<string> {
     identity_provider: "Google", // salta el selector propio de Cognito, va directo a Google
     code_challenge: challenge,
     code_challenge_method: "S256",
+    state: nonce,
   });
 
   return `https://${import.meta.env.VITE_COGNITO_DOMAIN}/oauth2/authorize?${params.toString()}`;
@@ -111,6 +131,7 @@ export interface CognitoIdTokenClaims {
   name?: string;
   given_name?: string;
   picture?: string;
+  "custom:condominio_id"?: string;
   "custom:unidad"?: string;
   "custom:torre"?: string;
   "custom:piso"?: string;

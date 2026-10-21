@@ -2,7 +2,9 @@ import { getStoredAccessToken } from "../utils/authStorage";
 
 export const rawBffUrl =
   (typeof import.meta !== "undefined" && import.meta.env?.VITE_BFF_URL) ||
-  "https://11bwhgfogd.execute-api.us-east-1.amazonaws.com/api/v1";
+  (import.meta.env?.DEV
+    ? "http://localhost:3000/api/v1"
+    : "https://11bwhgfogd.execute-api.us-east-1.amazonaws.com/api/v1");
 
 export const API_BASE_URL = rawBffUrl.replace(/\/espacios-comunes\/?$/, "").replace(/\/+$/, "");
 

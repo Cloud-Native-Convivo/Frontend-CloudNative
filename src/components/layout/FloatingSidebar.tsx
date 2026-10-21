@@ -29,6 +29,7 @@ export function FloatingSidebar() {
         <Link
           key={item.id}
           to={item.path}
+          aria-label={item.label}
           onMouseEnter={() => setHovered(item.id)}
           onMouseLeave={() => setHovered(null)}
           className="flex items-center justify-end no-underline"

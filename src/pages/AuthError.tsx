@@ -20,6 +20,12 @@ function resolveErrorInfo(reason: string | null): ErrorInfo {
         description:
           "La solicitud de autorización fue cancelada o no pudo validarse con el proveedor de acceso. Por favor, intenta nuevamente.",
       };
+    case "csrf_detected":
+      return {
+        title: "Error de validación de seguridad",
+        description:
+          "No se pudo comprobar la integridad de la sesión de inicio (CSRF). Por favor, intenta iniciar sesión nuevamente.",
+      };
     case "connection_failed":
     case "config_missing":
     case "exchange_failed":

@@ -23,11 +23,17 @@ export default defineConfig({
     include: ["recharts", "recharts/es6/component/DefaultLegendContent"],
   },
   build: {
-    sourcemap: "hidden", // Evita exponer el código fuente original
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
+            if (id.includes("recharts") || id.includes("d3-") || id.includes("victory-vendor")) {
+              return "charts-vendor";
+            }
+            if (/[\\/](react|react-dom|react-router)[\\/]/.test(id)) {
+              return "react-vendor";
+            }
             return "vendor";
           }
         },

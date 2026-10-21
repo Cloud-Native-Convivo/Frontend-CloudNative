@@ -368,7 +368,7 @@ function HeroSection() {
                   <button
                     type="button"
                     onClick={() => setPreviewMode("residente")}
-                    className={`px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                    className={`px-3 py-1 rounded-md text-xs font-semibold transition-[color,background-color,border-color,box-shadow] cursor-pointer ${
                       previewMode === "residente"
                         ? "bg-primary text-white shadow-sm"
                         : "text-white/70 hover:text-white"
@@ -379,7 +379,7 @@ function HeroSection() {
                   <button
                     type="button"
                     onClick={() => setPreviewMode("comite")}
-                    className={`px-3 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer ${
+                    className={`px-3 py-1 rounded-md text-xs font-semibold transition-[color,background-color,border-color,box-shadow] cursor-pointer ${
                       previewMode === "comite"
                         ? "bg-primary text-white shadow-sm"
                         : "text-white/70 hover:text-white"
@@ -597,7 +597,7 @@ function ModuleShowcase() {
                     setActiveTab(index);
                   });
                 }}
-                className={`group flex items-center gap-2.5 py-3 px-4 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer border ${
+                className={`group flex items-center gap-2.5 py-3 px-4 rounded-xl text-xs font-semibold whitespace-nowrap transition-[color,background-color,border-color,box-shadow] cursor-pointer border ${
                   isSelected
                     ? "bg-text text-white border-text shadow-sm"
                     : "bg-stone-50 text-stone-600 border-transparent hover:bg-stone-100 hover:text-text"
@@ -792,7 +792,7 @@ function StepsSection() {
           {PASOS.map((p) => (
             <div
               key={p.num}
-              className="rounded-2xl bg-white p-7 border border-stone-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.03)] flex flex-col justify-between transition-all hover:shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:-translate-y-1"
+              className="rounded-2xl bg-white p-7 border border-stone-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.03)] flex flex-col justify-between transition-[box-shadow,transform,background-color] hover:shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:-translate-y-1"
             >
               <div>
                 <div className="flex items-center justify-between mb-5">

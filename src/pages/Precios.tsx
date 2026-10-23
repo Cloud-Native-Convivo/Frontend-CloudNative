@@ -317,7 +317,7 @@ function FeatureCell({ value }: { value: boolean | string }) {
         </div>
       </td>
     );
-  return <td className="px-5 py-3 text-center text-[13px] text-slate-500 font-medium">{value}</td>;
+  return <td className="px-5 py-3 text-center text-sm text-slate-500 font-medium">{value}</td>;
 }
 
 function formatPrice(p: number | null, isAnnual: boolean) {
@@ -335,22 +335,20 @@ export default function Precios() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero */}
-      <div className="bg-text px-6 pt-20 pb-[72px] text-center">
-        <p className="text-[11px] font-bold text-teal-300/70 tracking-wide mb-4">
-          Planes y precios
-        </p>
+      <div className="bg-text px-6 pt-20 pb-18 text-center">
+        <p className="text-xs font-bold text-teal-300/70 tracking-wide mb-4">Planes y precios</p>
         <h1 className="font-serif text-[clamp(34px,5vw,60px)] text-white leading-[1.1] m-0 mb-4 font-normal">
           Simple y sin sorpresas
         </h1>
-        <p className="text-[17px] text-white/60 leading-[1.7] mx-auto mb-9 max-w-[480px]">
+        <p className="text-lg text-white/60 leading-[1.7] mx-auto mb-9 max-w-narrow">
           Sin costos ocultos ni instalaciones. Empieza gratis y escala cuando tu comunidad lo
           necesite.
         </p>
 
         {/* Toggle mensual/anual */}
-        <div className="inline-flex items-center gap-[14px] bg-white/5 rounded-full px-4 py-2 border border-white/10">
+        <div className="inline-flex items-center gap-4 bg-white/5 rounded-full px-4 py-2 border border-white/10">
           <span
-            className={`text-[13px] transition-colors duration-200 ${annual ? "text-white/45 font-normal" : "text-white font-semibold"}`}
+            className={`text-sm transition-colors duration-200 ${annual ? "text-white/45 font-normal" : "text-white font-semibold"}`}
           >
             Mensual
           </span>
@@ -358,22 +356,22 @@ export default function Precios() {
             onClick={() => setAnnual(!annual)}
             aria-label="Cambiar entre plan mensual y anual"
             aria-pressed={annual}
-            className={`w-11 h-6 rounded-xl cursor-pointer border-none relative transition-colors duration-[250ms] ${annual ? "bg-teal-600" : "bg-white/20"}`}
+            className={`w-11 h-6 rounded-full cursor-pointer border-none relative transition-colors duration-[250ms] ${annual ? "bg-teal-600" : "bg-white/20"}`}
           >
             <span
               className={`absolute top-[2px] w-5 h-5 rounded-full bg-white transition-all duration-[250ms] block ${annual ? "left-[22px]" : "left-[2px]"}`}
             />
           </button>
           <span
-            className={`text-[13px] transition-colors duration-200 ${annual ? "text-white font-semibold" : "text-white/45 font-normal"}`}
+            className={`text-sm transition-colors duration-200 ${annual ? "text-white font-semibold" : "text-white/45 font-normal"}`}
           >
-            Anual <span className="text-[11px] text-teal-300 font-bold ml-1">–25%</span>
+            Anual <span className="text-xs text-teal-300 font-bold ml-1">–25%</span>
           </span>
         </div>
       </div>
 
       {/* Tier cards */}
-      <div className="max-w-[1200px] -mt-12 mx-auto px-6 pb-[72px]">
+      <div className="max-w-page -mt-12 mx-auto px-6 pb-18">
         <div className="price-cards grid grid-cols-3 gap-5 items-stretch">
           {PLANS.map((plan) => {
             const price = formatPrice(plan.monthlyPrice, annual);
@@ -388,20 +386,18 @@ export default function Precios() {
             return (
               <div
                 key={plan.id}
-                className="relative rounded-[20px] bg-white border border-slate-200 p-8 shadow-[0_2px_20px_rgba(0,0,0,0.05)]"
+                className="relative rounded-lg bg-white border border-slate-200 p-8 shadow-[0_2px_20px_rgba(0,0,0,0.05)]"
               >
-                <div className="text-[13px] font-bold mb-2 tracking-wide text-slate-400">
+                <div className="text-sm font-bold mb-2 tracking-wide text-slate-400">
                   {plan.name}
                 </div>
                 <div className="mb-2">
                   <span className="font-serif text-[46px] leading-none text-text">{price}</span>
-                  {period && <span className="text-[13px] ml-1 text-slate-400">{period}</span>}
+                  {period && <span className="text-sm ml-1 text-slate-400">{period}</span>}
                 </div>
-                <p className="text-[13px] leading-[1.6] m-0 mb-7 text-slate-500">{plan.desc}</p>
+                <p className="text-sm leading-[1.6] m-0 mb-7 text-slate-500">{plan.desc}</p>
 
-                <button className="w-full p-[13px] text-[14px] font-bold rounded-[10px] cursor-pointer transition-opacity duration-200 border-none hover:opacity-85 bg-text text-white">
-                  {plan.cta}
-                </button>
+                <button className="btn btn-primary w-full">{plan.cta}</button>
               </div>
             );
           })}
@@ -410,28 +406,28 @@ export default function Precios() {
 
       {/* Feature comparison table */}
       {/* Feature comparison table */}
-      <div className="max-w-[1200px] mx-auto px-6 pb-[100px]">
+      <div className="max-w-page mx-auto px-6 pb-25">
         <div className="text-center mb-12">
-          <h2 className="font-serif text-[clamp(26px,3vw,38px)] text-text leading-[1.2] m-0 mb-2.5 font-normal">
+          <h2 className="font-serif text-[clamp(26px,3vw,38px)] text-text leading-[1.2] m-0 mb-3 font-normal">
             Comparación completa
           </h2>
-          <p className="text-[15px] text-slate-500 m-0">
+          <p className="text-base text-slate-500 m-0">
             Todo lo que incluye cada plan, sin letras chicas.
           </p>
         </div>
 
-        <div className="bg-white rounded-[20px] border border-slate-200 overflow-hidden shadow-[0_4px_30px_rgba(0,0,0,0.06)]">
+        <div className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-[0_4px_30px_rgba(0,0,0,0.06)]">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse min-w-[600px]">
               <thead>
                 <tr className="border-b-2 border-slate-200">
-                  <th className="text-left py-5 px-6 text-[12px] font-bold text-slate-400 tracking-wide">
+                  <th className="text-left py-5 px-6 text-xs font-bold text-slate-400 tracking-wide">
                     Funcionalidad
                   </th>
                   {PLANS.map((p) => (
                     <th
                       key={p.id}
-                      className="text-center p-5 text-[14px] font-bold w-[160px] text-text"
+                      className="text-center p-5 text-sm font-bold w-[160px] text-text"
                     >
                       {p.name}
                     </th>
@@ -444,7 +440,7 @@ export default function Precios() {
                     <tr>
                       <td
                         colSpan={4}
-                        className={`pt-4 px-6 pb-2 text-[11px] font-extrabold text-teal-600 tracking-wide bg-slate-50 ${gi > 0 ? "border-t border-slate-200" : ""}`}
+                        className={`pt-4 px-6 pb-2 text-xs font-extrabold text-teal-600 tracking-wide bg-slate-50 ${gi > 0 ? "border-t border-slate-200" : ""}`}
                       >
                         {group.category}
                       </td>
@@ -454,7 +450,7 @@ export default function Precios() {
                         key={`${gi}-${fi}`}
                         className={`border-b border-slate-100 ${fi % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
                       >
-                        <td className="py-3 px-6 text-[13px] text-text">{feat.label}</td>
+                        <td className="py-3 px-6 text-sm text-text">{feat.label}</td>
                         <FeatureCell value={feat.basico} />
                         <FeatureCell value={feat.comunidad} />
                         <FeatureCell value={feat.enterprise} />
@@ -469,14 +465,14 @@ export default function Precios() {
       </div>
 
       {/* CTA banner */}
-      <section className="bg-primary py-[72px] px-6 text-center">
-        <h2 className="font-serif text-[clamp(26px,3.5vw,42px)] text-white m-0 mb-3.5 font-normal">
+      <section className="bg-primary py-18 px-6 text-center">
+        <h2 className="font-serif text-[clamp(26px,3.5vw,42px)] text-white m-0 mb-4 font-normal">
           ¿Tienes dudas sobre qué plan elegir?
         </h2>
-        <p className="text-[16px] text-white/70 m-0 mb-8">
+        <p className="text-base text-white/70 m-0 mb-8">
           Nuestro equipo te ayuda a elegir el plan ideal para tu condominio — sin compromiso.
         </p>
-        <button className="bg-white text-accent font-bold text-[15px] py-3.5 px-9 rounded-[10px] border-none cursor-pointer transition-[transform,box-shadow] duration-150 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.15)]">
+        <button className="btn btn-secondary border-transparent px-9 text-accent">
           Hablar con ventas
         </button>
       </section>

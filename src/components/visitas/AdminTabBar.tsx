@@ -13,7 +13,7 @@ const TABS: { key: ActiveTab; label: string }[] = [
 export function AdminTabBar({ activeTab, onSelectTab }: AdminTabBarProps) {
   return (
     <div className="bg-white border-b border-border sticky top-0 z-10">
-      <div className="max-w-2xl mx-auto flex">
+      <div className="max-w-content mx-auto flex">
         {TABS.map(({ key, label }) => (
           <button
             key={key}

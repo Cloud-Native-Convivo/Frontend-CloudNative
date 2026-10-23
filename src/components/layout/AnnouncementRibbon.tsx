@@ -48,21 +48,21 @@ export function AnnouncementRibbon({ onDismiss }: { onDismiss: () => void }) {
 
   return (
     <div className="fixed top-0 inset-x-0 z-[60] h-[32px] bg-accent flex items-center">
-      <div className="max-w-[1280px] mx-auto px-4 flex items-center gap-[12px] w-full">
-        <div className="shrink-0 bg-primary rounded-[3px] px-2 py-[1px]">
-          <span className="text-[10px] font-bold text-white tracking-wide">Tablón</span>
+      <div className="max-w-page mx-auto px-4 flex items-center gap-3 w-full">
+        <div className="shrink-0 bg-primary rounded-sm px-2 py-1">
+          <span className="text-xs font-bold text-white tracking-wide">Tablón</span>
         </div>
 
         <Link
           to={item.path}
           viewTransition
-          className="flex-1 text-[12px] text-white/90 no-underline overflow-hidden whitespace-nowrap text-ellipsis transition-opacity duration-300"
+          className="flex-1 text-xs text-white/90 no-underline overflow-hidden whitespace-nowrap text-ellipsis transition-opacity duration-300"
           style={{ opacity: fading ? 0 : 1 }}
         >
           {item.text}
         </Link>
 
-        <div className="flex gap-[4px] shrink-0 ribbon-dots">
+        <div className="flex gap-1 shrink-0 ribbon-dots">
           {RIBBON_ITEMS.map((ribbonItem, i) => (
             <button
               key={ribbonItem.text}
@@ -71,7 +71,7 @@ export function AnnouncementRibbon({ onDismiss }: { onDismiss: () => void }) {
                 setIdx(i);
                 setFading(false);
               }}
-              className={`h-[5px] rounded-[3px] border-none cursor-pointer p-0 transition-[width,background-color] duration-300 ${
+              className={`h-[5px] rounded-sm border-none cursor-pointer p-0 transition-[width,background-color] duration-300 ${
                 i === idx ? "bg-primary-on-dark" : "bg-white/30"
               }`}
               style={{ width: i === idx ? 14 : 5 }}
@@ -82,7 +82,7 @@ export function AnnouncementRibbon({ onDismiss }: { onDismiss: () => void }) {
         <button
           onClick={onDismiss}
           aria-label="Cerrar aviso"
-          className="shrink-0 bg-transparent border-none cursor-pointer text-white/60 hover:text-white px-1 py-0.5 leading-none text-[14px] transition-colors duration-150"
+          className="shrink-0 bg-transparent border-none cursor-pointer text-white/60 hover:text-white px-1 py-1 leading-none text-sm transition-colors duration-150"
         >
           ✕
         </button>

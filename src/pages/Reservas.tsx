@@ -153,20 +153,20 @@ function isCancelable(reserva: Reserva): boolean {
 function StatusBadge({ estado }: { estado: Reserva["estado"] }) {
   if (estado === "confirmada") {
     return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
         <span aria-hidden="true">✓</span> Confirmada
       </span>
     );
   }
   if (estado === "pendiente") {
     return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-text">
+      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-text">
         <span aria-hidden="true">⏳</span> Pendiente
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-muted">
+    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-muted">
       <span aria-hidden="true">✗</span> Cancelada
     </span>
   );
@@ -181,7 +181,7 @@ function StatusBar({ estado }: { estado: Reserva["estado"] }) {
         : "bg-gray-300";
   return (
     <div
-      className={`w-1 self-stretch rounded-l-xl flex-shrink-0 ${colorClass}`}
+      className={`w-1 self-stretch rounded-l-md flex-shrink-0 ${colorClass}`}
       aria-hidden="true"
     />
   );
@@ -199,20 +199,20 @@ function ReservaCard({ reserva, onCancel, onBlock }: ReservaCardProps) {
   const endTime = `${endHour.toString().padStart(2, "0")}:00`;
 
   return (
-    <div className="flex bg-white border border-border rounded-xl shadow-sm overflow-hidden">
+    <div className="flex bg-white border border-border rounded-md shadow-sm overflow-hidden">
       <StatusBar estado={reserva.estado} />
       <div className="flex flex-1 gap-4 p-5">
         <img
           src={reserva.imagen}
           alt={reserva.espacio}
-          className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+          className="w-16 h-16 rounded-md object-cover flex-shrink-0"
           loading="lazy"
           decoding="async"
         />
         <div className="flex flex-1 flex-col gap-2 min-w-0">
           <div className="flex flex-wrap items-start gap-2">
             <h3 className="font-display text-lg text-text leading-tight">{reserva.espacio}</h3>
-            <span className="px-2 py-0.5 bg-gray-100 text-muted text-xs rounded-full">
+            <span className="px-2 py-1 bg-gray-100 text-muted text-xs rounded-full">
               {reserva.categoria}
             </span>
           </div>
@@ -232,7 +232,7 @@ function ReservaCard({ reserva, onCancel, onBlock }: ReservaCardProps) {
                 onClick={() => cancelable && onCancel(reserva.id)}
                 disabled={!cancelable}
                 title={!cancelable ? "No cancelable (menos de 24 hrs de anticipación)" : undefined}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
+                className={`px-3 py-2 rounded-md text-sm font-medium border transition-colors ${
                   cancelable
                     ? "border-alert-red text-alert-red hover:bg-red-50"
                     : "border-border text-muted cursor-not-allowed opacity-50"
@@ -244,14 +244,12 @@ function ReservaCard({ reserva, onCancel, onBlock }: ReservaCardProps) {
             {onBlock && reserva.estado !== "cancelada" && (
               <button
                 onClick={() => onBlock(reserva.id)}
-                className="px-3 py-1.5 rounded-lg text-sm font-medium border border-alert-yellow text-text hover:bg-yellow-50 transition-colors"
+                className="btn btn-secondary btn-sm border-alert-yellow hover:bg-yellow-50"
               >
                 Bloquear por mantenimiento
               </button>
             )}
-            <button className="px-3 py-1.5 rounded-lg text-sm font-medium border border-primary text-primary hover:bg-teal-50 transition-colors">
-              Ver detalle
-            </button>
+            <button className="btn btn-secondary btn-sm">Ver detalle</button>
           </div>
         </div>
       </div>
@@ -340,7 +338,7 @@ function CreateModal({ espacios, onClose, onConfirm }: CreateModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-narrow p-6">
         <h2 className="font-display text-2xl text-text mb-5">Nueva reserva</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
@@ -351,7 +349,7 @@ function CreateModal({ espacios, onClose, onConfirm }: CreateModalProps) {
               id="espacio"
               value={form.espacioId}
               onChange={(e) => setForm({ ...form, espacioId: Number(e.target.value) })}
-              className="border border-border rounded-lg px-3 py-2 text-text bg-white focus:outline-none focus:ring-2 focus:ring-primary"
+              className="border border-border rounded-md px-3 py-2 text-text bg-white focus:outline-none focus:ring-2 focus:ring-primary"
             >
               {espacios.map((esp) => (
                 <option key={esp.id} value={esp.id}>
@@ -373,7 +371,7 @@ function CreateModal({ espacios, onClose, onConfirm }: CreateModalProps) {
               value={form.fecha}
               onChange={(e) => setForm({ ...form, fecha: e.target.value })}
               required
-              className="border border-border rounded-lg px-3 py-2 text-text bg-white focus:outline-none focus:ring-2 focus:ring-primary"
+              className="border border-border rounded-md px-3 py-2 text-text bg-white focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
@@ -386,7 +384,7 @@ function CreateModal({ espacios, onClose, onConfirm }: CreateModalProps) {
                 id="hora"
                 value={form.hora}
                 onChange={(e) => setForm({ ...form, hora: e.target.value })}
-                className="border border-border rounded-lg px-3 py-2 text-text bg-white focus:outline-none focus:ring-2 focus:ring-primary"
+                className="border border-border rounded-md px-3 py-2 text-text bg-white focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {HORAS.map((h) => (
                   <option key={h} value={h}>
@@ -403,7 +401,7 @@ function CreateModal({ espacios, onClose, onConfirm }: CreateModalProps) {
                 id="duracion"
                 value={form.duracion}
                 onChange={(e) => setForm({ ...form, duracion: Number(e.target.value) })}
-                className="border border-border rounded-lg px-3 py-2 text-text bg-white focus:outline-none focus:ring-2 focus:ring-primary"
+                className="border border-border rounded-md px-3 py-2 text-text bg-white focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {DURACIONES.map((d) => (
                   <option key={d} value={d}>
@@ -414,7 +412,7 @@ function CreateModal({ espacios, onClose, onConfirm }: CreateModalProps) {
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-3 text-sm text-text">
+          <div className="bg-gray-50 rounded-md p-3 text-sm text-text">
             <span className="font-medium">Total: </span>
             {form.duracion} {form.duracion === 1 ? "hr" : "hrs"} &times;{" "}
             {espacio.tarifaHr === 0 ? "Gratis" : `$${espacio.tarifaHr.toLocaleString("es-CL")}`} ={" "}
@@ -426,7 +424,7 @@ function CreateModal({ espacios, onClose, onConfirm }: CreateModalProps) {
           <div className="flex flex-col gap-2 mt-1">
             <button
               type="submit"
-              className="w-full bg-primary text-white font-medium py-2.5 rounded-lg hover:bg-accent transition-colors"
+              className="btn btn-primary w-full"
               data-cuelume-press="tick"
               data-cuelume-release="success"
             >
@@ -435,7 +433,7 @@ function CreateModal({ espacios, onClose, onConfirm }: CreateModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="w-full text-muted text-sm py-2 hover:text-text transition-colors"
+              className="btn btn-tertiary w-full text-muted hover:text-text"
             >
               Cancelar
             </button>
@@ -456,26 +454,23 @@ function CancelModal({ reserva, onClose, onConfirm }: CancelModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-narrow p-6">
         <h2 className="font-display text-xl text-text mb-2">¿Cancelar esta reserva?</h2>
         <p className="text-sm text-muted mb-1">
           <span className="font-medium text-text">{reserva.espacio}</span> — {reserva.fechaDisplay}{" "}
           a las {reserva.hora} hrs
         </p>
-        <p className="text-sm bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-text mt-3 mb-6">
+        <p className="text-sm bg-yellow-50 border border-yellow-200 rounded-md p-3 text-text mt-3 mb-6">
           ⚠️ Recuerda que las cancelaciones deben realizarse con al menos 24 horas de anticipación.
           Esta acción no se puede deshacer.
         </p>
         <div className="flex gap-3">
-          <button
-            onClick={onClose}
-            className="flex-1 border border-border text-text font-medium py-2.5 rounded-lg hover:bg-gray-50 transition-colors"
-          >
+          <button onClick={onClose} className="btn btn-secondary flex-1">
             Volver
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 bg-alert-red text-white font-medium py-2.5 rounded-lg hover:opacity-90 transition-opacity"
+            className="btn btn-primary flex-1 bg-alert-red text-white hover:bg-alert-red/90"
           >
             Sí, cancelar
           </button>
@@ -675,7 +670,7 @@ export default function Reservas() {
     <div className="min-h-screen bg-gray-50">
       {/* Dark header */}
       <header className="bg-text px-6 py-8">
-        <div className="max-w-3xl mx-auto flex items-start justify-between gap-4">
+        <div className="max-w-content mx-auto flex items-start justify-between gap-4">
           <div>
             <h1 className="font-display text-3xl text-white">
               {isAdmin ? "Reservas del condominio" : "Mis Reservas"}
@@ -685,24 +680,21 @@ export default function Reservas() {
             </p>
           </div>
           {!isAdmin && (
-            <button
-              onClick={() => setShowCreate(true)}
-              className="flex-shrink-0 bg-primary text-white font-medium px-4 py-2.5 rounded-lg hover:bg-accent transition-colors text-sm"
-            >
+            <button onClick={() => setShowCreate(true)} className="btn btn-primary shrink-0">
               + Nueva reserva
             </button>
           )}
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-6 py-6">
+      <main className="max-w-content mx-auto px-6 py-6">
         {/* Filter tabs */}
         <div className="flex gap-2 flex-wrap mb-6">
           {TABS.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 activeTab === tab.key
                   ? "bg-primary text-white"
                   : "border border-border text-muted hover:text-text hover:border-primary"
@@ -745,7 +737,7 @@ export default function Reservas() {
 
       {/* CTA strip */}
       <div className="bg-text mt-12">
-        <div className="max-w-3xl mx-auto px-6 py-6 flex items-center justify-between gap-4">
+        <div className="max-w-content mx-auto px-6 py-6 flex items-center justify-between gap-4">
           <p className="text-white/80 text-sm">¿Buscas un espacio disponible?</p>
           <Link
             to="/espacios"
@@ -778,7 +770,7 @@ export default function Reservas() {
             onClick={() => setBlockTarget(null)}
             aria-hidden="true"
           />
-          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+          <div className="relative bg-white rounded-lg shadow-xl w-full max-w-narrow p-6">
             <h2 className="font-display text-xl text-text mb-2">¿Bloquear por mantenimiento?</h2>
             <p className="text-sm text-muted mb-6">
               Esta reserva quedará cancelada y el espacio aparecerá no disponible en el período
@@ -787,13 +779,13 @@ export default function Reservas() {
             <div className="flex gap-3">
               <button
                 onClick={() => setBlockTarget(null)}
-                className="flex-1 border border-border text-text font-medium py-2.5 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 border border-border text-text font-medium py-3 rounded-md hover:bg-gray-50 transition-colors"
               >
                 Volver
               </button>
               <button
                 onClick={handleBlockConfirm}
-                className="flex-1 bg-alert-yellow text-text font-medium py-2.5 rounded-lg hover:opacity-90 transition-opacity"
+                className="btn btn-primary flex-1 bg-alert-yellow text-text hover:bg-alert-yellow/90"
               >
                 Confirmar bloqueo
               </button>

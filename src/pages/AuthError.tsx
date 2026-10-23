@@ -79,7 +79,7 @@ export default function AuthError() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-surface">
-      <div className="w-full max-w-md bg-white border border-border rounded-xl shadow-sm p-8 text-center">
+      <div className="w-full max-w-narrow bg-white border border-border rounded-md shadow-sm p-8 text-center">
         {/* Warning Icon */}
         <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-alert-red/10 flex items-center justify-center text-alert-red">
           <svg
@@ -104,7 +104,7 @@ export default function AuthError() {
         {retryError && (
           <div
             role="alert"
-            className="mb-5 p-3 bg-red-50 border border-alert-red/30 rounded-lg text-xs text-alert-red"
+            className="mb-5 p-3 bg-red-50 border border-alert-red/30 rounded-md text-xs text-alert-red"
           >
             {retryError}
           </div>
@@ -117,16 +117,13 @@ export default function AuthError() {
             onClick={handleRetry}
             disabled={isRetrying}
             aria-busy={isRetrying}
-            className="w-full flex items-center justify-center gap-2 bg-white border border-border text-text font-semibold text-sm py-3 rounded-lg transition-colors hover:bg-primary/5 hover:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn btn-secondary w-full"
           >
             <IconGoogle className="w-4 h-4" />
             {isRetrying ? "Reintentando…" : "Reintentar con Google"}
           </button>
 
-          <Link
-            to="/login"
-            className="block w-full bg-primary hover:bg-accent text-white font-bold text-sm py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 text-center"
-          >
+          <Link to="/login" className="btn btn-primary w-full">
             Volver a iniciar sesión
           </Link>
         </div>

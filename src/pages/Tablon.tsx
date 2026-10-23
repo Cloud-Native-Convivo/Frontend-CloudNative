@@ -121,37 +121,33 @@ export default function Tablon() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <div className="bg-text px-6 pb-16 pt-[72px]">
-        <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-white/45 tracking-wide mb-4">
-            Cartelera digital
-          </p>
-          <h1 className="font-display text-[clamp(36px,5vw,64px)] text-white leading-[1.08] mb-[18px] font-normal">
+      <div className="bg-text px-6 pb-16 pt-18">
+        <div className="max-w-page mx-auto">
+          <p className="text-xs font-bold text-white/45 tracking-wide mb-4">Cartelera digital</p>
+          <h1 className="font-display text-[clamp(36px,5vw,64px)] text-white leading-[1.08] mb-5 font-normal">
             Tablón de avisos
           </h1>
-          <p className="text-[19px] text-white/65 m-0 max-w-[540px] leading-[1.65]">
+          <p className="text-lg text-white/65 m-0 max-w-content leading-[1.65]">
             Información del condominio, siempre al día
           </p>
         </div>
       </div>
 
       <div className="bg-primary px-6 pb-9 pt-10">
-        <div className="max-w-[1280px] mx-auto flex justify-between items-end flex-wrap gap-5">
+        <div className="max-w-page mx-auto flex justify-between items-end flex-wrap gap-5">
           <div>
-            <p className="text-[11px] font-bold text-white/60 tracking-wide mb-2.5">
-              Cartelera digital
-            </p>
-            <h2 className="font-display text-[clamp(24px,3vw,36px)] text-white leading-[1.1] mb-2.5 font-normal">
+            <p className="text-xs font-bold text-white/60 tracking-wide mb-3">Cartelera digital</p>
+            <h2 className="font-display text-[clamp(24px,3vw,36px)] text-white leading-[1.1] mb-3 font-normal">
               Tablón de Eventos y Avisos
             </h2>
-            <p className="text-[15px] text-white/72 m-0 max-w-[520px] leading-[1.65]">
+            <p className="text-base text-white/72 m-0 max-w-content leading-[1.65]">
               Cartelera digital comunitaria con avisos, asambleas y comunicados del comité — en
               tiempo real.
             </p>
           </div>
           <button
             onClick={() => setShowNew(true)}
-            className="flex items-center gap-2 bg-white text-accent border-none rounded-[10px] px-5 py-3 text-[14px] font-bold cursor-pointer transition-opacity duration-200 whitespace-nowrap hover:opacity-90"
+            className="btn btn-secondary border-transparent text-accent whitespace-nowrap"
           >
             <IconPlus className="w-4 h-4" />
             {canPublishDirect ? "Publicar aviso" : "Solicitar publicación"}
@@ -159,14 +155,14 @@ export default function Tablon() {
         </div>
       </div>
 
-      <div className="max-w-[1280px] mx-auto px-6 pb-20 pt-10">
+      <div className="max-w-page mx-auto px-6 pb-20 pt-10">
         <div className="flex justify-between items-center flex-wrap gap-4 mb-8">
           <div className="flex gap-2">
             {tipos.map((t) => (
               <button
                 key={t}
                 onClick={() => setActiveTipo(t)}
-                className={`px-4 py-2 rounded-full text-[13px] font-medium cursor-pointer border transition-colors duration-150 ${
+                className={`px-4 py-2 rounded-full text-sm font-medium cursor-pointer border transition-colors duration-150 ${
                   activeTipo === t
                     ? "border-primary bg-primary text-white"
                     : "border-border bg-white text-text-muted hover:border-primary"
@@ -176,7 +172,7 @@ export default function Tablon() {
               </button>
             ))}
           </div>
-          <div className="text-[13px] text-text-muted">{filtered.length} publicaciones</div>
+          <div className="text-sm text-text-muted">{filtered.length} publicaciones</div>
         </div>
 
         <AvisosGrid
@@ -193,8 +189,8 @@ export default function Tablon() {
       </div>
 
       <div className="bg-white px-6 py-20">
-        <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-primary tracking-wide mb-3">Funcionalidades</p>
+        <div className="max-w-page mx-auto">
+          <p className="text-xs font-bold text-primary tracking-wide mb-3">Funcionalidades</p>
           <h2 className="font-display text-[clamp(28px,3.5vw,44px)] text-text m-0 mb-12 font-normal">
             Todo lo que necesitas en un tablón
           </h2>
@@ -204,16 +200,16 @@ export default function Tablon() {
                 key={card.title}
                 height={200}
                 front={
-                  <div className="h-full bg-slate-50 rounded-2xl border border-border flex flex-col items-center justify-center p-6 text-center gap-3.5">
+                  <div className="h-full bg-slate-50 rounded-lg border border-border flex flex-col items-center justify-center p-6 text-center gap-4">
                     {card.icon}
-                    <span className="text-[15px] font-bold text-text leading-[1.3]">
+                    <span className="text-base font-bold text-text leading-[1.3]">
                       {card.title}
                     </span>
                   </div>
                 }
                 back={
-                  <div className="h-full bg-text rounded-2xl p-6 flex flex-col justify-center text-center">
-                    <p className="text-white/85 text-[14px] leading-[1.65] m-0">{card.desc}</p>
+                  <div className="h-full bg-text rounded-lg p-6 flex flex-col justify-center text-center">
+                    <p className="text-white/85 text-sm leading-[1.65] m-0">{card.desc}</p>
                   </div>
                 }
               />
@@ -223,23 +219,20 @@ export default function Tablon() {
       </div>
 
       {altSections.map((sec) => (
-        <div
-          key={sec.title}
-          className={`py-[72px] px-6 ${sec.imgLeft ? "bg-slate-50" : "bg-white"}`}
-        >
+        <div key={sec.title} className={`py-18 px-6 ${sec.imgLeft ? "bg-slate-50" : "bg-white"}`}>
           <div
-            className={`max-w-[1280px] mx-auto flex items-center gap-16 flex-wrap ${
+            className={`max-w-page mx-auto flex items-center gap-16 flex-wrap ${
               sec.imgLeft ? "flex-row-reverse" : "flex-row"
             }`}
           >
             <div className="flex-[1_1_400px]">
-              <p className="text-[11px] font-bold text-primary tracking-wide mb-3">
+              <p className="text-xs font-bold text-primary tracking-wide mb-3">
                 Comunidad conectada
               </p>
-              <h2 className="font-display text-[clamp(26px,3vw,40px)] text-text m-0 mb-[18px] font-normal leading-[1.15]">
+              <h2 className="font-display text-[clamp(26px,3vw,40px)] text-text m-0 mb-5 font-normal leading-[1.15]">
                 {sec.title}
               </h2>
-              <p className="text-[16px] text-text-muted leading-[1.75] m-0">{sec.body}</p>
+              <p className="text-base text-text-muted leading-[1.75] m-0">{sec.body}</p>
             </div>
             <div className="flex-[1_1_360px]">
               <img
@@ -247,7 +240,7 @@ export default function Tablon() {
                 alt={sec.title}
                 width="700"
                 height="500"
-                className="w-full rounded-[18px] block shadow-[0_16px_48px_rgba(0,0,0,0.1)]"
+                className="w-full rounded-lg block shadow-[0_16px_48px_rgba(0,0,0,0.1)]"
                 loading="lazy"
                 decoding="async"
               />
@@ -257,16 +250,13 @@ export default function Tablon() {
       ))}
 
       <div className="bg-text px-6 py-16">
-        <div className="max-w-[1280px] mx-auto flex items-center justify-center gap-6 flex-wrap">
-          <Link
-            to="/tablon"
-            className="inline-flex items-center gap-2 bg-primary hover:bg-accent text-white rounded-xl px-8 py-4 text-[15px] font-bold no-underline transition-colors duration-200"
-          >
+        <div className="max-w-page mx-auto flex items-center justify-center gap-6 flex-wrap">
+          <Link to="/tablon" className="btn btn-primary btn-lg">
             Ver los avisos
           </Link>
           <button
             onClick={() => setShowNew(true)}
-            className="inline-flex items-center gap-2 bg-transparent hover:bg-white/5 text-white rounded-xl border border-white/30 hover:border-white px-8 py-4 text-[15px] font-bold cursor-pointer transition-colors duration-200"
+            className="btn btn-secondary bg-transparent text-white border-white/30 hover:bg-white/5 hover:border-white px-8"
           >
             {canPublishDirect ? "Publicar aviso" : "Solicitar publicación"}{" "}
           </button>

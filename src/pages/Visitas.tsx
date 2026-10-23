@@ -75,7 +75,7 @@ export default function Visitas() {
 
       {role === "admin" && <AdminTabBar activeTab={activeTab} onSelectTab={setActiveTab} />}
 
-      <main className="max-w-2xl mx-auto px-4 py-6">
+      <main className="max-w-content mx-auto px-4 py-6">
         {canSeeConserjeria && !showingResidente ? (
           <ConserjeriaPanel visitas={visitas} onUpdateEstado={handleUpdateEstado} />
         ) : (

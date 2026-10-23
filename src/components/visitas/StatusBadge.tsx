@@ -39,7 +39,7 @@ export function StatusBadge({ estado }: { estado: EstadoVisita }) {
   const { label, icon, className } = STATUS_BADGE_MAP[estado];
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${className}`}
+      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${className}`}
     >
       {icon && <span>{icon}</span>}
       {label}

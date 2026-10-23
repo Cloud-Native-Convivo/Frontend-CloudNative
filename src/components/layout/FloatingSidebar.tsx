@@ -24,7 +24,7 @@ export function FloatingSidebar() {
   const [hovered, setHovered] = useState<string | null>(null);
 
   return (
-    <div className="float-sidebar fixed right-0 top-1/2 -translate-y-1/2 z-[45] flex flex-col gap-[6px]">
+    <div className="float-sidebar fixed right-0 top-1/2 -translate-y-1/2 z-[45] flex flex-col gap-2">
       {FLOATING_SIDEBAR_ITEMS.map((item) => (
         <Link
           key={item.id}
@@ -35,14 +35,14 @@ export function FloatingSidebar() {
           className="flex items-center justify-end no-underline"
         >
           <div
-            className={`flex items-center h-[40px] overflow-hidden whitespace-nowrap rounded-l-[6px] transition-[max-width,padding,opacity] duration-[220ms] ease-out ${item.bg}`}
+            className={`flex items-center h-[40px] overflow-hidden whitespace-nowrap rounded-l-sm transition-[max-width,padding,opacity] duration-[220ms] ease-out ${item.bg}`}
             style={{
               maxWidth: hovered === item.id ? 120 : 0,
               paddingLeft: hovered === item.id ? 12 : 0,
               opacity: hovered === item.id ? 1 : 0,
             }}
           >
-            <span className="text-[12px] font-bold text-white">{item.label}</span>
+            <span className="text-xs font-bold text-white">{item.label}</span>
           </div>
 
           <div

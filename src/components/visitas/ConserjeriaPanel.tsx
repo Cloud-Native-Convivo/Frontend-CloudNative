@@ -55,7 +55,7 @@ function RechazoModal({
   const [motivo, setMotivo] = useState("");
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 flex flex-col gap-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-narrow w-full p-6 flex flex-col gap-4">
         <h3 className="font-display text-xl text-text">Motivo de rechazo</h3>
         <textarea
           aria-label="Motivo de rechazo"
@@ -63,20 +63,17 @@ function RechazoModal({
           onChange={(e) => setMotivo(e.target.value)}
           rows={3}
           required
-          className="w-full rounded-lg border border-border px-3 py-2 text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-alert-red/40 resize-none"
+          className="w-full rounded-md border border-border px-3 py-2 text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-alert-red/40 resize-none"
           placeholder="Describe el motivo del rechazo..."
         />
         <div className="flex gap-3">
-          <button
-            onClick={onCancel}
-            className="flex-1 border border-border rounded-lg py-2 text-text font-semibold hover:bg-gray-50 transition-colors"
-          >
+          <button onClick={onCancel} className="btn btn-secondary flex-1">
             Cancelar
           </button>
           <button
             onClick={() => motivo.trim() && onConfirm(motivo)}
             disabled={!motivo.trim()}
-            className="flex-1 bg-alert-red text-white rounded-lg py-2 font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="btn btn-primary flex-1 bg-alert-red text-white hover:bg-alert-red/90"
           >
             Confirmar rechazo
           </button>
@@ -131,7 +128,7 @@ export function ConserjeriaPanel({ visitas, onUpdateEstado }: ConserjeriaPanelPr
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="max-w-md mx-auto w-full bg-white rounded-2xl border border-border p-6 flex flex-col gap-4">
+      <div className="max-w-narrow mx-auto w-full bg-white rounded-lg border border-border p-6 flex flex-col gap-4">
         <h2 className="font-display text-2xl text-text">Validar acceso</h2>
         <form onSubmit={handleSearch} className="flex gap-2">
           <input
@@ -143,18 +140,15 @@ export function ConserjeriaPanel({ visitas, onUpdateEstado }: ConserjeriaPanelPr
               setNotFound(false);
             }}
             placeholder="CONV-VIS-..."
-            className="flex-1 rounded-lg border border-border px-3 py-2 text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/40 font-mono text-sm"
+            className="flex-1 rounded-md border border-border px-3 py-2 text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/40 font-mono text-sm"
           />
-          <button
-            type="submit"
-            className="bg-primary text-white rounded-lg px-4 py-2 font-semibold hover:opacity-90 transition-opacity whitespace-nowrap"
-          >
+          <button type="submit" className="btn btn-primary whitespace-nowrap">
             Buscar
           </button>
         </form>
 
         {notFound && (
-          <div className="rounded-lg bg-red-50 border border-alert-red/20 px-4 py-3 text-alert-red text-sm font-medium">
+          <div className="rounded-md bg-red-50 border border-alert-red/20 px-4 py-3 text-alert-red text-sm font-medium">
             Código no encontrado. Verifica con el residente.
           </div>
         )}
@@ -192,17 +186,14 @@ export function ConserjeriaPanel({ visitas, onUpdateEstado }: ConserjeriaPanelPr
               {currentFound.estado !== "en_progreso" &&
                 currentFound.estado !== "rechazada" &&
                 currentFound.estado !== "completada" && (
-                  <button
-                    onClick={handleEntrada}
-                    className="w-full bg-primary text-white rounded-lg py-2.5 font-semibold hover:opacity-90 transition-opacity"
-                  >
+                  <button onClick={handleEntrada} className="btn btn-primary w-full">
                     Registrar entrada
                   </button>
                 )}
               {currentFound.estado === "en_progreso" && (
                 <button
                   onClick={handleSalida}
-                  className="w-full bg-accent text-white rounded-lg py-2.5 font-semibold hover:opacity-90 transition-opacity"
+                  className="btn btn-primary w-full bg-accent text-white hover:bg-accent/90"
                 >
                   Registrar salida
                 </button>
@@ -210,7 +201,7 @@ export function ConserjeriaPanel({ visitas, onUpdateEstado }: ConserjeriaPanelPr
               {currentFound.estado !== "rechazada" && currentFound.estado !== "completada" && (
                 <button
                   onClick={() => setShowRechazo(true)}
-                  className="w-full bg-alert-red text-white rounded-lg py-2.5 font-semibold hover:opacity-90 transition-opacity"
+                  className="btn btn-primary w-full bg-alert-red text-white hover:bg-alert-red/90"
                 >
                   Rechazar
                 </button>
@@ -220,7 +211,7 @@ export function ConserjeriaPanel({ visitas, onUpdateEstado }: ConserjeriaPanelPr
         )}
       </div>
 
-      <div className="bg-white rounded-2xl border border-border overflow-hidden">
+      <div className="bg-white rounded-lg border border-border overflow-hidden">
         <div className="px-6 py-4 border-b border-border">
           <h3 className="font-display text-lg text-text">Últimos registros de hoy</h3>
         </div>

@@ -89,12 +89,12 @@ export default function Canales() {
     <div className="min-h-screen bg-slate-50">
       {/* Dark hero header */}
       <div className="bg-text p-[72px_24px_64px]">
-        <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-white/45 tracking-wide mb-4">Contacto directo</p>
-          <h1 className="font-display text-[clamp(36px,5vw,64px)] text-white leading-[1.08] m-0 mb-[18px] font-normal">
+        <div className="max-w-page mx-auto">
+          <p className="text-xs font-bold text-white/45 tracking-wide mb-4">Contacto directo</p>
+          <h1 className="font-display text-[clamp(36px,5vw,64px)] text-white leading-[1.08] m-0 mb-5 font-normal">
             Canales de seguridad
           </h1>
-          <p className="text-[19px] text-white/65 m-0 max-w-[540px] leading-[1.65]">
+          <p className="text-lg text-white/65 m-0 max-w-content leading-[1.65]">
             Todo el condominio, un clic para cada emergencia
           </p>
         </div>
@@ -102,14 +102,12 @@ export default function Canales() {
 
       {/* Existing header strip */}
       <div className="bg-primary p-[40px_24px_36px]">
-        <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-white/60 tracking-wide mb-[10px]">
-            Contacto directo
-          </p>
-          <h2 className="font-display text-[clamp(24px,3vw,36px)] text-white leading-[1.1] m-0 mb-[10px] font-normal">
+        <div className="max-w-page mx-auto">
+          <p className="text-xs font-bold text-white/60 tracking-wide mb-3">Contacto directo</p>
+          <h2 className="font-display text-[clamp(24px,3vw,36px)] text-white leading-[1.1] m-0 mb-3 font-normal">
             Canales de Seguridad
           </h2>
-          <p className="text-[15px] text-white/72 m-0 max-w-[520px] leading-[1.65]">
+          <p className="text-base text-white/72 m-0 max-w-content leading-[1.65]">
             Toda la información de contacto del condominio en un solo lugar, siempre actualizada. Un
             clic para emergencias.
           </p>
@@ -117,19 +115,19 @@ export default function Canales() {
       </div>
 
       {/* Main channel content */}
-      <div className="max-w-[1280px] mx-auto p-[40px_24px_80px]">
+      <div className="max-w-page mx-auto p-[40px_24px_80px]">
         {/* Emergency banner */}
-        <div className="bg-rose-50 border border-rose-200 rounded-[14px] p-[20px_24px] mb-8 flex items-center gap-4 flex-wrap">
+        <div className="bg-rose-50 border border-rose-200 rounded-lg p-[20px_24px] mb-8 flex items-center gap-4 flex-wrap">
           <div className="text-alert-red shrink-0">
             <IconAlertTriangle className="w-[28px] h-[28px]" />
           </div>
           <div className="flex-1">
-            <div className="text-[15px] font-bold text-alert-red mb-[2px]">¿Es una emergencia?</div>
-            <div className="text-[13px] text-rose-800">
+            <div className="text-base font-bold text-alert-red mb-1">¿Es una emergencia?</div>
+            <div className="text-sm text-rose-800">
               Llama directamente a Carabineros (133), Bomberos (132) o Ambulancia SAMU (131)
             </div>
           </div>
-          <div className="flex gap-[10px] flex-wrap">
+          <div className="flex gap-3 flex-wrap">
             {[
               { num: "133", label: "Carabineros" },
               { num: "132", label: "Bomberos" },
@@ -138,10 +136,10 @@ export default function Canales() {
               <a
                 key={e.num}
                 href={`tel:${e.num}`}
-                className="flex flex-col items-center bg-alert-red hover:bg-rose-800 text-white rounded-[10px] py-[10px] px-[18px] no-underline transition-colors duration-200"
+                className="btn btn-primary flex-col py-3 bg-alert-red text-white hover:bg-rose-800"
               >
-                <span className="font-display text-[20px] leading-none">{e.num}</span>
-                <span className="text-[11px] opacity-85 mt-[2px]">{e.label}</span>
+                <span className="font-display text-xl leading-none">{e.num}</span>
+                <span className="text-xs opacity-85 mt-1">{e.label}</span>
               </a>
             ))}
           </div>
@@ -154,10 +152,10 @@ export default function Canales() {
             return (
               <div
                 key={c.area}
-                className="bg-white border border-border hover:border-slate-300 rounded-[16px] py-[24px] px-[28px] grid grid-cols-[56px_1fr_auto] gap-5 items-center transition-[border-color,box-shadow] duration-200 hover:shadow-[0_6px_24px_rgba(0,0,0,0.07)]"
+                className="bg-white border border-border hover:border-slate-300 rounded-lg py-6 px-7 grid grid-cols-[56px_1fr_auto] gap-5 items-center transition-[border-color,box-shadow] duration-200 hover:shadow-[0_6px_24px_rgba(0,0,0,0.07)]"
               >
                 <div
-                  className={`w-[52px] h-[52px] rounded-[14px] flex items-center justify-center shrink-0 ${
+                  className={`w-[52px] h-[52px] rounded-lg flex items-center justify-center shrink-0 ${
                     c.urgencia === "critica"
                       ? "bg-rose-50 text-alert-red"
                       : "bg-teal-100 text-accent"
@@ -166,21 +164,19 @@ export default function Canales() {
                   {iconMap[c.area]}
                 </div>
                 <div>
-                  <div className="flex items-center gap-[10px] mb-1 flex-wrap">
-                    <h3 className="font-display text-[18px] text-text m-0 font-normal">{c.area}</h3>
-                    <span
-                      className={`text-[11px] font-bold py-[3px] px-[10px] rounded-full ${badge.className}`}
-                    >
+                  <div className="flex items-center gap-3 mb-1 flex-wrap">
+                    <h3 className="font-display text-lg text-text m-0 font-normal">{c.area}</h3>
+                    <span className={`text-xs font-bold py-1 px-3 rounded-full ${badge.className}`}>
                       {badge.label}
                     </span>
                   </div>
-                  <div className="text-[13px] text-muted mb-[10px]">{c.resp}</div>
+                  <div className="text-sm text-muted mb-3">{c.resp}</div>
                   <div className="flex gap-5 flex-wrap">
-                    <div className="flex items-center gap-[6px] text-[14px] text-text font-semibold">
+                    <div className="flex items-center gap-2 text-sm text-text font-semibold">
                       <IconPhone className="w-[14px] h-[14px] text-primary" /> {c.contacto}
                     </div>
                     {c.email && (
-                      <div className="flex items-center gap-[6px] text-[13px] text-primary">
+                      <div className="flex items-center gap-2 text-sm text-primary">
                         <IconMail className="w-[14px] h-[14px]" />
                         <a href={`mailto:${c.email}`} className="text-primary no-underline">
                           {c.email}
@@ -190,12 +186,14 @@ export default function Canales() {
                   </div>
                 </div>
                 <div className="text-right shrink-0">
-                  <div className="text-[12px] text-slate-400 mb-[10px]">{c.horario}</div>
+                  <div className="text-xs text-slate-400 mb-3">{c.horario}</div>
                   {c.contacto.match(/\d{3}/) && (
                     <a
                       href={`tel:${c.contacto.split("/")[0].trim().replace(/\s/g, "")}`}
-                      className={`inline-flex items-center gap-[6px] text-white rounded-lg py-[9px] px-[16px] no-underline text-[13px] font-semibold transition-opacity duration-200 hover:opacity-85 ${
-                        c.urgencia === "critica" ? "bg-alert-red" : "bg-primary"
+                      className={`btn btn-primary btn-sm ${
+                        c.urgencia === "critica"
+                          ? "bg-alert-red text-white hover:bg-alert-red/90"
+                          : ""
                       }`}
                     >
                       <IconPhone className="w-[13px] h-[13px]" /> Llamar
@@ -209,47 +207,43 @@ export default function Canales() {
 
         {/* Security info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="bg-white border border-border rounded-[16px] p-[28px]">
+          <div className="bg-white border border-border rounded-lg p-7">
             <div className="flex items-center gap-3 mb-5">
               <div className="text-primary">
                 <IconShield className="w-[24px] h-[24px]" />
               </div>
-              <h3 className="font-display text-[20px] text-text m-0 font-normal">Plan Cuadrante</h3>
+              <h3 className="font-display text-xl text-text m-0 font-normal">Plan Cuadrante</h3>
             </div>
-            <p className="text-[14px] text-muted leading-[1.7] m-0 mb-4">
+            <p className="text-sm text-muted leading-[1.7] m-0 mb-4">
               Ficha del sector con el cuadrante de seguridad vigente y el contacto del funcionario a
               cargo, mantenida por el comité.
             </p>
-            <div className="text-[14px] text-text font-medium">Comisaría 12a — Las Condes</div>
-            <div className="mt-2 text-[14px] text-text font-medium">
-              Cuadrante N° 4 — Sector Norte
-            </div>
+            <div className="text-sm text-text font-medium">Comisaría 12a — Las Condes</div>
+            <div className="mt-2 text-sm text-text font-medium">Cuadrante N° 4 — Sector Norte</div>
           </div>
 
-          <div className="bg-white border border-border rounded-[16px] p-[28px]">
+          <div className="bg-white border border-border rounded-lg p-7">
             <div className="flex items-center gap-3 mb-5">
               <div className="text-primary">
                 <IconBell className="w-[24px] h-[24px]" />
               </div>
-              <h3 className="font-display text-[20px] text-text m-0 font-normal">
+              <h3 className="font-display text-xl text-text m-0 font-normal">
                 Notificaciones push
               </h3>
             </div>
-            <p className="text-[14px] text-muted leading-[1.7] m-0 mb-5">
+            <p className="text-sm text-muted leading-[1.7] m-0 mb-5">
               Activa las notificaciones para recibir alertas de seguridad, mantenimientos
               programados y avisos urgentes directamente en tu dispositivo.
             </p>
-            <button className="bg-primary hover:bg-accent text-white border-none rounded-lg py-[10px] px-[20px] text-[14px] font-semibold cursor-pointer transition-colors duration-200">
-              Activar notificaciones
-            </button>
+            <button className="btn btn-primary">Activar notificaciones</button>
           </div>
         </div>
       </div>
 
       {/* Sub-features flip cards */}
       <div className="bg-white p-[80px_24px]">
-        <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-primary tracking-wide mb-3">Funcionalidades</p>
+        <div className="max-w-page mx-auto">
+          <p className="text-xs font-bold text-primary tracking-wide mb-3">Funcionalidades</p>
           <h2 className="font-display text-[clamp(28px,3.5vw,44px)] text-text m-0 mb-12 font-normal">
             Cada canal, a un clic de distancia
           </h2>
@@ -259,16 +253,16 @@ export default function Canales() {
                 key={card.title}
                 height={200}
                 front={
-                  <div className="h-full bg-slate-50 rounded-[16px] border border-border flex flex-col items-center justify-center p-6 text-center gap-[14px]">
+                  <div className="h-full bg-slate-50 rounded-lg border border-border flex flex-col items-center justify-center p-6 text-center gap-4">
                     {card.icon}
-                    <span className="text-[15px] font-bold text-text leading-[1.3]">
+                    <span className="text-base font-bold text-text leading-[1.3]">
                       {card.title}
                     </span>
                   </div>
                 }
                 back={
-                  <div className="h-full bg-primary rounded-[16px] flex items-center justify-center p-6 text-center">
-                    <span className="text-[14px] text-white leading-[1.6]">{card.desc}</span>
+                  <div className="h-full bg-primary rounded-lg flex items-center justify-center p-6 text-center">
+                    <span className="text-sm text-white leading-[1.6]">{card.desc}</span>
                   </div>
                 }
               />
@@ -281,9 +275,9 @@ export default function Canales() {
       {altSections.map((section) => (
         <div
           key={section.title}
-          className={`py-[80px] px-[24px] ${section.imgLeft ? "bg-slate-50" : "bg-white"}`}
+          className={`py-20 px-6 ${section.imgLeft ? "bg-slate-50" : "bg-white"}`}
         >
-          <div className="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+          <div className="max-w-page mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
             {section.imgLeft ? (
               <>
                 <img
@@ -291,7 +285,7 @@ export default function Canales() {
                   alt={section.title}
                   width="700"
                   height="500"
-                  className="w-full h-[380px] object-cover rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
+                  className="w-full h-[380px] object-cover rounded-lg shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
                   loading="lazy"
                   decoding="async"
                 />
@@ -299,7 +293,7 @@ export default function Canales() {
                   <h2 className="font-display text-[clamp(26px,3vw,40px)] text-text m-0 mb-5 font-normal leading-[1.2]">
                     {section.title}
                   </h2>
-                  <p className="text-[16px] text-muted leading-[1.75] m-0">{section.body}</p>
+                  <p className="text-base text-muted leading-[1.75] m-0">{section.body}</p>
                 </div>
               </>
             ) : (
@@ -308,14 +302,14 @@ export default function Canales() {
                   <h2 className="font-display text-[clamp(26px,3vw,40px)] text-text m-0 mb-5 font-normal leading-[1.2]">
                     {section.title}
                   </h2>
-                  <p className="text-[16px] text-muted leading-[1.75] m-0">{section.body}</p>
+                  <p className="text-base text-muted leading-[1.75] m-0">{section.body}</p>
                 </div>
                 <img
                   src={section.imgUrl}
                   alt={section.title}
                   width="700"
                   height="500"
-                  className="w-full h-[380px] object-cover rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
+                  className="w-full h-[380px] object-cover rounded-lg shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
                   loading="lazy"
                   decoding="async"
                 />
@@ -327,16 +321,13 @@ export default function Canales() {
 
       {/* CTA strip */}
       <div className="bg-text p-[64px_24px]">
-        <div className="max-w-[1280px] mx-auto flex items-center justify-center gap-6 flex-wrap">
-          <Link
-            to="/canales"
-            className="inline-flex items-center gap-2 bg-primary hover:bg-accent text-white rounded-xl py-4 px-8 text-[15px] font-bold no-underline transition-colors duration-200"
-          >
+        <div className="max-w-page mx-auto flex items-center justify-center gap-6 flex-wrap">
+          <Link to="/canales" className="btn btn-primary btn-lg">
             Ver canales
           </Link>
           <Link
             to="/dashboard"
-            className="inline-flex items-center gap-2 bg-transparent hover:bg-white/5 text-white rounded-xl border border-white/30 hover:border-white py-4 px-8 text-[15px] font-bold no-underline transition-[border-color,background-color] duration-200"
+            className="btn btn-secondary bg-transparent text-white border-white/30 hover:bg-white/10 hover:border-white/60 btn-lg"
           >
             Dashboard
           </Link>

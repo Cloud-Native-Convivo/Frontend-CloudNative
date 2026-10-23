@@ -145,23 +145,23 @@ export default function Login() {
           <Link
             to="/"
             viewTransition
-            className="group inline-flex items-center gap-3 no-underline text-white rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#001714]"
+            className="group inline-flex items-center gap-3 no-underline text-white rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#001714]"
             aria-label="Volver a la portada de Convivo"
           >
-            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center font-display font-bold text-white text-lg shadow-[0_4px_16px_rgba(13,148,136,0.35)] transition-transform group-hover:scale-105">
+            <div className="w-9 h-9 rounded-md bg-primary flex items-center justify-center font-display font-bold text-white text-lg shadow-[0_4px_16px_rgba(13,148,136,0.35)] transition-transform group-hover:scale-105">
               C
             </div>
             <div className="flex flex-col">
               <span className="font-display text-2xl text-white tracking-tight leading-none">
                 Convivo
               </span>
-              <span className="text-[10px] uppercase tracking-widest text-emerald-300 font-semibold mt-1">
+              <span className="text-xs uppercase tracking-widest text-emerald-300 font-semibold mt-1">
                 Portal Residencial
               </span>
             </div>
           </Link>
 
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-[11px] font-medium text-emerald-300 backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-xs font-medium text-emerald-300 backdrop-blur-sm">
             <span
               className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"
               aria-hidden="true"
@@ -181,14 +181,14 @@ export default function Login() {
             <br />
             <span className="text-primary-on-dark italic font-normal">en sintonía digital.</span>
           </h1>
-          <p className="text-white/80 text-sm xl:text-base leading-relaxed max-w-md">
+          <p className="text-white/80 text-sm xl:text-base leading-relaxed max-w-narrow">
             Gestiona gastos comunes con trazabilidad bancaria, reserva quinchos y autoriza visitas
             desde un acceso seguro y unificado.
           </p>
         </div>
 
         {/* Bottom: Security standards assurance */}
-        <div className="relative z-10 pt-6 border-t border-white/10 space-y-2.5">
+        <div className="relative z-10 pt-6 border-t border-white/10 space-y-3">
           <div className="flex items-center gap-2 text-xs text-white font-medium">
             <IconShield className="w-4 h-4 text-emerald-400 shrink-0" aria-hidden="true" />
             <span>Ley 21.442 Chile</span>
@@ -206,15 +206,15 @@ export default function Login() {
         }`}
       >
         {/* Top utility bar */}
-        <div className="flex items-center justify-between w-full max-w-md mx-auto">
+        <div className="flex items-center justify-between w-full max-w-narrow mx-auto">
           {/* Mobile Logo */}
           <Link
             to="/"
             viewTransition
-            className="lg:hidden inline-flex items-center gap-2.5 no-underline text-text rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
+            className="lg:hidden inline-flex items-center gap-3 no-underline text-text rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
             aria-label="Volver a la portada de Convivo"
           >
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-display font-bold text-white text-base shadow-xs">
+            <div className="w-8 h-8 rounded-md bg-primary flex items-center justify-center font-display font-bold text-white text-base shadow-xs">
               C
             </div>
             <span className="font-display text-xl text-text font-bold">Convivo</span>
@@ -223,7 +223,7 @@ export default function Login() {
           <Link
             to="/"
             viewTransition
-            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-slate-950 transition-colors group rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
+            className="hidden sm:inline-flex items-center gap-2 text-xs font-semibold text-slate-700 hover:text-slate-950 transition-colors group rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
           >
             <span className="transition-transform group-hover:-translate-x-1" aria-hidden="true">
               ←
@@ -235,7 +235,7 @@ export default function Login() {
             ¿Necesitas ayuda?{" "}
             <a
               href="mailto:soporte@convivo.cl"
-              className="text-teal-800 hover:text-teal-950 font-semibold underline underline-offset-2 rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
+              className="text-teal-800 hover:text-teal-950 font-semibold underline underline-offset-2 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
             >
               Mesa de ayuda
             </a>
@@ -243,10 +243,10 @@ export default function Login() {
         </div>
 
         {/* Center Form Section */}
-        <div className="w-full max-w-md mx-auto my-auto py-8">
+        <div className="w-full max-w-narrow mx-auto my-auto py-8">
           {/* Header */}
           <div className="mb-8">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-900 text-[11px] font-bold uppercase tracking-wider mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-emerald-500/10 border border-emerald-500/30 text-emerald-900 text-xs font-bold uppercase tracking-wider mb-3">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" aria-hidden="true" />
               <span>Acceso de Residentes</span>
             </div>
@@ -266,7 +266,7 @@ export default function Login() {
               onClick={handleGoogleLogin}
               disabled={isConnectingGoogle}
               aria-busy={isConnectingGoogle}
-              className="w-full relative group flex items-center justify-center gap-3 bg-white hover:bg-slate-50 border border-slate-300 hover:border-slate-400 text-slate-900 font-semibold text-sm py-3.5 px-4 rounded-xl shadow-xs hover:shadow-md transition-[color,background-color,border-color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+              className="btn btn-secondary w-full relative group gap-3"
             >
               {isConnectingGoogle ? (
                 <div
@@ -280,7 +280,7 @@ export default function Login() {
                 {isConnectingGoogle ? "Conectando con Google…" : "Continuar con Google"}
               </span>
             </button>
-            <p className="text-center text-xs text-slate-600 flex items-center justify-center gap-1.5">
+            <p className="text-center text-xs text-slate-600 flex items-center justify-center gap-2">
               <IconShield className="w-3.5 h-3.5 text-emerald-700 shrink-0" aria-hidden="true" />
               <span>Acceso seguro y verificado con tu cuenta de Google</span>
             </p>
@@ -289,7 +289,7 @@ export default function Login() {
           {/* Editorial divider */}
           <div className="my-7 flex items-center gap-3" aria-hidden="true">
             <div className="h-px flex-1 bg-slate-200" />
-            <span className="text-[11px] font-bold uppercase tracking-widest text-slate-600">
+            <span className="text-xs font-bold uppercase tracking-widest text-slate-600">
               o con credenciales
             </span>
             <div className="h-px flex-1 bg-slate-200" />
@@ -301,13 +301,13 @@ export default function Login() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-1.5"
+                className="block text-xs font-bold text-slate-900 uppercase tracking-wider mb-2"
               >
                 Correo electrónico
               </label>
               <div className="relative">
                 <div
-                  className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500"
+                  className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500"
                   aria-hidden="true"
                 >
                   <IconMail className="w-4 h-4" />
@@ -321,7 +321,7 @@ export default function Login() {
                   onChange={handleChange}
                   aria-describedby={errors.email ? "email-error" : undefined}
                   aria-invalid={!!errors.email}
-                  className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl border text-base sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-[color,background-color,border-color,box-shadow] focus:border-teal-700 focus:ring-2 focus:ring-teal-700/25 bg-white ${
+                  className={`w-full pl-10 pr-4 py-3 rounded-md border text-base sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-[color,background-color,border-color,box-shadow] focus:border-teal-700 focus:ring-2 focus:ring-teal-700/25 bg-white ${
                     errors.email
                       ? "border-rose-600 bg-rose-50/40 focus:border-rose-700 focus:ring-rose-700/20"
                       : "border-slate-300 hover:border-slate-400"
@@ -333,7 +333,7 @@ export default function Login() {
                 <p
                   id="email-error"
                   role="alert"
-                  className="mt-1.5 text-xs text-rose-700 flex items-center gap-1 font-semibold"
+                  className="mt-2 text-xs text-rose-700 flex items-center gap-1 font-semibold"
                 >
                   <span aria-hidden="true">⚠</span> {errors.email}
                 </p>
@@ -342,7 +342,7 @@ export default function Login() {
 
             {/* Password Field */}
             <div>
-              <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center justify-between mb-2">
                 <label
                   htmlFor="password"
                   className="block text-xs font-bold text-slate-900 uppercase tracking-wider"
@@ -351,14 +351,14 @@ export default function Login() {
                 </label>
                 <Link
                   to="/auth/recuperar-clave"
-                  className="text-xs text-teal-800 font-semibold hover:text-teal-950 hover:underline rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
+                  className="text-xs text-teal-800 font-semibold hover:text-teal-950 hover:underline rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
                 >
                   ¿Olvidaste tu clave?
                 </Link>
               </div>
               <div className="relative">
                 <div
-                  className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500"
+                  className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500"
                   aria-hidden="true"
                 >
                   <IconLock className="w-4 h-4" />
@@ -372,7 +372,7 @@ export default function Login() {
                   onChange={handleChange}
                   aria-describedby={errors.password ? "password-error" : undefined}
                   aria-invalid={!!errors.password}
-                  className={`w-full pl-10 pr-11 py-2.5 rounded-xl border text-base sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-[color,background-color,border-color,box-shadow] focus:border-teal-700 focus:ring-2 focus:ring-teal-700/25 bg-white ${
+                  className={`w-full pl-10 pr-11 py-3 rounded-md border text-base sm:text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-[color,background-color,border-color,box-shadow] focus:border-teal-700 focus:ring-2 focus:ring-teal-700/25 bg-white ${
                     errors.password
                       ? "border-rose-600 bg-rose-50/40 focus:border-rose-700 focus:ring-rose-700/20"
                       : "border-slate-300 hover:border-slate-400"
@@ -382,7 +382,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 rounded-md transition-colors cursor-pointer"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 rounded-sm transition-colors cursor-pointer"
                   aria-label={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
                   aria-controls="password"
                 >
@@ -397,7 +397,7 @@ export default function Login() {
                 <p
                   id="password-error"
                   role="alert"
-                  className="mt-1.5 text-xs text-rose-700 flex items-center gap-1 font-semibold"
+                  className="mt-2 text-xs text-rose-700 flex items-center gap-1 font-semibold"
                 >
                   <span aria-hidden="true">⚠</span> {errors.password}
                 </p>
@@ -418,23 +418,20 @@ export default function Login() {
             </div>
 
             {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full bg-primary hover:bg-accent text-white font-bold text-sm py-3.5 rounded-xl shadow-[0_4px_16px_rgba(13,148,136,0.25)] hover:shadow-[0_6px_20px_rgba(13,148,136,0.35)] transition-[color,background-color,border-color,box-shadow] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 focus-visible:ring-offset-2"
-            >
+            <button type="submit" className="btn btn-primary w-full">
               Ingresar
             </button>
           </form>
 
           {/* Dev Mode Local Mock Login */}
           {import.meta.env.DEV && (
-            <div className="mt-6 p-4 rounded-xl bg-slate-900 border border-slate-800 text-left">
+            <div className="mt-6 p-4 rounded-md bg-slate-900 border border-slate-800 text-left">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-teal-400 flex items-center gap-1.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-teal-400 flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-teal-400" aria-hidden="true" />
                   Entorno Local de Pruebas
                 </span>
-                <span className="text-[10px] text-slate-400 font-mono">DEV MODE</span>
+                <span className="text-xs text-slate-400 font-mono">DEV MODE</span>
               </div>
               <p className="text-xs text-slate-300 mb-3 leading-relaxed">
                 Inicia sesión al instante con un perfil simulado de residente activo para pruebas
@@ -444,7 +441,7 @@ export default function Login() {
                 type="button"
                 onClick={handleMockLogin}
                 disabled={isConnectingMock}
-                className="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs py-2.5 px-3 rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+                className="btn btn-primary btn-sm w-full"
               >
                 <span aria-hidden="true">⚡</span>
                 <span>
@@ -462,7 +459,7 @@ export default function Login() {
             <Link
               to="/terminos"
               viewTransition
-              className="text-teal-800 hover:text-teal-950 font-semibold underline underline-offset-2 rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
+              className="text-teal-800 hover:text-teal-950 font-semibold underline underline-offset-2 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
             >
               Términos de uso
             </Link>{" "}
@@ -470,7 +467,7 @@ export default function Login() {
             <Link
               to="/privacidad"
               viewTransition
-              className="text-teal-800 hover:text-teal-950 font-semibold underline underline-offset-2 rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
+              className="text-teal-800 hover:text-teal-950 font-semibold underline underline-offset-2 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
             >
               Política de privacidad
             </Link>
@@ -483,7 +480,7 @@ export default function Login() {
             <Link
               to="/crear-cuenta"
               viewTransition
-              className="inline-flex items-center gap-1 text-teal-800 font-bold hover:text-teal-950 hover:underline transition-colors rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
+              className="inline-flex items-center gap-1 text-teal-800 font-bold hover:text-teal-950 hover:underline transition-colors rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
             >
               <span>Crear cuenta</span>
               <IconChevronRight className="w-3.5 h-3.5" aria-hidden="true" />
@@ -492,13 +489,13 @@ export default function Login() {
         </div>
 
         {/* Bottom micro-footer */}
-        <div className="w-full max-w-md mx-auto pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-600">
+        <div className="w-full max-w-narrow mx-auto pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-600">
           <span>Convivo © 2026 · Chile</span>
           <div className="flex items-center gap-3">
             <Link
               to="/privacidad"
               viewTransition
-              className="hover:text-slate-900 rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
+              className="hover:text-slate-900 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
             >
               Privacidad
             </Link>
@@ -506,7 +503,7 @@ export default function Login() {
             <Link
               to="/terminos"
               viewTransition
-              className="hover:text-slate-900 rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
+              className="hover:text-slate-900 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
             >
               Términos
             </Link>
@@ -514,7 +511,7 @@ export default function Login() {
             <Link
               to="/precios"
               viewTransition
-              className="hover:text-slate-900 rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
+              className="hover:text-slate-900 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700"
             >
               Planes
             </Link>

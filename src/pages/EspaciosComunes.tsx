@@ -190,16 +190,16 @@ function DetalleModal({ espacio, onClose }: DetalleModalProps) {
       ref={dialogRef}
       onClose={onClose}
       aria-labelledby="modal-title"
-      className="m-auto p-0 rounded-2xl bg-transparent backdrop:bg-black/60 w-full max-w-2xl max-h-[90vh]"
+      className="m-auto p-0 rounded-lg bg-transparent backdrop:bg-black/60 w-full max-w-content max-h-[90vh]"
     >
       {/* Panel */}
-      <div className="relative z-10 bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="relative z-10 bg-white rounded-lg shadow-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Image */}
         <div className="relative">
           <img
             src={espacio.imagen}
             alt={espacio.nombre}
-            className="w-full aspect-video object-cover rounded-t-2xl"
+            className="w-full aspect-video object-cover rounded-t-lg"
             loading="lazy"
             decoding="async"
           />
@@ -223,7 +223,7 @@ function DetalleModal({ espacio, onClose }: DetalleModalProps) {
 
           {/* Availability badge */}
           <span
-            className={`absolute top-3 left-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+            className={`absolute top-3 left-3 inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${
               espacio.disponibleHoy
                 ? "bg-emerald-100 text-emerald-800"
                 : "bg-slate-200 text-slate-600"
@@ -242,7 +242,7 @@ function DetalleModal({ espacio, onClose }: DetalleModalProps) {
         {/* Content */}
         <div className="p-6 space-y-5">
           <div>
-            <span className="inline-block bg-primary/10 text-primary text-xs font-semibold px-2.5 py-1 rounded-full mb-2">
+            <span className="inline-block bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full mb-2">
               {espacio.categoria}
             </span>
             <h2 id="modal-title" className="font-display text-2xl text-text leading-tight">
@@ -257,7 +257,7 @@ function DetalleModal({ espacio, onClose }: DetalleModalProps) {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
               fill="currentColor"
-              className="w-5 h-5 text-primary shrink-0 mt-0.5"
+              className="w-5 h-5 text-primary shrink-0 mt-1"
               aria-hidden="true"
             >
               <path
@@ -277,14 +277,14 @@ function DetalleModal({ espacio, onClose }: DetalleModalProps) {
             <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-2">
               Reglas de uso
             </p>
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {espacio.reglas.map((regla) => (
                 <li key={regla} className="flex items-start gap-2 text-sm text-text">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
-                    className="w-4 h-4 text-primary shrink-0 mt-0.5"
+                    className="w-4 h-4 text-primary shrink-0 mt-1"
                     aria-hidden="true"
                   >
                     <path
@@ -300,7 +300,7 @@ function DetalleModal({ espacio, onClose }: DetalleModalProps) {
           </div>
 
           {/* Tarifa + Depósito */}
-          <div className="bg-slate-50 rounded-xl p-4 flex flex-wrap gap-6">
+          <div className="bg-slate-50 rounded-md p-4 flex flex-wrap gap-6">
             <div>
               <p className="text-xs font-semibold text-muted uppercase tracking-wide">Tarifa</p>
               <p className="text-lg font-semibold text-text">{formatTarifa(espacio.tarifa)}</p>
@@ -314,25 +314,19 @@ function DetalleModal({ espacio, onClose }: DetalleModalProps) {
           {/* Actions */}
           <div className="flex gap-3 pt-1">
             {espacio.disponibleHoy ? (
-              <Link
-                to="/reservas"
-                className="flex-1 bg-primary hover:bg-accent text-white text-sm font-semibold py-2.5 px-4 rounded-lg text-center transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-              >
+              <Link to="/reservas" className="btn btn-primary flex-1">
                 Reservar ahora
               </Link>
             ) : (
               <button
                 disabled
-                className="flex-1 bg-slate-200 text-slate-400 text-sm font-semibold py-2.5 px-4 rounded-lg cursor-not-allowed"
+                className="flex-1 bg-slate-200 text-slate-400 text-sm font-semibold py-3 px-4 rounded-md cursor-not-allowed"
                 aria-disabled="true"
               >
                 No disponible hoy
               </button>
             )}
-            <button
-              onClick={handleClose}
-              className="px-4 py-2.5 border border-border rounded-lg text-sm font-medium text-muted hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-            >
+            <button onClick={handleClose} className="btn btn-secondary">
               Cerrar
             </button>
           </div>
@@ -344,19 +338,19 @@ function DetalleModal({ espacio, onClose }: DetalleModalProps) {
 
 function EspacioCard({ espacio, onVerDetalle, isAdmin }: EspacioCardProps) {
   return (
-    <article className="bg-white rounded-xl border border-border shadow-sm hover:shadow-md transition-shadow flex flex-col overflow-hidden">
+    <article className="bg-white rounded-md border border-border shadow-sm hover:shadow-md transition-shadow flex flex-col overflow-hidden">
       {/* Image */}
       <div className="relative">
         <img
           src={espacio.imagen}
           alt={espacio.nombre}
-          className="w-full aspect-video object-cover rounded-t-xl"
+          className="w-full aspect-video object-cover rounded-t-md"
           loading="lazy"
           decoding="async"
         />
         {/* Availability badge */}
         <span
-          className={`absolute top-2.5 right-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
+          className={`absolute top-2.5 right-2.5 inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${
             espacio.disponibleHoy
               ? "bg-emerald-100 text-emerald-800"
               : "bg-slate-200 text-slate-600"
@@ -375,7 +369,7 @@ function EspacioCard({ espacio, onVerDetalle, isAdmin }: EspacioCardProps) {
       {/* Body */}
       <div className="flex flex-col flex-1 p-4 gap-3">
         {/* Category chip */}
-        <span className="inline-block self-start bg-primary/10 text-primary text-xs font-semibold px-2.5 py-1 rounded-full">
+        <span className="inline-block self-start bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full">
           {espacio.categoria}
         </span>
 
@@ -384,7 +378,7 @@ function EspacioCard({ espacio, onVerDetalle, isAdmin }: EspacioCardProps) {
 
         {/* Capacity + Tarifa */}
         <div className="flex items-center justify-between text-sm text-muted">
-          <span className="flex items-center gap-1.5">
+          <span className="flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
@@ -401,31 +395,22 @@ function EspacioCard({ espacio, onVerDetalle, isAdmin }: EspacioCardProps) {
 
         {/* Actions */}
         <div className="flex gap-2 mt-auto pt-1">
-          <button
-            onClick={() => onVerDetalle(espacio)}
-            className="flex-1 border border-border text-text text-sm font-medium py-2 px-3 rounded-lg hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-          >
+          <button onClick={() => onVerDetalle(espacio)} className="btn btn-secondary btn-sm flex-1">
             Ver detalle
           </button>
           {isAdmin ? (
-            <button
-              onClick={() => onVerDetalle(espacio)}
-              className="flex-1 bg-accent hover:opacity-90 text-white text-sm font-semibold py-2 px-3 rounded-lg text-center transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
-            >
+            <button onClick={() => onVerDetalle(espacio)} className="btn btn-primary btn-sm flex-1">
               Administrar
             </button>
           ) : espacio.disponibleHoy ? (
-            <Link
-              to="/reservas"
-              className="flex-1 bg-primary hover:bg-accent text-white text-sm font-semibold py-2 px-3 rounded-lg text-center transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-            >
+            <Link to="/reservas" className="btn btn-primary btn-sm flex-1">
               Reservar
             </Link>
           ) : (
             <button
               disabled
               aria-disabled="true"
-              className="flex-1 bg-slate-200 text-slate-400 text-sm font-semibold py-2 px-3 rounded-lg cursor-not-allowed"
+              className="flex-1 bg-slate-200 text-slate-400 text-sm font-semibold py-2 px-3 rounded-md cursor-not-allowed"
             >
               Reservar
             </button>
@@ -563,7 +548,7 @@ export default function EspaciosComunes() {
               placeholder="Buscar espacio..."
               value={filtros.busqueda}
               onChange={(e) => setFiltros((f) => ({ ...f, busqueda: e.target.value }))}
-              className="w-full pl-9 pr-3 py-2 border border-border rounded-lg text-sm text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full pl-9 pr-3 py-2 border border-border rounded-md text-sm text-text placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
 
@@ -571,7 +556,7 @@ export default function EspaciosComunes() {
           <select
             value={filtros.categoria}
             onChange={(e) => setFiltros((f) => ({ ...f, categoria: e.target.value }))}
-            className="border border-border rounded-lg text-sm text-text py-2 pl-3 pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
+            className="border border-border rounded-md text-sm text-text py-2 pl-3 pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
             aria-label="Filtrar por categoría"
           >
             {["Todos", "Quincho", "Piscina", "Gimnasio", "Sala", "Cancha"].map((c) => (
@@ -585,7 +570,7 @@ export default function EspaciosComunes() {
           <select
             value={filtros.capacidad}
             onChange={(e) => setFiltros((f) => ({ ...f, capacidad: e.target.value }))}
-            className="border border-border rounded-lg text-sm text-text py-2 pl-3 pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
+            className="border border-border rounded-md text-sm text-text py-2 pl-3 pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white"
             aria-label="Filtrar por capacidad"
           >
             {["Todos", "Hasta 10", "10-30", "+30 personas"].map((c) => (
@@ -669,7 +654,7 @@ export default function EspaciosComunes() {
                     soloDisponibles: false,
                   })
                 }
-                className="mt-2 text-primary text-sm font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-primary rounded"
+                className="btn btn-tertiary btn-sm mt-2"
               >
                 Limpiar filtros
               </button>

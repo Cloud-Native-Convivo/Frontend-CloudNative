@@ -24,7 +24,10 @@ Sistema de diseño de Convivo — plataforma digital para la gestión de condomi
 | H2 | Gloock | 24px / 1.5rem | 1.25 | Regular |
 | H3 | Inter | 18px / 1.125rem | 1.3 | Semibold |
 | Body | Inter | 16px / 1rem | 1.5 | Regular |
-| Small / caption | Inter | 13px / 0.8125rem | 1.4 | Regular |
+| Small | Inter | 14px / 0.875rem (`text-sm`) | 1.43 | Regular |
+| Caption / label | Inter | 12px / 0.75rem (`text-xs`) | 1.33 | Regular o Semibold |
+
+Escala de UI: 12, 14, 16, 18, 20px (`text-xs`, `text-sm`, `text-base`, `text-lg`, `text-xl`). No usar `text-[Npx]` para estos tamaños y no bajar de 12px. Titulares de hero y de página usan `clamp()` fuera de esta escala.
 
 Line-height más alto en texto de cuerpo (legibilidad en párrafos largos), más bajo en headlines (impacto visual).
 
@@ -130,7 +133,7 @@ Si el proyecto responde a una obligación legal de accesibilidad (sistema públi
 
 ## 3. Spacing y tamaños
 
-Escala en base 4px (Tailwind default) — no usar valores sueltos fuera de la escala.
+Escala en base 4px (Tailwind default) — no usar valores sueltos fuera de la escala. Esto incluye los pasos de medio punto de Tailwind (`py-2.5`, `gap-1.5`, `p-0.5`) y los arbitrarios (`py-[14px]`): usar el múltiplo de 4 más cercano (`py-3`, `py-4`).
 
 | Token | Valor |
 | --- | --- |
@@ -140,12 +143,26 @@ Escala en base 4px (Tailwind default) — no usar valores sueltos fuera de la es
 | `space-lg` | 24px |
 | `space-xl` | 32px |
 
+### Anchos máximos
+
+| Token | Valor | Uso |
+| --- | --- | --- |
+| `max-w-page` | 1280px | contenedor de página (nav, secciones, footer) |
+| `max-w-content` | 672px | texto corrido, subtítulos de hero, formularios anchos |
+| `max-w-narrow` | 448px | modales, tarjetas de formulario, párrafos cortos |
+
+Anchos de truncado de texto en componentes chicos (`max-w-[100px]` y similares) no son contenedores y quedan como valor local.
+
 ## 4. Radius, elevación y movimiento
 
 | Token | Valor | Uso |
 | --- | --- | --- |
-| `radius-sm` | 6px | inputs, badges, sidebar buttons |
-| `radius-md` | 8-10px | cards, botones, modales |
+| `radius-sm` | 6px | inputs, badges, sidebar buttons (`rounded-sm`) |
+| `radius-md` | 10px | cards, botones (`rounded-md`) |
+| `radius-lg` | 16px | modales, paneles grandes, imágenes destacadas (`rounded-lg`) |
+| `rounded-full` | círculo / pastilla | avatares, chips, toggles |
+
+Los demás `rounded-*` de Tailwind (`xs`, `xl`, `2xl`, `3xl`, `rounded` pelado) están desactivados en `src/index.css` (`--radius-*: initial`); no usar `rounded-[Npx]`.
 | `shadow-sm` | `0 2px 12px rgba(0,0,0,0.08)` | elevación baja (scroll-to-top) |
 | `shadow-md` | `0 2px 12px rgba(0,0,0,0.22)` | elevación media (sidebar flotante) |
 | `shadow-lg` | `0 4px 20px rgba(0,0,0,0.1)` | dropdowns, menus |
@@ -241,11 +258,12 @@ Por componente documentar: qué es, cuándo usarlo, estados, cómo se implementa
 - **Estados**: default (solo ícono), hover (expande label con max-width 120px, transición 222ms).
 - **Accesibilidad**: `Link` de react-router, touch target 40×40.
 
-### Button (por implementar)
+### Button
 
-- **Anatomía**: label + ícono opcional.
-- **Uso**: variante `primary` (Primary bg) para acción principal; `secondary` para alternativas.
-- **Estados**: default, hover (Accent), focus (outline 2px Primary), disabled (opacity 40%), loading.
+- **Anatomía**: label + ícono opcional. Clases en `src/index.css`: `.btn` (base) + una variante + tamaño opcional: `.btn-sm` (36px de alto), base (44px) o `.btn-lg` (56px, CTAs de hero). Sirve en `<button>`, `<Link>` y `<a>`. Sobre fondo oscuro, `btn-secondary bg-transparent text-white border-white/30` (ghost).
+- **Uso**: `btn-primary` (Primary bg, texto Text) para la acción principal; `btn-secondary` (borde, fondo blanco) para alternativas; `btn-tertiary` (solo texto Accent) para acciones menores. Acción destructiva o de advertencia: `btn-primary` con `bg-alert-red text-white` o `bg-alert-yellow text-text`. No definir variantes nuevas por pantalla.
+- **Fuera del alcance**: botones de ícono (cerrar, menú), controles segmentados, chips de filtro y tabs; no son variantes de botón.
+- **Estados**: default, hover (Accent), focus (outline global de `:focus-visible`), disabled (opacity 50%), loading (por implementar).
 - **Accesibilidad**: rol `button`, alcanzable por teclado, `aria-disabled`, `aria-busy`.
 
 ### ProtectedRoute

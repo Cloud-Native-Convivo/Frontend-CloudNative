@@ -42,7 +42,7 @@ export function validateAccount(form: StepAccountForm): StepErrors {
 }
 
 export function inputClass(err?: string) {
-  return `w-full px-3.5 py-2.5 rounded-lg border text-sm text-text placeholder:text-muted/60 outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 ${
+  return `w-full px-4 py-3 rounded-md border text-sm text-text placeholder:text-muted/60 outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20 ${
     err ? "border-alert-red bg-red-50" : "border-border bg-white"
   }`;
 }

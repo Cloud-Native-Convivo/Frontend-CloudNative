@@ -47,7 +47,7 @@ function UserAvatar({ user }: { user: User }) {
   }
   return (
     <div
-      className="w-[32px] h-[32px] rounded-full bg-border text-muted flex items-center justify-center font-bold text-[12px]"
+      className="w-[32px] h-[32px] rounded-full bg-border text-muted flex items-center justify-center font-bold text-xs"
       title={user.nombre}
     >
       {user.nombre.charAt(0).toUpperCase()}
@@ -81,7 +81,7 @@ function MobileMenuDropdown({
           viewTransition
           onClick={onClose}
           className={({ isActive }) =>
-            `flex items-center gap-[10px] py-[11px] px-[8px] text-[14px] font-medium no-underline border-b border-slate-100 ${
+            `flex items-center gap-3 py-3 px-2 text-sm font-medium no-underline border-b border-slate-100 ${
               isActive ? "text-primary" : "text-text"
             }`
           }
@@ -91,10 +91,8 @@ function MobileMenuDropdown({
       ))}
       {role && (
         <div className="mt-3 px-2 flex items-center justify-between">
-          <span className="text-[12px] text-muted">Rol:</span>
-          <span
-            className={`text-[11px] font-bold text-white px-[8px] py-[2px] rounded-[6px] ${ROLE_BG[role]}`}
-          >
+          <span className="text-xs text-muted">Rol:</span>
+          <span className={`text-xs font-bold text-white px-2 py-1 rounded-sm ${ROLE_BG[role]}`}>
             {ROLE_LABELS[role]}
           </span>
         </div>
@@ -130,31 +128,29 @@ export function NavHeader({ ribbonH, navH, navLinks, role, user, onLogout }: Nav
       }`}
       style={{ top: ribbonH, height: navH }}
     >
-      <div className="max-w-[1280px] mx-auto px-6 w-full flex items-center justify-between">
+      <div className="max-w-page mx-auto px-6 w-full flex items-center justify-between">
         {/* Logo */}
-        <NavLink to="/" viewTransition className="flex items-center gap-[10px] no-underline">
-          <div className="w-[34px] h-[34px] rounded-[9px] bg-primary flex items-center justify-center">
+        <NavLink to="/" viewTransition className="flex items-center gap-3 no-underline">
+          <div className="w-[34px] h-[34px] rounded-md bg-primary flex items-center justify-center">
             <IconHome className="text-white w-[17px] h-[17px]" />
           </div>
           <div>
-            <div className="font-['Gloock',Georgia,serif] text-[19px] text-text leading-tight">
+            <div className="font-['Gloock',Georgia,serif] text-lg text-text leading-tight">
               Convivo
             </div>
-            <div className="text-[9px] text-slate-400 tracking-wide font-semibold">
-              Gestión Simple
-            </div>
+            <div className="text-xs text-slate-400 tracking-wide font-semibold">Gestión Simple</div>
           </div>
         </NavLink>
 
         {/* Desktop links */}
-        <div className="nav-desktop flex items-center gap-[2px]">
+        <div className="nav-desktop flex items-center gap-1">
           {navLinks.map((l) => (
             <NavLink
               key={l.path}
               to={l.path}
               viewTransition
               className={({ isActive }) =>
-                `flex items-center gap-[5px] text-[13px] font-medium no-underline px-[11px] py-[6px] rounded-[7px] transition-colors duration-150 ${
+                `flex items-center gap-1 text-sm font-medium no-underline px-3 py-2 rounded-sm transition-colors duration-150 ${
                   isActive ? "text-primary bg-teal-50" : "text-muted bg-transparent hover:text-text"
                 }`
               }
@@ -162,7 +158,7 @@ export function NavHeader({ ribbonH, navH, navLinks, role, user, onLogout }: Nav
               {l.icon} {l.label}
             </NavLink>
           ))}
-          <div className="w-[1px] h-[20px] bg-border mx-[6px]" />
+          <div className="w-[1px] h-[20px] bg-border mx-2" />
 
           {/* Avatar del usuario */}
           {user && <UserAvatar user={user} />}
@@ -172,7 +168,7 @@ export function NavHeader({ ribbonH, navH, navLinks, role, user, onLogout }: Nav
             <span
               role="status"
               aria-label={`Rol activo: ${ROLE_LABELS[role]}`}
-              className={`text-[11px] font-bold text-white px-[8px] py-[3px] rounded-[6px] ${ROLE_BG[role]}`}
+              className={`text-xs font-bold text-white px-2 py-1 rounded-sm ${ROLE_BG[role]}`}
             >
               {ROLE_LABELS[role]}
             </span>
@@ -181,7 +177,7 @@ export function NavHeader({ ribbonH, navH, navLinks, role, user, onLogout }: Nav
           {user ? (
             <button
               onClick={onLogout}
-              className="flex items-center gap-[5px] text-[12px] font-semibold text-muted bg-transparent px-[12px] py-[7px] rounded-[7px] border border-border cursor-pointer transition-colors duration-200 hover:text-text hover:border-slate-300"
+              className="btn btn-secondary btn-sm gap-1 text-muted hover:text-text"
               data-cuelume-press="whisper"
               aria-label="Cerrar sesión"
             >
@@ -204,7 +200,7 @@ export function NavHeader({ ribbonH, navH, navLinks, role, user, onLogout }: Nav
             <Link
               to="/login"
               viewTransition
-              className="flex items-center gap-[5px] text-[12px] font-semibold text-muted bg-transparent px-[12px] py-[7px] rounded-[7px] no-underline border border-border transition-colors duration-200 hover:text-text hover:border-slate-300"
+              className="btn btn-secondary btn-sm gap-1 text-muted hover:text-text"
               data-cuelume-press="whisper"
             >
               Ingresar

@@ -14,26 +14,26 @@ export function NuevoAvisoModal({ canPublishDirect, onClose }: NuevoAvisoModalPr
         onClick={onClose}
         className="absolute inset-0 bg-text/60 border-none p-0 cursor-default"
       />
-      <div className="relative bg-white rounded-[20px] w-full max-w-[480px] px-7 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.2)]">
-        <h3 className="font-display text-[22px] text-text m-0 mb-1.5">
+      <div className="relative bg-white rounded-lg w-full max-w-narrow px-7 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.2)]">
+        <h3 className="font-display text-[22px] text-text m-0 mb-2">
           {canPublishDirect ? "Publicar aviso" : "Solicitar publicación"}
         </h3>
-        <p className="text-[13px] text-text-muted m-0 mb-6">
+        <p className="text-sm text-text-muted m-0 mb-6">
           {canPublishDirect
             ? "El aviso quedará publicado de inmediato en el tablón comunitario."
             : "Tu solicitud será revisada por el comité antes de publicarse."}
         </p>
-        <div className="flex flex-col gap-3.5">
+        <div className="flex flex-col gap-4">
           <div>
             <label
               htmlFor="nuevo-aviso-tipo"
-              className="text-[12px] font-semibold text-text-muted block mb-1.5"
+              className="text-xs font-semibold text-text-muted block mb-2"
             >
               Tipo
             </label>
             <select
               id="nuevo-aviso-tipo"
-              className="w-full px-3 py-2.5 border border-border rounded-lg text-[14px] text-text bg-white outline-none focus:border-primary"
+              className="w-full px-3 py-3 border border-border rounded-md text-sm text-text bg-white outline-none focus:border-primary"
             >
               <option>Aviso de interés comunitario</option>
               <option>Rifa / bazar</option>
@@ -43,7 +43,7 @@ export function NuevoAvisoModal({ canPublishDirect, onClose }: NuevoAvisoModalPr
           <div>
             <label
               htmlFor="nuevo-aviso-titulo"
-              className="text-[12px] font-semibold text-text-muted block mb-1.5"
+              className="text-xs font-semibold text-text-muted block mb-2"
             >
               Título
             </label>
@@ -51,13 +51,13 @@ export function NuevoAvisoModal({ canPublishDirect, onClose }: NuevoAvisoModalPr
               id="nuevo-aviso-titulo"
               type="text"
               placeholder="Título del aviso"
-              className="w-full px-3 py-2.5 border border-border rounded-lg text-[14px] text-text outline-none box-border focus:border-primary"
+              className="w-full px-3 py-3 border border-border rounded-md text-sm text-text outline-none box-border focus:border-primary"
             />
           </div>
           <div>
             <label
               htmlFor="nuevo-aviso-desc"
-              className="text-[12px] font-semibold text-text-muted block mb-1.5"
+              className="text-xs font-semibold text-text-muted block mb-2"
             >
               Descripción
             </label>
@@ -65,15 +65,12 @@ export function NuevoAvisoModal({ canPublishDirect, onClose }: NuevoAvisoModalPr
               id="nuevo-aviso-desc"
               rows={4}
               placeholder="Descripción detallada..."
-              className="w-full px-3 py-2.5 border border-border rounded-lg text-[14px] text-text outline-none resize-y font-sans box-border focus:border-primary"
+              className="w-full px-3 py-3 border border-border rounded-md text-sm text-text outline-none resize-y font-sans box-border focus:border-primary"
             />
           </div>
         </div>
         <div className="flex gap-3 mt-6">
-          <button
-            onClick={onClose}
-            className="flex-1 p-3 text-[14px] font-semibold rounded-[10px] border border-border bg-white text-text-muted cursor-pointer hover:bg-gray-50"
-          >
+          <button onClick={onClose} className="btn btn-secondary flex-1">
             Cancelar
           </button>
           <button
@@ -91,7 +88,7 @@ export function NuevoAvisoModal({ canPublishDirect, onClose }: NuevoAvisoModalPr
               }
               onClose();
             }}
-            className="flex-[2] p-3 text-[14px] font-bold rounded-[10px] border-none bg-primary text-white cursor-pointer hover:bg-accent"
+            className="btn btn-primary flex-[2]"
           >
             {canPublishDirect ? "Publicar" : "Enviar solicitud"}
           </button>

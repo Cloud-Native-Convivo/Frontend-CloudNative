@@ -29,7 +29,7 @@ export default function SparkAreaChart({
         <Tooltip
           content={({ active, payload }) =>
             active && payload?.length ? (
-              <span className="text-[11px] font-body bg-text text-white px-2 py-1 rounded-md">
+              <span className="text-xs font-body bg-text text-white px-2 py-1 rounded-sm">
                 {payload[0].value}
               </span>
             ) : null

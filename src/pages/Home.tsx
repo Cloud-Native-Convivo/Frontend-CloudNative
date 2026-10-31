@@ -281,12 +281,12 @@ function HeroSection() {
       <div className="absolute -bottom-40 right-10 w-[500px] h-[500px] rounded-full bg-accent/30 blur-3xl pointer-events-none" />
 
       {/* Main Container */}
-      <div className="relative max-w-[1280px] mx-auto px-6 py-20 md:py-28 w-full z-10">
+      <div className="relative max-w-page mx-auto px-6 py-20 md:py-28 w-full z-10">
         <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_460px] gap-12 lg:gap-16 items-center">
           {/* Left Column: Editorial Headline & Actions */}
           <div className="flex flex-col items-start">
             {/* Editorial Status Badge */}
-            <div className="cv-hero-badge inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 mb-6 text-white/90 text-xs tracking-wider uppercase font-semibold">
+            <div className="cv-hero-badge inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/15 mb-6 text-white/90 text-xs tracking-wider uppercase font-semibold">
               <span className="flex h-2 w-2 relative">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-on-dark opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-on-dark" />
@@ -308,7 +308,7 @@ function HeroSection() {
             </h1>
 
             {/* Subtitle */}
-            <p className="cv-hero-subtitle text-[17px] sm:text-[18px] leading-[1.68] text-white/80 font-light max-w-[560px] m-0 mb-9">
+            <p className="cv-hero-subtitle text-lg sm:text-lg leading-[1.68] text-white/80 font-light max-w-content m-0 mb-9">
               La plataforma definitiva para comunidades residenciales en Chile. Espacios comunes,
               conciliación transparente de gastos, control de acceso mediante pases QR y
               comunicación directa con conserjería.
@@ -316,27 +316,24 @@ function HeroSection() {
 
             {/* Primary & Secondary Actions */}
             <div className="cv-hero-ctas flex flex-wrap gap-4 items-center mb-10 w-full sm:w-auto">
-              <Link
-                to="/crear-cuenta"
-                className="inline-flex items-center justify-center gap-2.5 bg-primary text-white font-semibold text-[15px] py-4 px-7 rounded-xl no-underline shadow-[0_12px_28px_rgba(13,148,136,0.28)] transition-[background-color,transform,box-shadow] hover:bg-emerald-600 hover:-translate-y-[1px] hover:shadow-[0_16px_36px_rgba(13,148,136,0.36)]"
-              >
+              <Link to="/crear-cuenta" className="btn btn-primary btn-lg">
                 <span>Comenzar como residente</span>
                 <IconChevronRight className="w-4 h-4" />
               </Link>
               <Link
                 to="/login"
-                className="inline-flex items-center justify-center gap-2 bg-white/10 text-white font-semibold text-[15px] py-4 px-7 rounded-xl no-underline border border-white/25 backdrop-blur-md transition-[background-color,border-color] hover:bg-white/20 hover:border-white/40"
+                className="btn btn-secondary bg-transparent text-white border-white/30 hover:bg-white/10 hover:border-white/60 btn-lg"
               >
                 <span>Iniciar sesión</span>
               </Link>
             </div>
 
             {/* Certified Trust Hallmarks */}
-            <div className="cv-hero-badges flex flex-wrap gap-2.5 pt-2 border-t border-white/10 w-full">
+            <div className="cv-hero-badges flex flex-wrap gap-3 pt-2 border-t border-white/10 w-full">
               {TRUST_BADGES.map((b) => (
                 <div
                   key={b.text}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-white/80"
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-white/5 border border-white/10 text-xs text-white/80"
                 >
                   {b.icon}
                   <span>{b.text}</span>
@@ -347,11 +344,11 @@ function HeroSection() {
 
           {/* Right Column: Interactive Living Residence Folio Card */}
           <div className="cv-hero-card relative">
-            <div className="rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 p-6 sm:p-7 shadow-[0_24px_50px_rgba(0,0,0,0.35)] text-white">
+            <div className="rounded-lg bg-white/10 backdrop-blur-xl border border-white/20 p-6 sm:p-7 shadow-[0_24px_50px_rgba(0,0,0,0.35)] text-white">
               {/* Card Header & View Switcher */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-5 border-b border-white/15">
                 <div>
-                  <span className="text-[11px] font-bold tracking-widest text-primary-on-dark uppercase">
+                  <span className="text-xs font-bold tracking-widest text-primary-on-dark uppercase">
                     Terminal Activo
                   </span>
                   <h3 className="font-display text-base font-normal text-white m-0">
@@ -361,14 +358,14 @@ function HeroSection() {
 
                 {/* Mode Selector */}
                 <div
-                  className="flex items-center gap-1 p-1 bg-black/25 rounded-lg border border-white/10 self-start sm:self-auto"
+                  className="flex items-center gap-1 p-1 bg-black/25 rounded-md border border-white/10 self-start sm:self-auto"
                   role="group"
                   aria-label="Selector de vista de demostración"
                 >
                   <button
                     type="button"
                     onClick={() => setPreviewMode("residente")}
-                    className={`px-3 py-1 rounded-md text-xs font-semibold transition-[color,background-color,border-color,box-shadow] cursor-pointer ${
+                    className={`px-3 py-1 rounded-sm text-xs font-semibold transition-[color,background-color,border-color,box-shadow] cursor-pointer ${
                       previewMode === "residente"
                         ? "bg-primary text-white shadow-sm"
                         : "text-white/70 hover:text-white"
@@ -379,7 +376,7 @@ function HeroSection() {
                   <button
                     type="button"
                     onClick={() => setPreviewMode("comite")}
-                    className={`px-3 py-1 rounded-md text-xs font-semibold transition-[color,background-color,border-color,box-shadow] cursor-pointer ${
+                    className={`px-3 py-1 rounded-sm text-xs font-semibold transition-[color,background-color,border-color,box-shadow] cursor-pointer ${
                       previewMode === "comite"
                         ? "bg-primary text-white shadow-sm"
                         : "text-white/70 hover:text-white"
@@ -392,30 +389,30 @@ function HeroSection() {
 
               {/* Mode: Residente View */}
               {previewMode === "residente" ? (
-                <div className="flex flex-col gap-3.5">
+                <div className="flex flex-col gap-4">
                   {/* Item 1: Próxima Reserva */}
-                  <div className="rounded-xl bg-white/5 border border-white/10 p-3.5 transition-colors hover:bg-white/10">
+                  <div className="rounded-md bg-white/5 border border-white/10 p-4 transition-colors hover:bg-white/10">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-primary-on-dark font-medium flex items-center gap-1.5">
+                      <span className="text-xs text-primary-on-dark font-medium flex items-center gap-2">
                         <IconCalendar className="w-3.5 h-3.5" /> Próxima Reserva
                       </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-semibold">
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold">
                         Confirmada
                       </span>
                     </div>
                     <div className="font-display text-base text-white">Quincho Los Aromos</div>
-                    <div className="text-xs text-white/60 mt-0.5">
+                    <div className="text-xs text-white/60 mt-1">
                       Sábado 23 ago · 18:00 a 23:30 hrs · Pase QR listo
                     </div>
                   </div>
 
                   {/* Item 2: Gastos Comunes */}
-                  <div className="rounded-xl bg-white/5 border border-white/10 p-3.5 transition-colors hover:bg-white/10">
+                  <div className="rounded-md bg-white/5 border border-white/10 p-4 transition-colors hover:bg-white/10">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-primary-on-dark font-medium flex items-center gap-1.5">
+                      <span className="text-xs text-primary-on-dark font-medium flex items-center gap-2">
                         <IconDollar className="w-3.5 h-3.5" /> Gastos de Julio
                       </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 text-[11px] font-semibold">
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-semibold">
                         Vence en 5 días
                       </span>
                     </div>
@@ -430,82 +427,82 @@ function HeroSection() {
                         Pagar en línea →
                       </Link>
                     </div>
-                    <div className="text-xs text-white/60 mt-0.5">
+                    <div className="text-xs text-white/60 mt-1">
                       Boleta electrónica #284-B disponible
                     </div>
                   </div>
 
                   {/* Item 3: Pase de Visita Activo */}
-                  <div className="rounded-xl bg-white/5 border border-white/10 p-3.5 transition-colors hover:bg-white/10">
+                  <div className="rounded-md bg-white/5 border border-white/10 p-4 transition-colors hover:bg-white/10">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-primary-on-dark font-medium flex items-center gap-1.5">
+                      <span className="text-xs text-primary-on-dark font-medium flex items-center gap-2">
                         <IconUsers className="w-3.5 h-3.5" /> Pase QR de Visita
                       </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-cyan-400/20 text-cyan-300 text-[11px] font-semibold">
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-cyan-400/20 text-cyan-300 text-xs font-semibold">
                         Autorizado
                       </span>
                     </div>
                     <div className="text-sm font-semibold text-white">
                       Delivery Falabella (Torre B / 402)
                     </div>
-                    <div className="text-xs text-white/60 mt-0.5">
+                    <div className="text-xs text-white/60 mt-1">
                       Válido hoy entre 10:00 y 14:00 hrs · Conserjería notificada
                     </div>
                   </div>
                 </div>
               ) : (
                 /* Mode: Comité View */
-                <div className="flex flex-col gap-3.5">
+                <div className="flex flex-col gap-4">
                   {/* Item 1: Recaudación */}
-                  <div className="rounded-xl bg-white/5 border border-white/10 p-3.5 transition-colors hover:bg-white/10">
+                  <div className="rounded-md bg-white/5 border border-white/10 p-4 transition-colors hover:bg-white/10">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-primary-on-dark font-medium flex items-center gap-1.5">
+                      <span className="text-xs text-primary-on-dark font-medium flex items-center gap-2">
                         <IconTrendingUp className="w-3.5 h-3.5" /> Recaudación del Mes
                       </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-semibold">
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold">
                         94.8% Cobrado
                       </span>
                     </div>
                     <div className="font-display text-lg text-white tabular-nums">
                       $7.240.000 CLP
                     </div>
-                    <div className="text-xs text-white/60 mt-0.5">
+                    <div className="text-xs text-white/60 mt-1">
                       100% de respaldos de egresos cargados bajo Ley 21.442
                     </div>
                   </div>
 
                   {/* Item 2: Uso de Espacios */}
-                  <div className="rounded-xl bg-white/5 border border-white/10 p-3.5 transition-colors hover:bg-white/10">
+                  <div className="rounded-md bg-white/5 border border-white/10 p-4 transition-colors hover:bg-white/10">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-primary-on-dark font-medium flex items-center gap-1.5">
+                      <span className="text-xs text-primary-on-dark font-medium flex items-center gap-2">
                         <IconCalendar className="w-3.5 h-3.5" /> Ocupación Fin de Semana
                       </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-semibold">
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold">
                         Alta Demanda
                       </span>
                     </div>
                     <div className="text-sm font-semibold text-white">
                       6 de 7 espacios con reservas confirmadas
                     </div>
-                    <div className="text-xs text-white/60 mt-0.5">
+                    <div className="text-xs text-white/60 mt-1">
                       Quinchos 1 y 2 al 100% · Piscina en horario normal
                     </div>
                   </div>
 
                   {/* Item 3: Convocatoria */}
-                  <div className="rounded-xl bg-white/5 border border-white/10 p-3.5 transition-colors hover:bg-white/10">
+                  <div className="rounded-md bg-white/5 border border-white/10 p-4 transition-colors hover:bg-white/10">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-primary-on-dark font-medium flex items-center gap-1.5">
+                      <span className="text-xs text-primary-on-dark font-medium flex items-center gap-2">
                         <IconMessage className="w-3.5 h-3.5" /> Próxima Asamblea Ordinaria
                       </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-cyan-400/20 text-cyan-300 text-[11px] font-semibold">
+                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-cyan-400/20 text-cyan-300 text-xs font-semibold">
                         Convocada
                       </span>
                     </div>
                     <div className="text-sm font-semibold text-white">
                       Miércoles 27 ago · 19:30 hrs (Sala Multiuso)
                     </div>
-                    <div className="text-xs text-white/60 mt-0.5">
+                    <div className="text-xs text-white/60 mt-1">
                       Citación oficial enviada a 128 copropietarios
                     </div>
                   </div>
@@ -514,7 +511,7 @@ function HeroSection() {
 
               {/* Bottom Quick Bar */}
               <div className="mt-5 pt-4 border-t border-white/15 flex items-center justify-between text-xs text-white/70">
-                <span className="inline-flex items-center gap-1.5">
+                <span className="inline-flex items-center gap-2">
                   <IconPhone className="w-3.5 h-3.5 text-primary-on-dark" />
                   <span>Conserjería Central · Intercomunicador 100</span>
                 </span>
@@ -531,7 +528,7 @@ function HeroSection() {
 function MetricsSection() {
   return (
     <section className="bg-[#fbfaf8] border-y border-stone-200/80 py-12 px-6">
-      <div className="max-w-[1280px] mx-auto">
+      <div className="max-w-page mx-auto">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6">
           {METRICS.map((m, idx) => (
             <div
@@ -561,16 +558,16 @@ function ModuleShowcase() {
 
   return (
     <section className="bg-white py-24 px-6">
-      <div className="max-w-[1280px] mx-auto">
+      <div className="max-w-page mx-auto">
         {/* Section Header */}
-        <div className="max-w-2xl mb-14">
+        <div className="max-w-content mb-14">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary mb-3">
             01 / ARQUITECTURA MODULAR
           </p>
           <h2 className="font-display text-[clamp(30px,4vw,48px)] text-text leading-[1.12] m-0 mb-4 font-normal">
             Un ecosistema diseñado para la vida real de tu comunidad
           </h2>
-          <p className="text-[16px] text-muted leading-relaxed font-light m-0">
+          <p className="text-base text-muted leading-relaxed font-light m-0">
             Cada módulo de Convivo responde a una fricción histórica de los condominios en Chile:
             reuniones interminables, reservas en papel, falta de comprobantes y conserjerías
             aisladas.
@@ -597,14 +594,14 @@ function ModuleShowcase() {
                     setActiveTab(index);
                   });
                 }}
-                className={`group flex items-center gap-2.5 py-3 px-4 rounded-xl text-xs font-semibold whitespace-nowrap transition-[color,background-color,border-color,box-shadow] cursor-pointer border ${
+                className={`group flex items-center gap-3 py-3 px-4 rounded-md text-xs font-semibold whitespace-nowrap transition-[color,background-color,border-color,box-shadow] cursor-pointer border ${
                   isSelected
                     ? "bg-text text-white border-text shadow-sm"
                     : "bg-stone-50 text-stone-600 border-transparent hover:bg-stone-100 hover:text-text"
                 }`}
               >
                 <span
-                  className={`font-mono text-[11px] ${
+                  className={`font-mono text-xs ${
                     isSelected
                       ? "text-primary-on-dark"
                       : "text-stone-400 group-hover:text-stone-600"
@@ -612,7 +609,7 @@ function ModuleShowcase() {
                 >
                   {mod.num}
                 </span>
-                <span className="flex items-center gap-1.5">
+                <span className="flex items-center gap-2">
                   {mod.icon}
                   {mod.label}
                 </span>
@@ -629,7 +626,7 @@ function ModuleShowcase() {
           className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-16 items-center"
         >
           {/* Left: Magazine-style Architectural Photography Frame */}
-          <div className="relative rounded-2xl overflow-hidden bg-stone-100 shadow-[0_20px_50px_rgba(0,32,27,0.12)] border border-stone-200/70 h-[380px] sm:h-[460px]">
+          <div className="relative rounded-lg overflow-hidden bg-stone-100 shadow-[0_20px_50px_rgba(0,32,27,0.12)] border border-stone-200/70 h-[380px] sm:h-[460px]">
             <img
               src={activeModule.img}
               alt={activeModule.imgAlt}
@@ -640,7 +637,7 @@ function ModuleShowcase() {
               className="w-full h-full object-cover"
             />
             {/* Editorial overlay badges */}
-            <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/60 backdrop-blur-md text-white text-[11px] font-mono tracking-wider">
+            <div className="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-2 rounded-md bg-black/60 backdrop-blur-md text-white text-xs font-mono tracking-wider">
               <span>FIG. {activeModule.num}</span>
               <span className="text-white/40">/</span>
               <span>{activeModule.category}</span>
@@ -650,9 +647,9 @@ function ModuleShowcase() {
               {activeModule.specs.map((s) => (
                 <div
                   key={s.label}
-                  className="px-3 py-1.5 rounded-md bg-black/70 backdrop-blur-md text-white text-xs"
+                  className="px-3 py-2 rounded-sm bg-black/70 backdrop-blur-md text-white text-xs"
                 >
-                  <span className="text-white/60 mr-1.5 font-light">{s.label}:</span>
+                  <span className="text-white/60 mr-2 font-light">{s.label}:</span>
                   <span className="font-semibold text-primary-on-dark">{s.value}</span>
                 </div>
               ))}
@@ -661,7 +658,7 @@ function ModuleShowcase() {
 
           {/* Right: Rich Editorial Content & Features */}
           <div className="flex flex-col items-start">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-teal-50 text-accent text-xs font-bold tracking-wider uppercase mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-teal-50 text-accent text-xs font-bold tracking-wider uppercase mb-4">
               {activeModule.icon}
               <span>{activeModule.category}</span>
             </div>
@@ -670,7 +667,7 @@ function ModuleShowcase() {
               {activeModule.headline}
             </h3>
 
-            <p className="text-[16px] text-muted leading-[1.72] font-light m-0 mb-6">
+            <p className="text-base text-muted leading-[1.72] font-light m-0 mb-6">
               {activeModule.body}
             </p>
 
@@ -678,7 +675,7 @@ function ModuleShowcase() {
             <div className="flex flex-col gap-3 w-full mb-8">
               {activeModule.points.map((pt) => (
                 <div key={pt} className="flex items-start gap-3 text-sm text-text">
-                  <div className="w-5 h-5 rounded-full bg-teal-100/80 flex items-center justify-center shrink-0 mt-0.5 text-accent">
+                  <div className="w-5 h-5 rounded-full bg-teal-100/80 flex items-center justify-center shrink-0 mt-1 text-accent">
                     <IconCheck className="w-3.5 h-3.5" />
                   </div>
                   <span className="leading-snug">{pt}</span>
@@ -690,7 +687,7 @@ function ModuleShowcase() {
             <Link
               to={activeModule.path}
               viewTransition
-              className="inline-flex items-center gap-2.5 bg-text text-white font-semibold text-sm py-3.5 px-6 rounded-xl no-underline transition-[background-color,transform] hover:bg-accent hover:-translate-y-[1px]"
+              className="btn btn-primary bg-text text-white"
             >
               <span>Acceder a {activeModule.label}</span>
               <IconChevronRight className="w-4 h-4 text-primary-on-dark" />
@@ -708,9 +705,9 @@ function ManifestoSection() {
       {/* Decorative ambient subtle circle */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-primary/10 blur-[120px] pointer-events-none" />
 
-      <div className="max-w-[1280px] mx-auto relative z-10">
+      <div className="max-w-page mx-auto relative z-10">
         {/* Editorial Quote Header */}
-        <div className="text-center max-w-3xl mx-auto mb-20">
+        <div className="text-center max-w-content mx-auto mb-20">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary-on-dark mb-4">
             EL MANIFIESTO CONVIVO
           </p>
@@ -773,9 +770,9 @@ function ManifestoSection() {
 function StepsSection() {
   return (
     <section className="bg-[#f4f2ed] py-24 px-6 border-b border-stone-200/80">
-      <div className="max-w-[1280px] mx-auto">
+      <div className="max-w-page mx-auto">
         {/* Header */}
-        <div className="text-center max-w-xl mx-auto mb-16">
+        <div className="text-center max-w-content mx-auto mb-16">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-3">
             02 / EXPERIENCIA DE INGRESO
           </p>
@@ -792,21 +789,19 @@ function StepsSection() {
           {PASOS.map((p) => (
             <div
               key={p.num}
-              className="rounded-2xl bg-white p-7 border border-stone-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.03)] flex flex-col justify-between transition-[box-shadow,transform,background-color] hover:shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:-translate-y-1"
+              className="rounded-lg bg-white p-7 border border-stone-200/80 shadow-[0_10px_30px_rgba(0,0,0,0.03)] flex flex-col justify-between transition-[box-shadow,transform,background-color] hover:shadow-[0_16px_40px_rgba(0,0,0,0.06)] hover:-translate-y-1"
             >
               <div>
                 <div className="flex items-center justify-between mb-5">
                   <span className="font-display text-3xl font-normal text-primary">{p.num}</span>
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-teal-50 text-accent border border-teal-100">
+                  <span className="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-teal-50 text-accent border border-teal-100">
                     {p.tag}
                   </span>
                 </div>
-                <div className="text-[11px] font-bold uppercase tracking-wider text-stone-400 mb-1">
+                <div className="text-xs font-bold uppercase tracking-wider text-stone-400 mb-1">
                   {p.kicker}
                 </div>
-                <h3 className="font-display text-lg text-text font-normal m-0 mb-2.5">
-                  {p.titulo}
-                </h3>
+                <h3 className="font-display text-lg text-text font-normal m-0 mb-3">{p.titulo}</h3>
                 <p className="text-xs text-muted leading-relaxed font-light m-0">{p.desc}</p>
               </div>
             </div>
@@ -823,14 +818,14 @@ function FinalCTA() {
       {/* Background ambient lighting */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(13,148,136,0.35)_0%,rgba(0,80,71,1)_75%)] pointer-events-none" />
 
-      <div className="max-w-2xl mx-auto relative z-10">
+      <div className="max-w-content mx-auto relative z-10">
         <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary-on-dark mb-4 inline-block">
           COMUNIDADES INTELIGENTES
         </span>
         <h2 className="font-display text-[clamp(32px,4.5vw,52px)] text-white leading-[1.08] mb-5 font-normal m-0">
           Tu condominio, elevado al estándar que merece
         </h2>
-        <p className="text-[16px] sm:text-[18px] text-white/80 leading-relaxed font-light mb-10 max-w-xl mx-auto">
+        <p className="text-base sm:text-lg text-white/80 leading-relaxed font-light mb-10 max-w-content mx-auto">
           Sin contratos mínimos ni costos ocultos de instalación. Transparencia, tranquilidad y
           confort para residentes y comités de administración.
         </p>
@@ -839,14 +834,14 @@ function FinalCTA() {
           <Link
             to="/crear-cuenta"
             viewTransition
-            className="bg-white text-accent font-bold text-[15px] py-4 px-8 rounded-xl no-underline shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition-[transform,box-shadow] hover:-translate-y-[2px] hover:shadow-[0_16px_40px_rgba(0,0,0,0.3)]"
+            className="btn btn-secondary btn-lg border-transparent text-accent"
           >
             Comenzar como residente
           </Link>
           <Link
             to="/precios"
             viewTransition
-            className="bg-white/10 text-white font-semibold text-[15px] py-4 px-8 rounded-xl no-underline border border-white/25 backdrop-blur-md transition-colors hover:bg-white/20"
+            className="btn btn-secondary bg-transparent text-white border-white/30 hover:bg-white/10 hover:border-white/60 btn-lg"
           >
             Ver planes para el comité
           </Link>

@@ -23,7 +23,7 @@ export function StepIndicator({ current, labels }: { current: number; labels: st
                 {done ? "✓" : s}
               </div>
               <span
-                className={`text-[10px] font-semibold hidden sm:block whitespace-nowrap ${
+                className={`text-xs font-semibold hidden sm:block whitespace-nowrap ${
                   active ? "text-primary" : done ? "text-primary" : "text-muted"
                 }`}
               >
@@ -53,7 +53,7 @@ export function Field({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-semibold text-text mb-1.5">
+      <label htmlFor={id} className="block text-sm font-semibold text-text mb-2">
         {label}
       </label>
       {children}
@@ -61,7 +61,7 @@ export function Field({
         <p
           id={`${id}-error`}
           role="alert"
-          className="mt-1.5 text-xs text-alert-red flex items-center gap-1"
+          className="mt-2 text-xs text-alert-red flex items-center gap-1"
         >
           <span aria-hidden="true">⚠</span> {error}
         </p>

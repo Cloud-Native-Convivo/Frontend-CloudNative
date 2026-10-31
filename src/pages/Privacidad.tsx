@@ -93,7 +93,7 @@ const SECTIONS: LegalSection[] = [
           No pedimos datos que no usemos. No tratamos datos sensibles (salud, origen étnico,
           biometría, entre otros) ni hacemos perfiles con fines comerciales.
         </p>
-        <div className="overflow-x-auto rounded-lg border border-border">
+        <div className="overflow-x-auto rounded-md border border-border">
           <table className="w-full min-w-[640px] border-collapse text-left text-sm">
             <caption className="sr-only">
               Datos tratados, origen, finalidad y base de licitud

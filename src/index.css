@@ -13,6 +13,40 @@
 
   --font-display: "Gloock", Georgia, serif;
   --font-body: "Inter", system-ui, sans-serif;
+
+  /* radius: sm inputs/badges, md botones/cards, lg modales/paneles; círculos con rounded-full */
+  --radius-*: initial;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* anchos máximos: page = shell, content = texto y formularios anchos, narrow = modales y tarjetas */
+  --container-page: 80rem;
+  --container-content: 42rem;
+  --container-narrow: 28rem;
+}
+
+/* Botones: 3 variantes (primary, secondary, tertiary) y 2 tamaños. Texto sobre Primary es Text
+   (4.59:1); blanco sobre Primary no llega a 4.5:1 (DESIGN.md §2.5). */
+@layer components {
+  .btn {
+    @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-md px-4 text-sm font-semibold no-underline transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-sm {
+    @apply min-h-9 px-3 text-xs;
+  }
+  .btn-lg {
+    @apply min-h-14 px-8 text-base;
+  }
+  .btn-primary {
+    @apply bg-primary text-text hover:bg-accent hover:text-white;
+  }
+  .btn-secondary {
+    @apply border border-border bg-white text-text hover:bg-slate-50;
+  }
+  .btn-tertiary {
+    @apply bg-transparent text-accent hover:underline;
+  }
 }
 
 :root {
@@ -138,5 +172,5 @@ body {
 }
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 3px;
+  border-radius: 6px;
 }

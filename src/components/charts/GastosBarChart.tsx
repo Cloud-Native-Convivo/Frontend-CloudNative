@@ -29,7 +29,7 @@ function ChartTooltip({
 }) {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-text text-white text-[12px] px-3 py-1.5 rounded-lg shadow-lg font-mono">
+      <div className="bg-text text-white text-xs px-3 py-2 rounded-md shadow-lg font-mono">
         ${payload[0].value.toLocaleString("es-CL")}K
       </div>
     );

@@ -93,7 +93,7 @@ function RegistroCard({ registro, onOpen }: RegistroCardProps) {
   const [showBefore, setShowBefore] = useState(true);
 
   return (
-    <div className="group rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.09)] hover:-translate-y-[3px] transition-[shadow,transform] duration-250 ease-out">
+    <div className="group rounded-lg overflow-hidden border border-slate-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.09)] hover:-translate-y-[3px] transition-[shadow,transform] duration-250 ease-out">
       <div className="relative h-[200px] bg-slate-200 overflow-hidden">
         <img
           src={showBefore ? registro.antes : registro.despues}
@@ -112,7 +112,7 @@ function RegistroCard({ registro, onOpen }: RegistroCardProps) {
                   e.stopPropagation();
                   setShowBefore(i === 0);
                 }}
-                className={`px-2.5 py-1 rounded-full text-[11px] font-semibold cursor-pointer border-none transition-colors duration-150 text-text ${
+                className={`px-3 py-1 rounded-full text-xs font-semibold cursor-pointer border-none transition-colors duration-150 text-text ${
                   isActive ? "bg-white" : "bg-white/50"
                 }`}
               >
@@ -121,30 +121,27 @@ function RegistroCard({ registro, onOpen }: RegistroCardProps) {
             );
           })}
         </div>
-        <div className="absolute top-3 right-3 bg-black/60 text-white text-[11px] font-medium px-2.5 py-1 rounded-full">
+        <div className="absolute top-3 right-3 bg-black/60 text-white text-xs font-medium px-3 py-1 rounded-full">
           {registro.categoria}
         </div>
       </div>
 
-      <div className="pt-[18px] px-[18px] pb-[20px]">
-        <div className="flex justify-between mb-1.5">
-          <span className="text-[11px] text-slate-400">{registro.fecha}</span>
-          <span className="text-[11px] text-slate-400">{registro.id}</span>
+      <div className="pt-5 px-5 pb-5">
+        <div className="flex justify-between mb-2">
+          <span className="text-xs text-slate-400">{registro.fecha}</span>
+          <span className="text-xs text-slate-400">{registro.id}</span>
         </div>
-        <h3 className="font-display text-base text-text m-0 mb-1.5 font-normal leading-snug">
+        <h3 className="font-display text-base text-text m-0 mb-2 font-normal leading-snug">
           {registro.titulo}
         </h3>
-        <div className="text-[13px] text-slate-500 mb-1">{registro.responsable}</div>
-        <div className="text-[14px] font-bold text-text mb-3.5">{registro.monto}</div>
+        <div className="text-sm text-slate-500 mb-1">{registro.responsable}</div>
+        <div className="text-sm font-bold text-text mb-4">{registro.monto}</div>
 
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-1.5 text-[12px] text-teal-600 font-medium">
+          <div className="flex items-center gap-2 text-xs text-teal-600 font-medium">
             <IconCheck className="w-[12px] h-[12px]" /> {registro.boleta}
           </div>
-          <button
-            onClick={onOpen}
-            className="flex items-center gap-1.5 bg-teal-50 border border-teal-100 text-accent rounded-lg px-3.5 py-2 text-[13px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-teal-100"
-          >
+          <button onClick={onOpen} className="btn btn-secondary btn-sm">
             <IconEye className="w-[14px] h-[14px]" /> Ver detalle
           </button>
         </div>
@@ -164,14 +161,12 @@ export default function Registro() {
     <div className="min-h-screen bg-slate-50">
       {/* Dark hero header */}
       <div className="bg-text p-[72px_24px_64px]">
-        <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-white/45 tracking-wide mb-4">
-            Bitácora fotográfica
-          </p>
-          <h1 className="font-display text-[clamp(36px,5vw,64px)] text-white leading-[1.08] m-0 mb-[18px] font-normal">
+        <div className="max-w-page mx-auto">
+          <p className="text-xs font-bold text-white/45 tracking-wide mb-4">Bitácora fotográfica</p>
+          <h1 className="font-display text-[clamp(36px,5vw,64px)] text-white leading-[1.08] m-0 mb-5 font-normal">
             Registro fotográfico
           </h1>
-          <p className="text-[19px] text-white/65 m-0 max-w-[540px] leading-[1.65]">
+          <p className="text-lg text-white/65 m-0 max-w-content leading-[1.65]">
             Control de calidad verificable
           </p>
         </div>
@@ -179,14 +174,12 @@ export default function Registro() {
 
       {/* Existing gradient header strip */}
       <div className="bg-primary p-[40px_24px_36px]">
-        <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-white/60 tracking-wide mb-2.5">
-            Bitácora fotográfica
-          </p>
-          <h2 className="font-display text-[clamp(24px,3vw,36px)] text-white leading-[1.1] m-0 mb-2.5 font-normal">
+        <div className="max-w-page mx-auto">
+          <p className="text-xs font-bold text-white/60 tracking-wide mb-3">Bitácora fotográfica</p>
+          <h2 className="font-display text-[clamp(24px,3vw,36px)] text-white leading-[1.1] m-0 mb-3 font-normal">
             Registro Fotográfico
           </h2>
-          <p className="text-[15px] text-white/70 m-0 max-w-[560px] leading-[1.65]">
+          <p className="text-base text-white/70 m-0 max-w-content leading-[1.65]">
             Control de calidad verificable por todos los residentes. Cada intervención documentada
             con fotos de antes y después, fecha, responsable y boleta adjunta.
           </p>
@@ -194,7 +187,7 @@ export default function Registro() {
       </div>
 
       {/* Main registro content */}
-      <div className="max-w-[1280px] mx-auto p-[40px_24px_80px]">
+      <div className="max-w-page mx-auto p-[40px_24px_80px]">
         {/* Stats */}
         <div className="flex flex-wrap gap-4 mb-7">
           {[
@@ -212,12 +205,10 @@ export default function Registro() {
           ].map((s) => (
             <div
               key={s.label}
-              className="bg-white border border-slate-200 rounded-xl px-5 py-4 flex items-center gap-3"
+              className="bg-white border border-slate-200 rounded-md px-5 py-4 flex items-center gap-3"
             >
               <span className={`font-display text-[28px] ${s.colorClass}`}>{s.val}</span>
-              <span className="text-[13px] text-slate-500 max-w-[100px] leading-snug">
-                {s.label}
-              </span>
+              <span className="text-sm text-slate-500 max-w-[100px] leading-snug">{s.label}</span>
             </div>
           ))}
         </div>
@@ -230,7 +221,7 @@ export default function Registro() {
               <button
                 key={c}
                 onClick={() => setActiveCat(c)}
-                className={`px-4 py-2 rounded-full text-[13px] font-medium cursor-pointer border transition-colors duration-150 ${
+                className={`px-4 py-2 rounded-full text-sm font-medium cursor-pointer border transition-colors duration-150 ${
                   isActive
                     ? "border-teal-600 bg-teal-600 text-white"
                     : "border-slate-200 bg-white text-slate-500"
@@ -243,7 +234,7 @@ export default function Registro() {
         </div>
 
         {/* Cards */}
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-[22px]">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-6">
           {filtered.map((r) => (
             <RegistroCard
               key={r.id}
@@ -259,8 +250,8 @@ export default function Registro() {
 
       {/* Sub-features flip cards */}
       <div className="bg-white p-[80px_24px]">
-        <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-teal-600 tracking-wide mb-3">Funcionalidades</p>
+        <div className="max-w-page mx-auto">
+          <p className="text-xs font-bold text-teal-600 tracking-wide mb-3">Funcionalidades</p>
           <h2 className="font-display text-[clamp(28px,3.5vw,44px)] text-text m-0 mb-12 font-normal">
             Cada trabajo, completamente documentado
           </h2>
@@ -270,16 +261,14 @@ export default function Registro() {
                 key={card.title}
                 height={200}
                 front={
-                  <div className="h-full bg-slate-50 rounded-2xl border border-slate-200 flex flex-col items-center justify-center p-6 text-center gap-3.5">
+                  <div className="h-full bg-slate-50 rounded-lg border border-slate-200 flex flex-col items-center justify-center p-6 text-center gap-4">
                     {card.icon}
-                    <span className="text-[15px] font-bold text-text leading-snug">
-                      {card.title}
-                    </span>
+                    <span className="text-base font-bold text-text leading-snug">{card.title}</span>
                   </div>
                 }
                 back={
-                  <div className="h-full bg-teal-600 rounded-2xl flex items-center justify-center p-6 text-center">
-                    <span className="text-[14px] text-white leading-[1.6]">{card.desc}</span>
+                  <div className="h-full bg-teal-600 rounded-lg flex items-center justify-center p-6 text-center">
+                    <span className="text-sm text-white leading-[1.6]">{card.desc}</span>
                   </div>
                 }
               />
@@ -294,13 +283,13 @@ export default function Registro() {
           key={section.title}
           className={`py-20 px-6 ${section.imgLeft ? "bg-slate-50" : "bg-white"}`}
         >
-          <div className="max-w-[1280px] mx-auto grid grid-cols-2 gap-16 items-center">
+          <div className="max-w-page mx-auto grid grid-cols-2 gap-16 items-center">
             {section.imgLeft ? (
               <>
                 <img
                   src={section.imgUrl}
                   alt={section.title}
-                  className="w-full h-[380px] object-cover rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
+                  className="w-full h-[380px] object-cover rounded-lg shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
                   loading="lazy"
                   decoding="async"
                 />
@@ -322,7 +311,7 @@ export default function Registro() {
                 <img
                   src={section.imgUrl}
                   alt={section.title}
-                  className="w-full h-[380px] object-cover rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
+                  className="w-full h-[380px] object-cover rounded-lg shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
                   loading="lazy"
                   decoding="async"
                 />
@@ -334,16 +323,13 @@ export default function Registro() {
 
       {/* CTA strip */}
       <div className="bg-text p-[64px_24px]">
-        <div className="max-w-[1280px] mx-auto flex items-center justify-center gap-6 flex-wrap">
-          <Link
-            to="/registro"
-            className="inline-flex items-center gap-2 bg-teal-600 text-white rounded-xl px-8 py-4 text-[15px] font-bold no-underline transition-colors duration-200 hover:bg-accent"
-          >
+        <div className="max-w-page mx-auto flex items-center justify-center gap-6 flex-wrap">
+          <Link to="/registro" className="btn btn-primary btn-lg">
             Ver registros
           </Link>
           <Link
             to="/dashboard"
-            className="inline-flex items-center gap-2 bg-transparent text-white rounded-xl border border-white/30 px-8 py-4 text-[15px] font-bold no-underline transition-[border-color,background-color] duration-200 hover:border-white hover:bg-white/5"
+            className="btn btn-secondary bg-transparent text-white border-white/30 hover:bg-white/10 hover:border-white/60 btn-lg"
           >
             Dashboard
           </Link>
@@ -359,8 +345,8 @@ export default function Registro() {
             onClick={() => setSelected(null)}
             className="absolute inset-0 bg-text/65 border-none p-0 cursor-default"
           />
-          <div className="relative bg-white rounded-[20px] w-full max-w-[680px] max-h-[90vh] overflow-y-auto shadow-[0_32px_80px_rgba(0,0,0,0.25)]">
-            <div className="relative h-[320px] bg-slate-200 overflow-hidden rounded-[20px_20px_0_0]">
+          <div className="relative bg-white rounded-lg w-full max-w-content max-h-[90vh] overflow-y-auto shadow-[0_32px_80px_rgba(0,0,0,0.25)]">
+            <div className="relative h-[320px] bg-slate-200 overflow-hidden rounded-t-lg">
               <img
                 src={showBefore ? selected.antes : selected.despues}
                 alt={showBefore ? "Antes" : "Después"}
@@ -375,7 +361,7 @@ export default function Registro() {
                     <button
                       key={label}
                       onClick={() => setShowBefore(i === 0)}
-                      className={`px-5 py-2 rounded-full text-[13px] font-semibold cursor-pointer border-none transition-colors duration-200 ${
+                      className={`px-5 py-2 rounded-full text-sm font-semibold cursor-pointer border-none transition-colors duration-200 ${
                         isActive ? "bg-white text-text" : "bg-white/40 text-white"
                       }`}
                     >
@@ -396,16 +382,14 @@ export default function Registro() {
             <div className="px-7 pt-7 pb-8">
               <div className="flex justify-between items-start gap-3 mb-4">
                 <div>
-                  <span className="text-[11px] font-bold text-accent bg-teal-100 px-2.5 py-1 rounded-md inline-block mb-2">
+                  <span className="text-xs font-bold text-accent bg-teal-100 px-3 py-1 rounded-sm inline-block mb-2">
                     {selected.categoria}
                   </span>
                   <h2 className="font-display text-[22px] text-text m-0 font-normal leading-tight">
                     {selected.titulo}
                   </h2>
                 </div>
-                <span className="text-[11px] text-slate-400 whitespace-nowrap mt-1">
-                  {selected.id}
-                </span>
+                <span className="text-xs text-slate-400 whitespace-nowrap mt-1">{selected.id}</span>
               </div>
 
               <div className="grid grid-cols-2 gap-4 mb-5">
@@ -416,19 +400,19 @@ export default function Registro() {
                   { label: "Estado", val: selected.estado },
                 ].map((f) => (
                   <div key={f.label}>
-                    <div className="text-[11px] font-semibold text-slate-400 tracking-wide mb-1">
+                    <div className="text-xs font-semibold text-slate-400 tracking-wide mb-1">
                       {f.label}
                     </div>
-                    <div className="text-[14px] font-semibold text-text">{f.val}</div>
+                    <div className="text-sm font-semibold text-text">{f.val}</div>
                   </div>
                 ))}
               </div>
 
-              <div className="flex items-center justify-between bg-teal-50 rounded-lg px-4 py-3.5">
-                <div className="flex items-center gap-2 text-[13px] text-accent font-semibold">
+              <div className="flex items-center justify-between bg-teal-50 rounded-md px-4 py-4">
+                <div className="flex items-center gap-2 text-sm text-accent font-semibold">
                   <IconCheck className="w-[16px] h-[16px]" /> Boleta adjunta: {selected.boleta}
                 </div>
-                <button className="flex items-center gap-1.5 bg-transparent border-none text-teal-600 text-[13px] font-semibold cursor-pointer">
+                <button className="btn btn-tertiary btn-sm">
                   <IconDownload className="w-[14px] h-[14px]" /> Descargar
                 </button>
               </div>

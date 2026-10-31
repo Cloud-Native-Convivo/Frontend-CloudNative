@@ -8,7 +8,7 @@ interface VisitaCardProps {
 
 export function VisitaCard({ visita, onVerQR }: VisitaCardProps) {
   return (
-    <div className="bg-white rounded-xl border border-border p-4 flex flex-col gap-3">
+    <div className="bg-white rounded-md border border-border p-4 flex flex-col gap-3">
       <div className="flex items-start justify-between gap-2">
         <div>
           <p className="font-semibold text-text">{visita.nombre}</p>
@@ -22,10 +22,7 @@ export function VisitaCard({ visita, onVerQR }: VisitaCardProps) {
         <span>📋 {visita.motivo}</span>
       </div>
       {(visita.estado === "pendiente_qr" || visita.estado === "confirmada") && (
-        <button
-          onClick={() => onVerQR(visita)}
-          className="self-start text-sm font-semibold text-primary border border-primary/30 rounded-lg px-3 py-1.5 hover:bg-primary/5 transition-colors"
-        >
+        <button onClick={() => onVerQR(visita)} className="btn btn-secondary btn-sm self-start">
           Ver QR
         </button>
       )}

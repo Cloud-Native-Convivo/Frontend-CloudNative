@@ -174,10 +174,7 @@ function FormularioUnidad({ condominios, onSubmit }: FormularioUnidadProps) {
         )}
       </div>
 
-      <button
-        type="submit"
-        className="w-full mt-2 min-h-[44px] py-3 bg-primary hover:bg-accent text-white font-bold text-sm rounded-xl transition-colors cursor-pointer shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-      >
+      <button type="submit" className="btn btn-primary w-full mt-2">
         Guardar y continuar
       </button>
     </form>
@@ -264,7 +261,7 @@ export default function CompletarRegistro() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-border p-8">
+      <div className="w-full max-w-narrow bg-white rounded-lg shadow-sm border border-border p-8">
         <div className="mb-6 text-center">
           <span className="text-primary font-display text-2xl font-bold">Convivo</span>
           <h1 className="font-display text-text text-xl font-bold mt-2">Completa tu registro</h1>
@@ -280,17 +277,13 @@ export default function CompletarRegistro() {
         ) : errorCarga ? (
           <div
             role="alert"
-            className="p-4 bg-red-50 border border-alert-red rounded-xl text-center space-y-3"
+            className="p-4 bg-red-50 border border-alert-red rounded-md text-center space-y-3"
           >
             <p className="text-xs text-alert-red font-medium">
               <span aria-hidden="true">⚠ </span>
               {errorCarga}
             </p>
-            <button
-              type="button"
-              onClick={reintentar}
-              className="inline-flex items-center justify-center min-h-[36px] px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-            >
+            <button type="button" onClick={reintentar} className="btn btn-primary btn-sm">
               Reintentar
             </button>
           </div>
@@ -308,7 +301,7 @@ export default function CompletarRegistro() {
           <button
             type="button"
             onClick={continuarSinAsignacion}
-            className="mt-4 w-full min-h-[44px] text-sm font-semibold text-primary underline focus:outline-none focus:ring-2 focus:ring-primary"
+            className="btn btn-tertiary mt-4 w-full underline"
           >
             {estadoSolicitud === "pendiente"
               ? "Continuar al panel de residente"

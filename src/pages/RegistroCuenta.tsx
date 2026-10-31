@@ -65,7 +65,7 @@ export default function RegistroCuenta() {
   if (done) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white p-6">
-        <div className="text-center max-w-sm">
+        <div className="text-center max-w-narrow">
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5 text-2xl text-primary">
             ✓
           </div>
@@ -73,10 +73,7 @@ export default function RegistroCuenta() {
           <p className="text-muted text-sm leading-relaxed mb-6">
             Tu solicitud está en revisión. El comité la aprobará en las próximas 24 horas hábiles.
           </p>
-          <Link
-            to="/login"
-            className="inline-flex bg-primary hover:bg-accent text-white font-bold text-sm px-6 py-3 rounded-lg transition-colors"
-          >
+          <Link to="/login" className="btn btn-primary">
             Ir al inicio de sesión
           </Link>
         </div>
@@ -106,7 +103,7 @@ export default function RegistroCuenta() {
             "Acepta el Reglamento Interno digitalmente",
           ].map((t, i) => (
             <li key={t} className="flex gap-3 items-start">
-              <div className="w-5 h-5 rounded-full bg-primary/25 text-primary text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+              <div className="w-5 h-5 rounded-full bg-primary/25 text-primary text-xs font-bold flex items-center justify-center shrink-0 mt-1">
                 {i + 1}
               </div>
               <span className="text-white/65 text-sm leading-snug">{t}</span>
@@ -117,7 +114,7 @@ export default function RegistroCuenta() {
 
       {/* Form panel */}
       <div className="flex-1 flex items-center justify-center p-6 bg-white">
-        <div className="w-full max-w-sm">
+        <div className="w-full max-w-narrow">
           <div className="lg:hidden mb-6 text-center">
             <span className="text-primary font-display text-2xl">Convivo</span>
           </div>
@@ -149,15 +146,12 @@ export default function RegistroCuenta() {
             {step > 1 && (
               <button
                 onClick={() => setStep((s) => (s - 1) as Step)}
-                className="flex-1 border border-border text-text font-semibold text-sm py-3 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/30"
+                className="btn btn-secondary flex-1"
               >
                 Atrás
               </button>
             )}
-            <button
-              onClick={goNext}
-              className="flex-1 bg-primary hover:bg-accent text-white font-bold text-sm py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-            >
+            <button onClick={goNext} className="btn btn-primary flex-1">
               {step === 3 ? "Crear cuenta" : "Continuar"}
             </button>
           </div>

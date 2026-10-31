@@ -32,7 +32,7 @@ function Casilla({
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="mt-0.5 h-4 w-4 shrink-0 accent-primary"
+        className="mt-1 h-4 w-4 shrink-0 accent-primary"
       />
       <span>{children}</span>
     </label>
@@ -76,7 +76,7 @@ export default function AceptarTerminos() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-white p-6">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-narrow">
         <span className="font-display text-2xl text-primary">Convivo</span>
         <h1 className="mt-8 mb-3 font-display text-3xl font-normal text-text">
           Antes de continuar
@@ -86,7 +86,7 @@ export default function AceptarTerminos() {
           Se abren en otra pestaña para que puedas leerlos sin perder este paso.
         </p>
 
-        <div className="space-y-4 rounded-lg border border-border p-5">
+        <div className="space-y-4 rounded-md border border-border p-5">
           <Casilla id="acepta-terminos" checked={terminos} onChange={setTerminos}>
             Leí y acepto los{" "}
             <Link to="/terminos" target="_blank" rel="noopener" className="text-primary underline">
@@ -119,7 +119,7 @@ export default function AceptarTerminos() {
             type="button"
             onClick={aceptar}
             disabled={!terminos || !privacidad || enviando}
-            className="w-full rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50"
+            className="btn btn-primary w-full"
           >
             {enviando ? "Registrando…" : "Aceptar y continuar"}
           </button>
@@ -127,7 +127,7 @@ export default function AceptarTerminos() {
             type="button"
             onClick={rechazar}
             disabled={enviando}
-            className="w-full rounded-lg border border-border bg-white px-4 py-3 text-sm font-semibold text-text transition-colors hover:bg-slate-50"
+            className="btn btn-secondary w-full"
           >
             No acepto
           </button>

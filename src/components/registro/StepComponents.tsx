@@ -54,16 +54,12 @@ export function StepUnit({
             Cargando condominios disponibles…
           </div>
         ) : errorCarga ? (
-          <div role="alert" className="p-3 bg-red-50 border border-alert-red rounded-lg space-y-2">
+          <div role="alert" className="p-3 bg-red-50 border border-alert-red rounded-md space-y-2">
             <p className="text-xs text-alert-red font-medium">
               <span aria-hidden="true">⚠ </span>
               {errorCarga}
             </p>
-            <button
-              type="button"
-              onClick={reintentar}
-              className="inline-flex items-center min-h-[32px] text-xs font-bold text-primary hover:underline cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
-            >
+            <button type="button" onClick={reintentar} className="btn btn-tertiary btn-sm">
               Reintentar
             </button>
           </div>
@@ -225,7 +221,7 @@ export function StepReglamento({
   return (
     <div>
       <div
-        className="border border-border rounded-xl p-4 h-52 overflow-y-auto text-sm text-muted leading-relaxed mb-4 bg-gray-50/60"
+        className="border border-border rounded-md p-4 h-52 overflow-y-auto text-sm text-muted leading-relaxed mb-4 bg-gray-50/60"
         tabIndex={0}
         role="region"
         aria-label="Reglamento interno"
@@ -247,7 +243,7 @@ export function StepReglamento({
       </div>
 
       <label
-        className={`flex gap-3 items-start cursor-pointer p-3 rounded-lg border transition-colors ${
+        className={`flex gap-3 items-start cursor-pointer p-3 rounded-md border transition-colors ${
           accepted
             ? "border-green-600 bg-green-50"
             : reglamentoError
@@ -259,7 +255,7 @@ export function StepReglamento({
           type="checkbox"
           checked={accepted}
           onChange={(e) => onAcceptChange(e.target.checked)}
-          className="mt-0.5 w-4 h-4 accent-primary"
+          className="mt-1 w-4 h-4 accent-primary"
           aria-describedby={reglamentoError ? "reg-error" : undefined}
         />
         <span className="text-sm text-text leading-snug">
@@ -271,7 +267,7 @@ export function StepReglamento({
         <p
           id="reg-error"
           role="alert"
-          className="mt-1.5 text-xs text-alert-red flex items-center gap-1"
+          className="mt-2 text-xs text-alert-red flex items-center gap-1"
         >
           <span aria-hidden="true">⚠</span> {reglamentoError}
         </p>

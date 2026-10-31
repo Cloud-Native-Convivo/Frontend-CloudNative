@@ -11,7 +11,7 @@ export default function RouteError() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-6 text-center bg-surface">
       <h1 className="font-display text-2xl text-text">Algo salió mal</h1>
-      <p className="text-muted max-w-md">{message}</p>
+      <p className="text-muted max-w-narrow">{message}</p>
       <a href="/" className="text-primary font-semibold hover:underline">
         Volver al inicio
       </a>

@@ -262,7 +262,7 @@ function Badge({ label, variant }: { label: string; variant: "green" | "yellow" 
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold border ${styles[variant]}`}
+      className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold border ${styles[variant]}`}
     >
       <span
         className={`inline-block h-1.5 w-1.5 rounded-full ${
@@ -280,15 +280,15 @@ function Badge({ label, variant }: { label: string; variant: "green" | "yellow" 
 
 function KpiCard({ card }: { card: KpiCardData }) {
   return (
-    <div className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-[box-shadow,transform,background-color] hover:shadow-[0_12px_28px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 relative overflow-hidden">
+    <div className="flex flex-col justify-between rounded-lg border border-stone-200/80 bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-[box-shadow,transform,background-color] hover:shadow-[0_12px_28px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 relative overflow-hidden">
       <div>
         <div className="flex items-start justify-between mb-3">
-          <div className="w-9 h-9 rounded-xl bg-stone-50 border border-stone-200/60 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-md bg-stone-50 border border-stone-200/60 flex items-center justify-center">
             {card.icon}
           </div>
           <Badge label={card.badge.label} variant={card.badge.variant} />
         </div>
-        <p className="font-mono text-[11px] font-bold uppercase tracking-wider text-muted">
+        <p className="font-mono text-xs font-bold uppercase tracking-wider text-muted">
           {card.title}
         </p>
         <p className="mt-1 font-display text-2xl font-normal text-text tabular-nums leading-tight">
@@ -297,10 +297,10 @@ function KpiCard({ card }: { card: KpiCardData }) {
         <p className="mt-1 font-body text-xs text-muted leading-relaxed">{card.subtitle}</p>
       </div>
 
-      <div className="mt-4 pt-3.5 border-t border-stone-100 flex items-center justify-between">
+      <div className="mt-4 pt-4 border-t border-stone-100 flex items-center justify-between">
         <Link
           to={card.actionUrl}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-accent transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-primary hover:text-accent transition-colors"
         >
           <span>{card.actionText}</span>
           <IconChevronRight className="w-3.5 h-3.5" />
@@ -331,11 +331,11 @@ function DashboardHeroHeader({ user }: { user: ReturnType<typeof useAuth>["user"
       {/* Ambient background glow */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-primary/10 blur-[100px] pointer-events-none" />
 
-      <div className="mx-auto max-w-6xl relative z-10">
+      <div className="mx-auto max-w-page relative z-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             {/* Top metadata badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-[11px] font-mono tracking-wider text-primary-on-dark uppercase mb-3.5">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-mono tracking-wider text-primary-on-dark uppercase mb-4">
               <span className="h-1.5 w-1.5 rounded-full bg-primary-on-dark" />
               <span>FOLIO RESIDENCIAL ACTIVO</span>
               <span className="text-white/40">·</span>
@@ -345,31 +345,28 @@ function DashboardHeroHeader({ user }: { user: ReturnType<typeof useAuth>["user"
             <h1 className="font-display text-[clamp(28px,4vw,44px)] font-normal text-white m-0 leading-tight">
               Buenos días, {primerNombre}
             </h1>
-            <p className="mt-1.5 font-body text-sm text-white/70 font-light max-w-xl">
+            <p className="mt-2 font-body text-sm text-white/70 font-light max-w-content">
               Bienvenido al portal de tu comunidad. Revisa tus gastos comunes, agenda tus reservas
               de quincho y gestiona tus visitas en tiempo real.
             </p>
           </div>
 
           {/* Quick Action Dock */}
-          <div className="flex flex-wrap gap-2.5 items-center">
-            <Link
-              to="/espacios"
-              className="inline-flex items-center gap-2 bg-primary text-white text-xs font-semibold py-2.5 px-4 rounded-xl no-underline shadow-[0_4px_16px_rgba(13,148,136,0.25)] transition-[box-shadow,transform,background-color] hover:bg-emerald-600 hover:-translate-y-0.5"
-            >
+          <div className="flex flex-wrap gap-3 items-center">
+            <Link to="/espacios" className="btn btn-primary btn-sm">
               <IconCalendar className="w-3.5 h-3.5" />
               <span>Reservar espacio</span>
             </Link>
             <Link
               to="/gastos"
-              className="inline-flex items-center gap-2 bg-white/10 text-white text-xs font-semibold py-2.5 px-4 rounded-xl no-underline border border-white/20 transition-[color,background-color,border-color,box-shadow] hover:bg-white/20"
+              className="btn btn-secondary bg-transparent text-white border-white/30 hover:bg-white/10 hover:border-white/60 btn-sm"
             >
               <IconDollar className="w-3.5 h-3.5 text-primary-on-dark" />
               <span>Pagar gastos</span>
             </Link>
             <Link
               to="/visitas"
-              className="inline-flex items-center gap-2 bg-white/10 text-white text-xs font-semibold py-2.5 px-4 rounded-xl no-underline border border-white/20 transition-[color,background-color,border-color,box-shadow] hover:bg-white/20"
+              className="btn btn-secondary bg-transparent text-white border-white/30 hover:bg-white/10 hover:border-white/60 btn-sm"
             >
               <IconUsers className="w-3.5 h-3.5 text-primary-on-dark" />
               <span>Pase de visita</span>
@@ -390,10 +387,10 @@ function NoticeTile({ notice }: { notice: NoticeCard }) {
   };
 
   return (
-    <article className="flex flex-col gap-2 rounded-2xl border border-stone-200/80 bg-white p-5 transition-[color,background-color,border-color,box-shadow] hover:shadow-[0_8px_24px_rgba(0,0,0,0.05)] hover:border-stone-300">
+    <article className="flex flex-col gap-2 rounded-lg border border-stone-200/80 bg-white p-5 transition-[color,background-color,border-color,box-shadow] hover:shadow-[0_8px_24px_rgba(0,0,0,0.05)] hover:border-stone-300">
       <div className="flex items-center justify-between">
         <span
-          className={`rounded-full px-2.5 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider border ${
+          className={`rounded-full px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider border ${
             categoryStyles[notice.category] ?? "bg-stone-50 text-stone-700 border-stone-200"
           }`}
         >
@@ -425,7 +422,7 @@ function VisitasPassesSection({
           <h2 className="font-display text-xl font-normal text-text m-0">
             Pases de Visita Próximos
           </h2>
-          <p className="text-xs text-muted font-light mt-0.5">
+          <p className="text-xs text-muted font-light mt-1">
             Accesos temporales registrados en conserjería
           </p>
         </div>
@@ -442,11 +439,11 @@ function VisitasPassesSection({
         {visits.map((vis) => (
           <div
             key={vis.id}
-            className="flex flex-col justify-between rounded-2xl border border-stone-200/80 bg-white p-4 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-[color,background-color,border-color,box-shadow] hover:shadow-[0_10px_24px_rgba(0,0,0,0.05)]"
+            className="flex flex-col justify-between rounded-lg border border-stone-200/80 bg-white p-4 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-[color,background-color,border-color,box-shadow] hover:shadow-[0_10px_24px_rgba(0,0,0,0.05)]"
           >
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="font-mono text-[11px] text-muted tracking-wider uppercase">
+                <span className="font-mono text-xs text-muted tracking-wider uppercase">
                   {vis.fechaDisplay}
                 </span>
                 <Badge
@@ -455,19 +452,17 @@ function VisitasPassesSection({
                 />
               </div>
               <h3 className="font-display text-base font-normal text-text m-0">{vis.nombre}</h3>
-              <p className="font-body text-xs text-muted font-light mt-0.5">
+              <p className="font-body text-xs text-muted font-light mt-1">
                 {vis.hora} · {vis.motivo}
               </p>
             </div>
 
             <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between">
-              <span className="font-mono text-[11px] text-stone-400 font-semibold">
-                {vis.codigo}
-              </span>
+              <span className="font-mono text-xs text-stone-400 font-semibold">{vis.codigo}</span>
               <button
                 type="button"
                 onClick={() => onVerQr(vis)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-xs font-semibold text-text hover:bg-primary hover:text-white hover:border-primary transition-[color,background-color,border-color,box-shadow] cursor-pointer"
+                className="btn btn-secondary btn-sm"
               >
                 <span>Ver QR</span>
                 <IconChevronRight className="w-3 h-3" />
@@ -485,7 +480,7 @@ function QuickLinksDock({ links }: { links: QuickAccessItem[] }) {
     <section>
       <div className="mb-4">
         <h2 className="font-display text-xl font-normal text-text m-0">Accesos Directos</h2>
-        <p className="text-xs text-muted font-light mt-0.5">Servicios de tu comunidad a un clic</p>
+        <p className="text-xs text-muted font-light mt-1">Servicios de tu comunidad a un clic</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -493,15 +488,15 @@ function QuickLinksDock({ links }: { links: QuickAccessItem[] }) {
           <Link
             key={link.label}
             to={link.to}
-            className="group flex flex-col items-start p-3.5 rounded-2xl border border-stone-200/80 bg-white no-underline transition-[color,background-color,border-color,box-shadow] hover:shadow-[0_8px_20px_rgba(0,0,0,0.05)] hover:border-stone-300"
+            className="group flex flex-col items-start p-4 rounded-lg border border-stone-200/80 bg-white no-underline transition-[color,background-color,border-color,box-shadow] hover:shadow-[0_8px_20px_rgba(0,0,0,0.05)] hover:border-stone-300"
           >
-            <div className="w-8 h-8 rounded-xl bg-teal-50 text-accent flex items-center justify-center mb-2.5 transition-transform group-hover:scale-105">
+            <div className="w-8 h-8 rounded-md bg-teal-50 text-accent flex items-center justify-center mb-3 transition-transform group-hover:scale-105">
               {link.icon}
             </div>
             <span className="font-body text-xs font-semibold text-text group-hover:text-primary transition-colors">
               {link.label}
             </span>
-            <span className="font-body text-[11px] text-muted font-light leading-tight mt-0.5">
+            <span className="font-body text-xs text-muted font-light leading-tight mt-1">
               {link.category}
             </span>
           </Link>
@@ -516,10 +511,10 @@ function RecentActivityFeed({ items }: { items: ActivityItem[] }) {
     <section>
       <div className="mb-4">
         <h2 className="font-display text-xl font-normal text-text m-0">Actividad Reciente</h2>
-        <p className="text-xs text-muted font-light mt-0.5">Historial cronológico de tu unidad</p>
+        <p className="text-xs text-muted font-light mt-1">Historial cronológico de tu unidad</p>
       </div>
 
-      <div className="rounded-2xl border border-stone-200/80 bg-white p-5 shadow-[0_4px_16px_rgba(0,0,0,0.02)]">
+      <div className="rounded-lg border border-stone-200/80 bg-white p-5 shadow-[0_4px_16px_rgba(0,0,0,0.02)]">
         <ul className="flex flex-col gap-4 list-none m-0 p-0">
           {items.map((item, idx) => (
             <li key={item.id} className="flex items-start gap-3 relative">
@@ -531,11 +526,11 @@ function RecentActivityFeed({ items }: { items: ActivityItem[] }) {
               >
                 {item.icon}
               </div>
-              <div className="flex flex-col gap-0.5">
+              <div className="flex flex-col gap-1">
                 <p className="font-body text-xs font-medium text-text leading-snug m-0">
                   {item.description}
                 </p>
-                <p className="font-mono text-[11px] text-muted m-0">{item.timestamp}</p>
+                <p className="font-mono text-xs text-muted m-0">{item.timestamp}</p>
               </div>
             </li>
           ))}
@@ -681,16 +676,13 @@ export default function ResidenteDashboard() {
   ) {
     return (
       <main className="min-h-screen bg-[#faf9f6] px-6 py-20">
-        <section className="mx-auto max-w-xl rounded-2xl border border-border bg-white p-8 shadow-sm">
+        <section className="mx-auto max-w-content rounded-lg border border-border bg-white p-8 shadow-sm">
           <h1 className="font-display text-2xl text-text">Asignación pendiente</h1>
           <p className="mt-4 text-sm text-muted">
             Tu sesión está activa. Elige tu condominio y unidad; las funciones de la comunidad
             estarán disponibles cuando administración confirme tu asignación.
           </p>
-          <Link
-            to="/completar-registro"
-            className="mt-6 inline-flex min-h-[44px] items-center rounded-xl bg-primary px-5 text-sm font-semibold text-white"
-          >
+          <Link to="/completar-registro" className="btn btn-primary mt-6">
             Elegir condominio
           </Link>
         </section>
@@ -705,10 +697,10 @@ export default function ResidenteDashboard() {
 
       {/* ── Content Area ── */}
       <main className="px-6 py-10 md:px-10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-10">
+        <div className="mx-auto flex max-w-page flex-col gap-10">
           {/* ── Notification Banner (Editorial Style) ── */}
           {!notifDismissed && (
-            <div className="flex items-center justify-between rounded-2xl border border-amber-200/90 bg-amber-50/90 px-5 py-3.5 shadow-sm text-text">
+            <div className="flex items-center justify-between rounded-lg border border-amber-200/90 bg-amber-50/90 px-5 py-4 shadow-sm text-text">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0 text-amber-700">
                   <IconBell className="w-4 h-4" />
@@ -761,7 +753,7 @@ export default function ResidenteDashboard() {
                     <h2 className="font-display text-xl font-normal text-text m-0">
                       Gaceta & Comunicados
                     </h2>
-                    <p className="text-xs text-muted font-light mt-0.5">
+                    <p className="text-xs text-muted font-light mt-1">
                       Publicaciones oficiales del comité de administración
                     </p>
                   </div>
@@ -774,7 +766,7 @@ export default function ResidenteDashboard() {
                   </Link>
                 </div>
 
-                <div className="flex flex-col gap-3.5">
+                <div className="flex flex-col gap-4">
                   {NOTICES.map((n) => (
                     <NoticeTile key={n.id} notice={n} />
                   ))}
@@ -796,12 +788,12 @@ export default function ResidenteDashboard() {
           </div>
 
           {/* ── Concierge Support Card (Bottom Banner) ── */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-stone-200/80 bg-white p-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-lg border border-stone-200/80 bg-white p-6 shadow-sm">
             <div>
-              <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-primary">
+              <span className="font-mono text-xs font-bold uppercase tracking-wider text-primary">
                 CONSERJERÍA & ASISTENCIA 24/7
               </span>
-              <h3 className="font-display text-lg font-normal text-text m-0 mt-0.5">
+              <h3 className="font-display text-lg font-normal text-text m-0 mt-1">
                 ¿Necesitas reportar una urgencia o consultar una encomienda?
               </h3>
               <p className="font-body text-xs text-muted font-light m-0 mt-1">
@@ -809,10 +801,7 @@ export default function ResidenteDashboard() {
               </p>
             </div>
             <div className="flex items-center gap-3 shrink-0">
-              <Link
-                to="/canales"
-                className="inline-flex items-center gap-2 rounded-xl bg-text text-white text-xs font-semibold px-4 py-2.5 transition-colors hover:bg-accent no-underline"
-              >
+              <Link to="/canales" className="btn btn-primary btn-sm bg-text text-white">
                 <IconPhone className="w-3.5 h-3.5 text-primary-on-dark" />
                 <span>Contactar conserjería</span>
               </Link>

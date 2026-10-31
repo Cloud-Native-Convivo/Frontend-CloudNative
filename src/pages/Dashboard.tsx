@@ -101,24 +101,24 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <div className="bg-text pt-[56px] px-6 pb-12">
-        <div className="max-w-[1280px] mx-auto">
-          <p className="text-[11px] font-bold text-primary-on-dark/70 tracking-wide mb-[10px]">
+      <div className="bg-text pt-14 px-6 pb-12">
+        <div className="max-w-page mx-auto">
+          <p className="text-xs font-bold text-primary-on-dark/70 tracking-wide mb-3">
             Transparencia total
           </p>
           <h1 className="font-[Gloock,Georgia,serif] text-[clamp(32px,4vw,52px)] text-white leading-[1.1] m-0 mb-3 font-normal">
             Dashboard de Transparencia
           </h1>
-          <p className="text-[17px] text-white/65 m-0 max-w-[560px] leading-[1.65]">
+          <p className="text-lg text-white/65 m-0 max-w-content leading-[1.65]">
             Panel centralizado de todos los gastos del condominio. Cada peso documentado con boleta
             o factura adjunta.
           </p>
         </div>
       </div>
 
-      <div className="max-w-[1280px] mx-auto p-[40px_24px_80px]">
+      <div className="max-w-page mx-auto p-[40px_24px_80px]">
         {/* KPI cards */}
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-[18px] mb-7">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-5 mb-7">
           {[
             {
               label: "Gasto del mes (ago)",
@@ -149,10 +149,7 @@ export default function Dashboard() {
               color: "text-primary",
             },
           ].map((k) => (
-            <div
-              key={k.label}
-              className="bg-white border border-border rounded-[14px] py-[22px] px-5"
-            >
+            <div key={k.label} className="bg-white border border-border rounded-lg py-6 px-5">
               <div className="flex justify-between items-start mb-3">
                 <div className="text-xs text-slate-400 font-semibold tracking-wide max-w-[140px] leading-[1.3]">
                   {k.label}
@@ -160,43 +157,46 @@ export default function Dashboard() {
                 <div className={k.color}>{k.icon}</div>
               </div>
               <div className="font-[Gloock,Georgia,serif] text-[26px] text-text mb-1">{k.val}</div>
-              <div className="text-[12px] text-slate-400">{k.sub}</div>
+              <div className="text-xs text-slate-400">{k.sub}</div>
             </div>
           ))}
         </div>
 
         <div className="grid grid-cols-[1.4fr_1fr] gap-6 mb-7">
           {/* Recharts bar chart — Evolución mensual */}
-          <div className="bg-white border border-border rounded-2xl p-7">
+          <div className="bg-white border border-border rounded-lg p-7">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="font-[Gloock,Georgia,serif] text-[20px] text-text m-0 font-normal">
+              <h3 className="font-[Gloock,Georgia,serif] text-xl text-text m-0 font-normal">
                 Evolución mensual
               </h3>
-              <span className="text-[12px] text-slate-400">2026 · miles CLP</span>
+              <span className="text-xs text-slate-400">2026 · miles CLP</span>
             </div>
             <Suspense
-              fallback={<div className="h-[180px] w-full animate-pulse rounded bg-slate-100" />}
+              fallback={<div className="h-[180px] w-full animate-pulse rounded-sm bg-slate-100" />}
             >
               <GastosBarChart data={evolucionMensual} />
             </Suspense>
           </div>
 
           {/* Desglose por categoría */}
-          <div className="bg-white border border-border rounded-2xl p-7">
-            <h3 className="font-[Gloock,Georgia,serif] text-[20px] text-text m-0 mb-6 font-normal">
+          <div className="bg-white border border-border rounded-lg p-7">
+            <h3 className="font-[Gloock,Georgia,serif] text-xl text-text m-0 mb-6 font-normal">
               Por categoría
             </h3>
             <div className="flex flex-col gap-4">
               {gastos.map((g) => (
                 <div key={g.item}>
-                  <div className="flex justify-between mb-1.5">
-                    <span className="text-[13px] text-text font-medium">{g.item}</span>
-                    <span className="text-[13px] font-bold text-text">{g.mensual}</span>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm text-text font-medium">{g.item}</span>
+                    <span className="text-sm font-bold text-text">{g.mensual}</span>
                   </div>
-                  <div className="bg-slate-100 rounded h-1.5">
-                    <div className={`h-full rounded ${g.color}`} style={{ width: `${g.pct}%` }} />
+                  <div className="bg-slate-100 rounded-sm h-1.5">
+                    <div
+                      className={`h-full rounded-sm ${g.color}`}
+                      style={{ width: `${g.pct}%` }}
+                    />
                   </div>
-                  <div className="text-[11px] text-slate-400 mt-[3px]">
+                  <div className="text-xs text-slate-400 mt-1">
                     {g.pct}% · Anual: {g.anual}
                   </div>
                 </div>
@@ -206,23 +206,23 @@ export default function Dashboard() {
         </div>
 
         {/* Detalle de gastos */}
-        <div className="bg-white border border-border rounded-2xl p-7">
+        <div className="bg-white border border-border rounded-lg p-7">
           <div className="flex justify-between items-center flex-wrap gap-4 mb-5">
-            <h3 className="font-[Gloock,Georgia,serif] text-[20px] text-text m-0 font-normal">
+            <h3 className="font-[Gloock,Georgia,serif] text-xl text-text m-0 font-normal">
               Detalle de gastos
             </h3>
-            <div className="flex gap-2.5 items-center flex-wrap">
+            <div className="flex gap-3 items-center flex-wrap">
               <select
                 aria-label="Filtrar por categoría"
                 value={activeCategoria}
                 onChange={(e) => setActiveCategoria(e.target.value)}
-                className="text-[13px] border border-border rounded-lg py-[7px] px-3 text-text bg-white outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-shadow"
+                className="text-sm border border-border rounded-md py-2 px-3 text-text bg-white outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-shadow"
               >
                 {categorias.map((c) => (
                   <option key={c}>{c}</option>
                 ))}
               </select>
-              <button className="flex items-center gap-1.5 text-[13px] font-semibold text-primary bg-transparent border border-primary rounded-lg py-[7px] px-[14px] cursor-pointer">
+              <button className="btn btn-secondary btn-sm">
                 <IconDownload className="w-[13px] h-[13px]" /> Exportar PDF
               </button>
             </div>
@@ -242,7 +242,7 @@ export default function Dashboard() {
                   ].map((h) => (
                     <th
                       key={h}
-                      className="text-left pr-3 pb-3 text-[11px] font-bold text-slate-400 tracking-wide whitespace-nowrap"
+                      className="text-left pr-3 pb-3 text-xs font-bold text-slate-400 tracking-wide whitespace-nowrap"
                     >
                       {h}
                     </th>
@@ -257,28 +257,24 @@ export default function Dashboard() {
                       i < filtered.length - 1 ? "border-b border-slate-100" : "border-none"
                     }
                   >
-                    <td className="py-[14px] pr-3 text-[13px] text-muted whitespace-nowrap">
-                      {r.fecha}
-                    </td>
-                    <td className="py-[14px] pr-3 text-[13px]">
-                      <span className="bg-teal-50 text-accent text-[11px] font-semibold py-[3px] px-2 rounded-md">
+                    <td className="py-4 pr-3 text-sm text-muted whitespace-nowrap">{r.fecha}</td>
+                    <td className="py-4 pr-3 text-sm">
+                      <span className="bg-teal-50 text-accent text-xs font-semibold py-1 px-2 rounded-sm">
                         {r.categoria}
                       </span>
                     </td>
-                    <td className="py-[14px] pr-3 text-[13px] text-text max-w-[220px]">
-                      {r.descripcion}
-                    </td>
-                    <td className="py-[14px] pr-3 text-[13px] text-muted whitespace-nowrap">
+                    <td className="py-4 pr-3 text-sm text-text max-w-[220px]">{r.descripcion}</td>
+                    <td className="py-4 pr-3 text-sm text-muted whitespace-nowrap">
                       {r.proveedor}
                     </td>
-                    <td className="py-[14px] pr-3 text-[13px] font-bold text-text whitespace-nowrap">
+                    <td className="py-4 pr-3 text-sm font-bold text-text whitespace-nowrap">
                       {r.monto}
                     </td>
-                    <td className="py-[14px] pr-3 text-[12px] text-primary font-mono whitespace-nowrap">
+                    <td className="py-4 pr-3 text-xs text-primary font-mono whitespace-nowrap">
                       {r.boleta}
                     </td>
-                    <td className="py-[14px]">
-                      <span className="text-[11px] font-semibold text-primary bg-teal-50 py-[3px] px-2 rounded-md">
+                    <td className="py-4">
+                      <span className="text-xs font-semibold text-primary bg-teal-50 py-1 px-2 rounded-sm">
                         {r.estado}
                       </span>
                     </td>
@@ -287,12 +283,10 @@ export default function Dashboard() {
               </tbody>
               <tfoot>
                 <tr className="border-t-2 border-border">
-                  <td colSpan={4} className="pt-[14px] pr-3 text-[13px] font-semibold text-muted">
+                  <td colSpan={4} className="pt-4 pr-3 text-sm font-semibold text-muted">
                     Total mostrado
                   </td>
-                  <td className="pt-[14px] pr-3 text-[15px] font-bold text-text">
-                    ${totalMostrado}
-                  </td>
+                  <td className="pt-4 pr-3 text-base font-bold text-text">${totalMostrado}</td>
                   <td colSpan={2} />
                 </tr>
               </tfoot>

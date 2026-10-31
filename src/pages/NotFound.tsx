@@ -19,24 +19,24 @@ export default function NotFound() {
       <div className="absolute inset-0 pointer-events-none opacity-[0.03] bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px]" />
 
       {/* Main Container */}
-      <div className="relative z-10 max-w-[1240px] mx-auto px-6 py-12 md:py-20 w-full flex-1 flex flex-col justify-center">
+      <div className="relative z-10 max-w-page mx-auto px-6 py-12 md:py-20 w-full flex-1 flex flex-col justify-center">
         {/* Top bar status */}
         <div className="flex items-center justify-between pb-6 mb-12 border-b border-white/10">
           <Link to="/" className="inline-flex items-center gap-3 no-underline text-white group">
-            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-[0_4px_14px_rgba(13,148,136,0.35)] transition-transform group-hover:scale-105">
+            <div className="w-9 h-9 rounded-md bg-primary flex items-center justify-center shadow-[0_4px_14px_rgba(13,148,136,0.35)] transition-transform group-hover:scale-105">
               <IconHome className="w-5 h-5 text-white" />
             </div>
             <div>
               <span className="font-display text-lg tracking-tight block leading-none">
                 Convivo
               </span>
-              <span className="text-[10px] uppercase font-semibold text-primary-on-dark tracking-wider">
+              <span className="text-xs uppercase font-semibold text-primary-on-dark tracking-wider">
                 Gestión Residencial
               </span>
             </div>
           </Link>
 
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-semibold uppercase tracking-wider">
             <span className="flex h-2 w-2 relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400" />
@@ -61,16 +61,16 @@ export default function NotFound() {
               </span>
             </h1>
 
-            <p className="text-[16px] sm:text-[17px] leading-[1.7] text-white/75 font-light max-w-[580px] m-0 mb-8">
+            <p className="text-base sm:text-lg leading-[1.7] text-white/75 font-light max-w-content m-0 mb-8">
               Revisamos la torre de departamentos, consultamos el libro de novedades en conserjería
               y verificamos los planos del condominio. Concluimos que esta dirección se quemó o
               nunca fue construida.
             </p>
 
             {/* Incident Specifications Card */}
-            <div className="w-full rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl p-5 mb-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="w-full rounded-lg bg-white/5 border border-white/10 backdrop-blur-xl p-5 mb-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-white/50 mb-1">
                   Código
                 </span>
                 <span className="font-mono text-xs font-semibold text-white">
@@ -78,7 +78,7 @@ export default function NotFound() {
                 </span>
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-white/50 mb-1">
                   Estado del Sector
                 </span>
                 <span className="text-xs font-semibold text-amber-300">
@@ -86,7 +86,7 @@ export default function NotFound() {
                 </span>
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-white/50 mb-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-white/50 mb-1">
                   Protocolo
                 </span>
                 <span className="text-xs font-semibold text-white/90">Evacuar a zona segura</span>
@@ -95,18 +95,14 @@ export default function NotFound() {
 
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-4 items-center mb-8 w-full sm:w-auto">
-              <Link
-                to="/"
-                viewTransition
-                className="inline-flex items-center justify-center gap-2.5 bg-primary text-white font-semibold text-[15px] py-4 px-7 rounded-xl no-underline shadow-[0_12px_28px_rgba(13,148,136,0.35)] transition-[background-color,transform,box-shadow] hover:bg-emerald-600 hover:-translate-y-[1px] hover:shadow-[0_16px_36px_rgba(13,148,136,0.45)]"
-              >
+              <Link to="/" viewTransition className="btn btn-primary btn-lg">
                 <span>Volver al inicio seguro</span>
                 <IconChevronRight className="w-4 h-4 text-white" />
               </Link>
               <Link
                 to="/login"
                 viewTransition
-                className="inline-flex items-center justify-center gap-2 bg-white/10 text-white font-semibold text-[15px] py-4 px-7 rounded-xl no-underline border border-white/20 backdrop-blur-md transition-colors hover:bg-white/20 hover:border-white/30"
+                className="btn btn-secondary bg-transparent text-white border-white/30 hover:bg-white/10 hover:border-white/60 btn-lg"
               >
                 <span>Iniciar sesión</span>
               </Link>
@@ -120,28 +116,28 @@ export default function NotFound() {
                   <Link
                     to="/mi-dashboard"
                     viewTransition
-                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                    className="px-3 py-1 rounded-sm bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
                   >
                     Mi panel
                   </Link>
                   <Link
                     to="/gastos"
                     viewTransition
-                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                    className="px-3 py-1 rounded-sm bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
                   >
                     Gastos comunes
                   </Link>
                   <Link
                     to="/espacios"
                     viewTransition
-                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                    className="px-3 py-1 rounded-sm bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
                   >
                     Espacios comunes
                   </Link>
                   <Link
                     to="/tablon"
                     viewTransition
-                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                    className="px-3 py-1 rounded-sm bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
                   >
                     Tablón de avisos
                   </Link>
@@ -151,35 +147,35 @@ export default function NotFound() {
                   <Link
                     to="/"
                     viewTransition
-                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                    className="px-3 py-1 rounded-sm bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
                   >
                     Inicio
                   </Link>
                   <Link
                     to="/precios"
                     viewTransition
-                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                    className="px-3 py-1 rounded-sm bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
                   >
                     Planes
                   </Link>
                   <Link
                     to="/privacidad"
                     viewTransition
-                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                    className="px-3 py-1 rounded-sm bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
                   >
                     Privacidad
                   </Link>
                   <Link
                     to="/terminos"
                     viewTransition
-                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                    className="px-3 py-1 rounded-sm bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
                   >
                     Términos
                   </Link>
                   <Link
                     to="/crear-cuenta"
                     viewTransition
-                    className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
+                    className="px-3 py-1 rounded-sm bg-white/5 border border-white/10 text-primary-on-dark no-underline transition-colors hover:bg-white/10 hover:text-white"
                   >
                     Crear cuenta
                   </Link>
@@ -191,21 +187,21 @@ export default function NotFound() {
           {/* Right Column: Architectural Frame with This Is Fine GIF */}
           <div className="relative">
             {/* Ambient flame glow behind the card */}
-            <div className="absolute -inset-4 bg-gradient-to-tr from-amber-500/25 to-primary/20 blur-2xl rounded-3xl pointer-events-none" />
+            <div className="absolute -inset-4 bg-gradient-to-tr from-amber-500/25 to-primary/20 blur-2xl rounded-lg pointer-events-none" />
 
-            <div className="relative rounded-2xl bg-[#121e1b]/90 border border-amber-500/35 p-5 sm:p-6 shadow-[0_24px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl text-white">
+            <div className="relative rounded-lg bg-[#121e1b]/90 border border-amber-500/35 p-5 sm:p-6 shadow-[0_24px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl text-white">
               <div className="flex items-center justify-between pb-3 mb-4 border-b border-white/10 text-xs">
                 <span className="font-mono font-bold tracking-wider text-amber-300 uppercase">
                   FIG. 404 · ESTADO ACTUAL
                 </span>
-                <span className="text-[11px] text-white/60 flex items-center gap-1.5">
+                <span className="text-xs text-white/60 flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
                   CÁMARA CONSERJERÍA 24/7
                 </span>
               </div>
 
               {/* GIF Container */}
-              <div className="relative rounded-xl overflow-hidden border border-white/15 bg-black/40 aspect-[16/10] shadow-inner group">
+              <div className="relative rounded-md overflow-hidden border border-white/15 bg-black/40 aspect-[16/10] shadow-inner group">
                 <img
                   src={gifSrc}
                   alt="Conserjería confirmando que todo está bajo control frente al fuego"
@@ -226,7 +222,7 @@ export default function NotFound() {
       </div>
 
       {/* Footer */}
-      <footer className="relative z-10 max-w-[1240px] mx-auto px-6 py-6 w-full border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/50">
+      <footer className="relative z-10 max-w-page mx-auto px-6 py-6 w-full border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/50">
         <div className="flex items-center gap-2">
           <IconShield className="w-3.5 h-3.5 text-primary-on-dark" />
           <span>Cumplimiento Ley 21.442 de Copropiedad Inmobiliaria</span>

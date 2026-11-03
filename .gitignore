@@ -53,3 +53,6 @@ graphify-out/
 
 # Superpowers execution artifacts
 .superpowers/
+
+# Memoria local de projectmem (por persona, no se versiona)
+.projectmem/

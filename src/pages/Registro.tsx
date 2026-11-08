@@ -1,42 +1,6 @@
-import { useState } from "react";
 import { Link } from "react-router";
-import { registroFotos } from "../data";
 import { FlipCard } from "../components/FlipCard";
-import {
-  IconCamera,
-  IconEye,
-  IconDownload,
-  IconCheck,
-  IconDollar,
-  IconCalendar,
-  IconUsers,
-} from "../components/icons/Icons";
-
-const categorias = [
-  "Todos",
-  "Jardinería",
-  "Pintura",
-  "Mantención eléctrica",
-  "Limpieza de fachada",
-];
-
-interface RegistroItem {
-  id: string;
-  titulo: string;
-  categoria: string;
-  fecha: string;
-  responsable: string;
-  monto: string;
-  estado: string;
-  boleta: string;
-  antes: string;
-  despues: string;
-}
-
-interface RegistroCardProps {
-  registro: RegistroItem;
-  onOpen: () => void;
-}
+import { IconCamera, IconDollar, IconCalendar, IconUsers } from "../components/icons/Icons";
 
 interface FlipCardData {
   title: string;
@@ -89,74 +53,7 @@ const altSections: AltSection[] = [
   },
 ];
 
-function RegistroCard({ registro, onOpen }: RegistroCardProps) {
-  const [showBefore, setShowBefore] = useState(true);
-
-  return (
-    <div className="group rounded-lg overflow-hidden border border-slate-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.09)] hover:-translate-y-[3px] transition-[shadow,transform] duration-250 ease-out">
-      <div className="relative h-[200px] bg-slate-200 overflow-hidden">
-        <img
-          src={showBefore ? registro.antes : registro.despues}
-          alt={showBefore ? "Antes" : "Después"}
-          className="w-full h-full object-cover transition-opacity duration-300"
-          loading="lazy"
-          decoding="async"
-        />
-        <div className="absolute top-3 left-3 flex gap-1">
-          {["Antes", "Después"].map((label, i) => {
-            const isActive = (showBefore && i === 0) || (!showBefore && i === 1);
-            return (
-              <button
-                key={label}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowBefore(i === 0);
-                }}
-                className={`px-3 py-1 rounded-full text-xs font-semibold cursor-pointer border-none transition-colors duration-150 text-text ${
-                  isActive ? "bg-white" : "bg-white/50"
-                }`}
-              >
-                {label}
-              </button>
-            );
-          })}
-        </div>
-        <div className="absolute top-3 right-3 bg-black/60 text-white text-xs font-medium px-3 py-1 rounded-full">
-          {registro.categoria}
-        </div>
-      </div>
-
-      <div className="pt-5 px-5 pb-5">
-        <div className="flex justify-between mb-2">
-          <span className="text-xs text-slate-400">{registro.fecha}</span>
-          <span className="text-xs text-slate-400">{registro.id}</span>
-        </div>
-        <h3 className="font-display text-base text-text m-0 mb-2 font-normal leading-snug">
-          {registro.titulo}
-        </h3>
-        <div className="text-sm text-slate-500 mb-1">{registro.responsable}</div>
-        <div className="text-sm font-bold text-text mb-4">{registro.monto}</div>
-
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2 text-xs text-teal-600 font-medium">
-            <IconCheck className="w-[12px] h-[12px]" /> {registro.boleta}
-          </div>
-          <button onClick={onOpen} className="btn btn-secondary btn-sm">
-            <IconEye className="w-[14px] h-[14px]" /> Ver detalle
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function Registro() {
-  const [activeCat, setActiveCat] = useState("Todos");
-  const [selected, setSelected] = useState<RegistroItem | null>(null);
-  const [showBefore, setShowBefore] = useState(true);
-
-  const filtered = registroFotos.filter((r) => activeCat === "Todos" || r.categoria === activeCat);
-
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Dark hero header */}
@@ -188,63 +85,9 @@ export default function Registro() {
 
       {/* Main registro content */}
       <div className="max-w-page mx-auto p-[40px_24px_80px]">
-        {/* Stats */}
-        <div className="flex flex-wrap gap-4 mb-7">
-          {[
-            {
-              val: registroFotos.length,
-              label: "Trabajos registrados",
-              colorClass: "text-primary",
-            },
-            {
-              val: registroFotos.filter((r) => r.estado === "Completado").length,
-              label: "Completados",
-              colorClass: "text-accent",
-            },
-            { val: "100%", label: "Con boleta adjunta", colorClass: "text-teal-500" },
-          ].map((s) => (
-            <div
-              key={s.label}
-              className="bg-white border border-slate-200 rounded-md px-5 py-4 flex items-center gap-3"
-            >
-              <span className={`font-display text-[28px] ${s.colorClass}`}>{s.val}</span>
-              <span className="text-sm text-slate-500 max-w-[100px] leading-snug">{s.label}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Filter */}
-        <div className="flex flex-wrap gap-2 mb-7">
-          {categorias.map((c) => {
-            const isActive = activeCat === c;
-            return (
-              <button
-                key={c}
-                onClick={() => setActiveCat(c)}
-                className={`px-4 py-2 rounded-full text-sm font-medium cursor-pointer border transition-colors duration-150 ${
-                  isActive
-                    ? "border-teal-600 bg-teal-600 text-white"
-                    : "border-slate-200 bg-white text-slate-500"
-                }`}
-              >
-                {c}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Cards */}
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-6">
-          {filtered.map((r) => (
-            <RegistroCard
-              key={r.id}
-              registro={r}
-              onOpen={() => {
-                setSelected(r);
-                setShowBefore(true);
-              }}
-            />
-          ))}
+        <div className="text-center py-16 text-slate-500">
+          <p className="text-lg font-semibold">Sin trabajos registrados</p>
+          <p className="text-sm mt-1">El registro fotográfico aún no está disponible.</p>
         </div>
       </div>
 
@@ -335,91 +178,6 @@ export default function Registro() {
           </Link>
         </div>
       </div>
-
-      {/* Detail modal */}
-      {selected && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-5">
-          <button
-            type="button"
-            aria-label="Cerrar"
-            onClick={() => setSelected(null)}
-            className="absolute inset-0 bg-text/65 border-none p-0 cursor-default"
-          />
-          <div className="relative bg-white rounded-lg w-full max-w-content max-h-[90vh] overflow-y-auto shadow-[0_32px_80px_rgba(0,0,0,0.25)]">
-            <div className="relative h-[320px] bg-slate-200 overflow-hidden rounded-t-lg">
-              <img
-                src={showBefore ? selected.antes : selected.despues}
-                alt={showBefore ? "Antes" : "Después"}
-                className="w-full h-full object-cover transition-opacity duration-300"
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                {["Antes", "Después"].map((label, i) => {
-                  const isActive = (showBefore && i === 0) || (!showBefore && i === 1);
-                  return (
-                    <button
-                      key={label}
-                      onClick={() => setShowBefore(i === 0)}
-                      className={`px-5 py-2 rounded-full text-sm font-semibold cursor-pointer border-none transition-colors duration-200 ${
-                        isActive ? "bg-white text-text" : "bg-white/40 text-white"
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  );
-                })}
-              </div>
-              <button
-                onClick={() => setSelected(null)}
-                aria-label="Cerrar"
-                className="absolute top-4 right-4 bg-black/50 border-none rounded-full w-9 h-9 flex items-center justify-center cursor-pointer text-white"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="px-7 pt-7 pb-8">
-              <div className="flex justify-between items-start gap-3 mb-4">
-                <div>
-                  <span className="text-xs font-bold text-accent bg-teal-100 px-3 py-1 rounded-sm inline-block mb-2">
-                    {selected.categoria}
-                  </span>
-                  <h2 className="font-display text-[22px] text-text m-0 font-normal leading-tight">
-                    {selected.titulo}
-                  </h2>
-                </div>
-                <span className="text-xs text-slate-400 whitespace-nowrap mt-1">{selected.id}</span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 mb-5">
-                {[
-                  { label: "Fecha", val: selected.fecha },
-                  { label: "Responsable", val: selected.responsable },
-                  { label: "Monto", val: selected.monto },
-                  { label: "Estado", val: selected.estado },
-                ].map((f) => (
-                  <div key={f.label}>
-                    <div className="text-xs font-semibold text-slate-400 tracking-wide mb-1">
-                      {f.label}
-                    </div>
-                    <div className="text-sm font-semibold text-text">{f.val}</div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex items-center justify-between bg-teal-50 rounded-md px-4 py-4">
-                <div className="flex items-center gap-2 text-sm text-accent font-semibold">
-                  <IconCheck className="w-[16px] h-[16px]" /> Boleta adjunta: {selected.boleta}
-                </div>
-                <button className="btn btn-tertiary btn-sm">
-                  <IconDownload className="w-[14px] h-[14px]" /> Descargar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

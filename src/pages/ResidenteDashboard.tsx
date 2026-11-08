@@ -6,20 +6,14 @@ import { obtenerSolicitudPropia } from "../services/condominiosApi";
 import { listarEspacios } from "../services/espaciosApi";
 import { obtenerResumenGastos } from "../services/gastosApi";
 import { CHART_COLORS } from "../components/charts/chartColors";
-import { QRModal } from "../components/visitas/QRModal";
-import type { Visita } from "../components/visitas/types";
 import {
   IconCalendar,
   IconDollar,
-  IconMail,
-  IconCheck,
   IconChevronRight,
   IconMessage,
   IconTrendingUp,
   IconPhone,
   IconUsers,
-  IconAlertTriangle,
-  IconBell,
 } from "../components/icons/Icons";
 
 const SparkAreaChart = lazy(() => import("../components/charts/SparkAreaChart"));
@@ -46,14 +40,6 @@ interface KpiCardData {
   sparkColor?: string;
 }
 
-interface NoticeCard {
-  id: number;
-  title: string;
-  date: string;
-  category: "Aviso" | "Comité" | "Comunidad" | "Urgente";
-  excerpt: string;
-}
-
 interface QuickAccessItem {
   label: string;
   category: string;
@@ -61,119 +47,29 @@ interface QuickAccessItem {
   to: string;
 }
 
-interface ActivityItem {
-  id: number;
-  icon: React.ReactNode;
-  description: string;
-  timestamp: string;
-  iconBg: string;
-  iconColor: string;
-}
-
 // ── Fallback Static Data ──────────────────────────────────────────────────────
 
+// Estado inicial sin datos: los valores reales llegan de panelApi y gastosApi.
 const DEFAULT_KPIS: KpiCardData[] = [
   {
     id: "proxima-reserva",
     icon: <IconCalendar className="w-5 h-5 text-primary" />,
     title: "Próxima Reserva",
-    value: "Quincho Los Aromos",
-    subtitle: "Sáb 23 ago, 18:00 hrs",
-    badge: { label: "Confirmada", variant: "green" },
+    value: "Sin reservas",
+    subtitle: "No tienes reservas próximas",
+    badge: { label: "Sin datos", variant: "blue" },
     actionUrl: "/reservas",
-    actionText: "Ver reserva",
-    spark: [{ v: 1 }, { v: 2 }, { v: 1 }, { v: 3 }, { v: 2 }, { v: 4 }, { v: 3 }, { v: 5 }],
-    sparkColor: CHART_COLORS.primary,
+    actionText: "Ver reservas",
   },
   {
     id: "gastos-pendientes",
     icon: <IconDollar className="w-5 h-5 text-accent" />,
     title: "Gastos Comunes",
-    value: "$65.000 CLP",
-    subtitle: "Vence en 5 días",
-    badge: { label: "Pendiente", variant: "yellow" },
+    value: "Sin información",
+    subtitle: "Aún no hay gastos cargados",
+    badge: { label: "Sin datos", variant: "blue" },
     actionUrl: "/gastos",
-    actionText: "Pagar en línea",
-    spark: [{ v: 3 }, { v: 4 }, { v: 3 }, { v: 5 }, { v: 4 }, { v: 6 }, { v: 5 }, { v: 7 }],
-    sparkColor: CHART_COLORS.accent,
-  },
-  {
-    id: "incidentes-abiertos",
-    icon: <IconAlertTriangle className="w-5 h-5 text-amber-600" />,
-    title: "Incidentes Activos",
-    value: "1 reporte",
-    subtitle: "Filtración en plomería",
-    badge: { label: "En revisión", variant: "yellow" },
-    actionUrl: "/incidentes",
-    actionText: "Ver seguimiento",
-    spark: [{ v: 0 }, { v: 1 }, { v: 0 }, { v: 1 }, { v: 2 }, { v: 1 }, { v: 1 }, { v: 1 }],
-    sparkColor: CHART_COLORS.alertYellow,
-  },
-  {
-    id: "correspondencia",
-    icon: <IconMail className="w-5 h-5 text-blue-600" />,
-    title: "Correspondencia",
-    value: "2 paquetes",
-    subtitle: "En conserjería central",
-    badge: { label: "Por retirar", variant: "blue" },
-    actionUrl: "/canales",
-    actionText: "Ver anexo",
-    spark: [{ v: 1 }, { v: 0 }, { v: 2 }, { v: 1 }, { v: 3 }, { v: 2 }, { v: 2 }, { v: 2 }],
-    sparkColor: CHART_COLORS.primary,
-  },
-];
-
-const NOTICES: NoticeCard[] = [
-  {
-    id: 1,
-    title: "Corte de agua programado — Mantención preventiva de bombas",
-    date: "18 ago 2026",
-    category: "Aviso",
-    excerpt:
-      "Se informa a los residentes de Torre A y B que el jueves 21 de agosto se realizará mantención general del sistema de bombas entre las 09:00 y las 14:00 hrs.",
-  },
-  {
-    id: 2,
-    title: "Votación de seguridad: Ampliación del circuito cerrado de cámaras",
-    date: "15 ago 2026",
-    category: "Comité",
-    excerpt:
-      "Con un 78% de quórum favorable, la asamblea aprobó la instalación de 8 cámaras adicionales de alta definición en accesos vehiculares y estacionamientos.",
-  },
-  {
-    id: 3,
-    title: "Torneo de Tenis y Pádel Primavera 2026 — Inscripciones abiertas",
-    date: "12 ago 2026",
-    category: "Comunidad",
-    excerpt:
-      "Ya se encuentran abiertas las inscripciones para el campeonato interno del condominio. Plazas limitadas por categoría; confirma tu participación antes del 25 de agosto.",
-  },
-];
-
-const VISITAS_DEMO: Visita[] = [
-  {
-    id: "vis-1",
-    nombre: "Carlos Fuentes",
-    documento: "18.452.123-K",
-    fecha: "2026-08-22",
-    fechaDisplay: "Vie 22 ago",
-    hora: "15:30",
-    motivo: "Reunión de trabajo",
-    estado: "confirmada",
-    codigo: "VIS-8492-CF",
-    unidad: "Torre A · Depto 402B",
-  },
-  {
-    id: "vis-2",
-    nombre: "Delivery Falabella",
-    documento: "Empresa de Despacho",
-    fecha: "2026-08-23",
-    fechaDisplay: "Sáb 23 ago",
-    hora: "10:00–14:00",
-    motivo: "Entrega de encomienda",
-    estado: "pendiente_qr",
-    codigo: "DEL-3104-FB",
-    unidad: "Torre A · Depto 402B",
+    actionText: "Ver gastos",
   },
 ];
 
@@ -186,7 +82,7 @@ const QUICK_LINKS: QuickAccessItem[] = [
   },
   {
     label: "Gastos & Finanzas",
-    category: "WebPay y boletas",
+    category: "Desglose e historial",
     icon: <IconDollar className="w-5 h-5" />,
     to: "/gastos",
   },
@@ -204,50 +100,15 @@ const QUICK_LINKS: QuickAccessItem[] = [
   },
   {
     label: "Conserjería",
-    category: "Anexo e intercom",
+    category: "Contactos de emergencia",
     icon: <IconPhone className="w-5 h-5" />,
     to: "/canales",
   },
   {
     label: "Control de Acceso",
-    category: "Pases QR de visitas",
+    category: "Visitas",
     icon: <IconUsers className="w-5 h-5" />,
     to: "/visitas",
-  },
-];
-
-const RECENT_ACTIVITY: ActivityItem[] = [
-  {
-    id: 1,
-    icon: <IconCheck className="w-4 h-4" />,
-    description: "Reserva confirmada — Quincho Los Aromos para Sáb 23 ago",
-    timestamp: "Hace 2 horas",
-    iconBg: "bg-emerald-100",
-    iconColor: "text-emerald-700",
-  },
-  {
-    id: 2,
-    icon: <IconDollar className="w-4 h-4" />,
-    description: "Gasto común de junio pagado mediante WebPay — $58.500 CLP",
-    timestamp: "Hace 3 días",
-    iconBg: "bg-teal-100",
-    iconColor: "text-accent",
-  },
-  {
-    id: 3,
-    icon: <IconBell className="w-4 h-4" />,
-    description: "Nuevo comunicado publicado: Resultados votación de cámaras",
-    timestamp: "Hace 4 días",
-    iconBg: "bg-amber-100",
-    iconColor: "text-amber-700",
-  },
-  {
-    id: 4,
-    icon: <IconUsers className="w-4 h-4" />,
-    description: "Pase QR emitido para Carlos Fuentes (Acceso Viernes)",
-    timestamp: "Hace 5 días",
-    iconBg: "bg-slate-100",
-    iconColor: "text-slate-700",
   },
 ];
 
@@ -362,116 +223,19 @@ function DashboardHeroHeader({ user }: { user: ReturnType<typeof useAuth>["user"
               className="btn btn-secondary bg-transparent text-white border-white/30 hover:bg-white/10 hover:border-white/60 btn-sm"
             >
               <IconDollar className="w-3.5 h-3.5 text-primary-on-dark" />
-              <span>Pagar gastos</span>
+              <span>Revisar gastos</span>
             </Link>
             <Link
               to="/visitas"
               className="btn btn-secondary bg-transparent text-white border-white/30 hover:bg-white/10 hover:border-white/60 btn-sm"
             >
               <IconUsers className="w-3.5 h-3.5 text-primary-on-dark" />
-              <span>Pase de visita</span>
+              <span>Visitas</span>
             </Link>
           </div>
         </div>
       </div>
     </div>
-  );
-}
-
-function NoticeTile({ notice }: { notice: NoticeCard }) {
-  const categoryStyles = {
-    Aviso: "bg-blue-50 text-blue-700 border-blue-200/60",
-    Comité: "bg-emerald-50 text-emerald-800 border-emerald-200/60",
-    Comunidad: "bg-purple-50 text-purple-700 border-purple-200/60",
-    Urgente: "bg-rose-50 text-rose-700 border-rose-200/60",
-  };
-
-  return (
-    <article className="flex flex-col gap-2 rounded-lg border border-stone-200/80 bg-white p-5 transition-[color,background-color,border-color,box-shadow] hover:shadow-[0_8px_24px_rgba(0,0,0,0.05)] hover:border-stone-300">
-      <div className="flex items-center justify-between">
-        <span
-          className={`rounded-full px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider border ${
-            categoryStyles[notice.category] ?? "bg-stone-50 text-stone-700 border-stone-200"
-          }`}
-        >
-          {notice.category}
-        </span>
-        <span className="font-mono text-xs text-muted">{notice.date}</span>
-      </div>
-      <h3 className="font-display text-base font-normal text-text m-0 leading-snug">
-        {notice.title}
-      </h3>
-      <p className="font-body text-xs leading-relaxed text-muted font-light m-0 line-clamp-2">
-        {notice.excerpt}
-      </p>
-    </article>
-  );
-}
-
-function VisitasPassesSection({
-  visits,
-  onVerQr,
-}: {
-  visits: Visita[];
-  onVerQr: (visita: Visita) => void;
-}) {
-  return (
-    <section>
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <h2 className="font-display text-xl font-normal text-text m-0">
-            Pases de Visita Próximos
-          </h2>
-          <p className="text-xs text-muted font-light mt-1">
-            Accesos temporales registrados en conserjería
-          </p>
-        </div>
-        <Link
-          to="/visitas"
-          className="font-body text-xs font-semibold text-primary hover:text-accent flex items-center gap-1"
-        >
-          <span>Gestionar pases</span>
-          <IconChevronRight className="w-3 h-3" />
-        </Link>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {visits.map((vis) => (
-          <div
-            key={vis.id}
-            className="flex flex-col justify-between rounded-lg border border-stone-200/80 bg-white p-4 shadow-[0_4px_16px_rgba(0,0,0,0.02)] transition-[color,background-color,border-color,box-shadow] hover:shadow-[0_10px_24px_rgba(0,0,0,0.05)]"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-mono text-xs text-muted tracking-wider uppercase">
-                  {vis.fechaDisplay}
-                </span>
-                <Badge
-                  label={vis.estado === "confirmada" ? "Confirmada" : "Pendiente QR"}
-                  variant={vis.estado === "confirmada" ? "green" : "yellow"}
-                />
-              </div>
-              <h3 className="font-display text-base font-normal text-text m-0">{vis.nombre}</h3>
-              <p className="font-body text-xs text-muted font-light mt-1">
-                {vis.hora} · {vis.motivo}
-              </p>
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between">
-              <span className="font-mono text-xs text-stone-400 font-semibold">{vis.codigo}</span>
-              <button
-                type="button"
-                onClick={() => onVerQr(vis)}
-                className="btn btn-secondary btn-sm"
-              >
-                <span>Ver QR</span>
-                <IconChevronRight className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
   );
 }
 
@@ -506,40 +270,6 @@ function QuickLinksDock({ links }: { links: QuickAccessItem[] }) {
   );
 }
 
-function RecentActivityFeed({ items }: { items: ActivityItem[] }) {
-  return (
-    <section>
-      <div className="mb-4">
-        <h2 className="font-display text-xl font-normal text-text m-0">Actividad Reciente</h2>
-        <p className="text-xs text-muted font-light mt-1">Historial cronológico de tu unidad</p>
-      </div>
-
-      <div className="rounded-lg border border-stone-200/80 bg-white p-5 shadow-[0_4px_16px_rgba(0,0,0,0.02)]">
-        <ul className="flex flex-col gap-4 list-none m-0 p-0">
-          {items.map((item, idx) => (
-            <li key={item.id} className="flex items-start gap-3 relative">
-              {idx < items.length - 1 && (
-                <div className="absolute top-7 left-3.5 bottom-0 w-[1px] bg-stone-200 -z-0" />
-              )}
-              <div
-                className={`w-7 h-7 shrink-0 rounded-full flex items-center justify-center relative z-10 ${item.iconBg} ${item.iconColor}`}
-              >
-                {item.icon}
-              </div>
-              <div className="flex flex-col gap-1">
-                <p className="font-body text-xs font-medium text-text leading-snug m-0">
-                  {item.description}
-                </p>
-                <p className="font-mono text-xs text-muted m-0">{item.timestamp}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
 // ── Main Page Component ───────────────────────────────────────────────────────
 
 export default function ResidenteDashboard() {
@@ -548,9 +278,7 @@ export default function ResidenteDashboard() {
     user?.condominioId && user?.unidad && user.unidad !== "Sin unidad asignada",
   );
   const [asignacionVerificada, setAsignacionVerificada] = useState(tieneAsignacionPrevia);
-  const [notifDismissed, setNotifDismissed] = useState(false);
   const [kpis, setKpis] = useState<KpiCardData[]>(DEFAULT_KPIS);
-  const [selectedVisita, setSelectedVisita] = useState<Visita | null>(null);
 
   useEffect(() => {
     let activo = true;
@@ -698,41 +426,6 @@ export default function ResidenteDashboard() {
       {/* ── Content Area ── */}
       <main className="px-6 py-10 md:px-10">
         <div className="mx-auto flex max-w-page flex-col gap-10">
-          {/* ── Notification Banner (Editorial Style) ── */}
-          {!notifDismissed && (
-            <div className="flex items-center justify-between rounded-lg border border-amber-200/90 bg-amber-50/90 px-5 py-4 shadow-sm text-text">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0 text-amber-700">
-                  <IconBell className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="font-semibold text-xs tracking-wider uppercase text-amber-900 block">
-                    Avisos del Comité
-                  </span>
-                  <span className="font-body text-xs text-amber-800 font-light">
-                    Tienes 3 comunicados nuevos pendientes de lectura en el tablón oficial.
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <Link
-                  to="/tablon"
-                  className="font-body text-xs font-bold text-amber-900 underline underline-offset-2 hover:no-underline"
-                >
-                  Ver todos
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setNotifDismissed(true)}
-                  aria-label="Cerrar aviso de notificaciones"
-                  className="flex h-6 w-6 items-center justify-center rounded-full text-amber-700 hover:bg-amber-200/60 transition-colors cursor-pointer"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-          )}
-
           {/* ── KPI Cards ── */}
           <section>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -744,7 +437,7 @@ export default function ResidenteDashboard() {
 
           {/* ── Main Content Grid (Asymmetric Editorial Spread) ── */}
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.25fr_1fr]">
-            {/* Left Column: Tablón Gazette + Guest Passes */}
+            {/* Left Column: Tablón Gazette */}
             <div className="flex flex-col gap-10">
               {/* Tablón Notices */}
               <section>
@@ -766,24 +459,13 @@ export default function ResidenteDashboard() {
                   </Link>
                 </div>
 
-                <div className="flex flex-col gap-4">
-                  {NOTICES.map((n) => (
-                    <NoticeTile key={n.id} notice={n} />
-                  ))}
-                </div>
+                <p className="text-sm text-muted">Sin comunicados publicados.</p>
               </section>
-
-              {/* Visitas & QR Passes */}
-              <VisitasPassesSection
-                visits={VISITAS_DEMO}
-                onVerQr={(visita) => setSelectedVisita(visita)}
-              />
             </div>
 
-            {/* Right Column: Quick Access Dock + Recent Activity */}
+            {/* Right Column: Quick Access Dock */}
             <div className="flex flex-col gap-10">
               <QuickLinksDock links={QUICK_LINKS} />
-              <RecentActivityFeed items={RECENT_ACTIVITY} />
             </div>
           </div>
 
@@ -796,9 +478,6 @@ export default function ResidenteDashboard() {
               <h3 className="font-display text-lg font-normal text-text m-0 mt-1">
                 ¿Necesitas reportar una urgencia o consultar una encomienda?
               </h3>
-              <p className="font-body text-xs text-muted font-light m-0 mt-1">
-                La caseta de conserjería se encuentra conectada en el intercomunicador anexo 100.
-              </p>
             </div>
             <div className="flex items-center gap-3 shrink-0">
               <Link to="/canales" className="btn btn-primary btn-sm bg-text text-white">
@@ -809,11 +488,6 @@ export default function ResidenteDashboard() {
           </div>
         </div>
       </main>
-
-      {/* ── Interactive QR Modal ── */}
-      {selectedVisita && (
-        <QRModal visita={selectedVisita} onClose={() => setSelectedVisita(null)} />
-      )}
     </div>
   );
 }

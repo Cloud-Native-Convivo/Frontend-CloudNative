@@ -1,75 +1,6 @@
-import { useState } from "react";
 import { Link } from "react-router";
-import { useAuth } from "../hooks/useAuth";
-import { IconPlus, IconBell, IconCalendar, IconMessage, IconHome } from "../components/icons/Icons";
+import { IconBell, IconCalendar, IconMessage, IconHome } from "../components/icons/Icons";
 import { FlipCard } from "../components/FlipCard";
-import { AvisosGrid, type AvisoItem } from "../components/tablon/AvisosGrid";
-import { NuevoAvisoModal } from "../components/tablon/NuevoAvisoModal";
-
-const tipos = ["Todos", "Aviso", "Urgente", "Asamblea", "Comunidad"];
-
-const avisos: AvisoItem[] = [
-  {
-    tipo: "Urgente",
-    badge: "critico",
-    fecha: "Hoy · 08:30",
-    titulo: "Corte de agua programado — Torres A y B",
-    desc: "Por trabajos de mantenimiento en matriz principal, se suspenderá el suministro de agua entre las 09:00 y las 14:00 hrs. Agradecemos tomar precauciones.",
-    autor: "Administración",
-    confirmacion: false,
-    confirmados: 0,
-  },
-  {
-    tipo: "Asamblea",
-    badge: "aviso",
-    fecha: "22 ago 2026",
-    titulo: "Asamblea Ordinaria de Copropietarios",
-    desc: "Se convoca a todos los copropietarios a la asamblea anual para revisión de gastos comunes y elección del nuevo comité de administración. Sala de Eventos, 19:00 hrs.",
-    autor: "Comité de Administración",
-    confirmacion: true,
-    confirmados: 47,
-  },
-  {
-    tipo: "Comunidad",
-    badge: "info",
-    fecha: "15 ago 2026",
-    titulo: "Campeonato de Padel — Inscripciones abiertas",
-    desc: "Este sábado 29 de agosto realizaremos el primer torneo de padel del condominio. Inscripciones en conserjería hasta el jueves. ¡Premios para el 1er y 2do lugar!",
-    autor: "Comité de Deportes",
-    confirmacion: true,
-    confirmados: 18,
-  },
-  {
-    tipo: "Comunidad",
-    badge: "actividad",
-    fecha: "18 ago 2026",
-    titulo: "Rifa Solidaria — Bazar Comunidad",
-    desc: "Organizada por vecinos del piso 4 en beneficio del fondo de mejoras del parque infantil. Premios donados por residentes. Boletos disponibles en conserjería.",
-    autor: "Vecinos Piso 4",
-    confirmacion: false,
-    confirmados: 0,
-  },
-  {
-    tipo: "Aviso",
-    badge: "residente",
-    fecha: "15 ago 2026",
-    titulo: "Renovación de jardines — Acceso principal",
-    desc: "Se iniciaron los trabajos de paisajismo en el acceso peatonal norte. El paso estará habilitado por el acceso vehicular poniente durante 3 días.",
-    autor: "Administración",
-    confirmacion: false,
-    confirmados: 0,
-  },
-  {
-    tipo: "Aviso",
-    badge: "residente",
-    fecha: "08 ago 2026",
-    titulo: "Mantenimiento preventivo de ascensores",
-    desc: "Los ascensores de Torre C estarán en revisión técnica el próximo martes entre las 10:00 y las 13:00 hrs. Un ascensor permanecerá operativo en todo momento.",
-    autor: "Otis Chile",
-    confirmacion: false,
-    confirmados: 0,
-  },
-];
 
 const flipCards = [
   {
@@ -109,16 +40,8 @@ const altSections = [
   },
 ];
 
+// Sin servicio de avisos en el backend: la cartelera muestra estado vacío real.
 export default function Tablon() {
-  const { role } = useAuth();
-  const canPublishDirect = role === "admin" || role === "comite";
-
-  const [activeTipo, setActiveTipo] = useState("Todos");
-  const [confirmados, setConfirmados] = useState<Record<number, boolean>>({});
-  const [showNew, setShowNew] = useState(false);
-
-  const filtered = avisos.filter((a) => activeTipo === "Todos" || a.tipo === activeTipo);
-
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="bg-text px-6 pb-16 pt-18">
@@ -145,47 +68,14 @@ export default function Tablon() {
               tiempo real.
             </p>
           </div>
-          <button
-            onClick={() => setShowNew(true)}
-            className="btn btn-secondary border-transparent text-accent whitespace-nowrap"
-          >
-            <IconPlus className="w-4 h-4" />
-            {canPublishDirect ? "Publicar aviso" : "Solicitar publicación"}
-          </button>
         </div>
       </div>
 
       <div className="max-w-page mx-auto px-6 pb-20 pt-10">
-        <div className="flex justify-between items-center flex-wrap gap-4 mb-8">
-          <div className="flex gap-2">
-            {tipos.map((t) => (
-              <button
-                key={t}
-                onClick={() => setActiveTipo(t)}
-                className={`px-4 py-2 rounded-full text-sm font-medium cursor-pointer border transition-colors duration-150 ${
-                  activeTipo === t
-                    ? "border-primary bg-primary text-white"
-                    : "border-border bg-white text-text-muted hover:border-primary"
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-          <div className="text-sm text-text-muted">{filtered.length} publicaciones</div>
+        <div className="text-center py-16 text-text-muted">
+          <p className="text-lg font-semibold">Sin avisos publicados</p>
+          <p className="text-sm mt-1">La publicación de avisos aún no está disponible.</p>
         </div>
-
-        <AvisosGrid
-          filteredAvisos={filtered}
-          allAvisos={avisos}
-          confirmados={confirmados}
-          onToggleConfirm={(idx) =>
-            setConfirmados((prev) => ({
-              ...prev,
-              [idx]: !prev[idx],
-            }))
-          }
-        />
       </div>
 
       <div className="bg-white px-6 py-20">
@@ -254,18 +144,8 @@ export default function Tablon() {
           <Link to="/tablon" className="btn btn-primary btn-lg">
             Ver los avisos
           </Link>
-          <button
-            onClick={() => setShowNew(true)}
-            className="btn btn-secondary bg-transparent text-white border-white/30 hover:bg-white/5 hover:border-white px-8"
-          >
-            {canPublishDirect ? "Publicar aviso" : "Solicitar publicación"}{" "}
-          </button>
         </div>
       </div>
-
-      {showNew && (
-        <NuevoAvisoModal canPublishDirect={canPublishDirect} onClose={() => setShowNew(false)} />
-      )}
     </div>
   );
 }

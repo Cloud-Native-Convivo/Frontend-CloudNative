@@ -20,7 +20,6 @@ const ROLE_BG: Record<Role, string> = {
 };
 
 interface NavHeaderProps {
-  ribbonH: number;
   navH: number;
   navLinks: {
     label: string;
@@ -101,7 +100,7 @@ function MobileMenuDropdown({
   );
 }
 
-export function NavHeader({ ribbonH, navH, navLinks, role, user, onLogout }: NavHeaderProps) {
+export function NavHeader({ navH, navLinks, role, user, onLogout }: NavHeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
@@ -126,7 +125,7 @@ export function NavHeader({ ribbonH, navH, navLinks, role, user, onLogout }: Nav
       className={`fixed inset-x-0 z-50 flex items-center backdrop-blur-[14px] border-b transition-[background-color,border-color] duration-300 ${
         solid ? "bg-white/97 border-border" : "bg-transparent border-transparent"
       }`}
-      style={{ top: ribbonH, height: navH }}
+      style={{ top: 0, height: navH }}
     >
       <div className="max-w-page mx-auto px-6 w-full flex items-center justify-between">
         {/* Logo */}

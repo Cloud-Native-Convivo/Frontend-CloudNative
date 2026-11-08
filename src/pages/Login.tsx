@@ -11,7 +11,6 @@ import {
 } from "../components/icons/Icons";
 import { useAuth } from "../hooks/useAuth";
 import { rutaPrincipalPorRol } from "../auth/sesion";
-import { iniciarSesionResidenteMock } from "../auth/mockAuth";
 import {
   buildGoogleAuthorizeUrl,
   checkCognitoReachability,
@@ -45,13 +44,12 @@ function validate(form: FormState): FieldError {
 
 export default function Login() {
   const navigate = useNavigate();
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const [form, setForm] = useState<FormState>({ email: "", password: "" });
   const [errors, setErrors] = useState<FieldError>({});
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [isConnectingGoogle, setIsConnectingGoogle] = useState(false);
-  const [isConnectingMock, setIsConnectingMock] = useState(false);
   const submitted = useRef(false);
   const [mounted, setMounted] = useState(false);
 
@@ -64,18 +62,6 @@ export default function Login() {
     const t = setTimeout(() => setMounted(true), 15);
     return () => clearTimeout(t);
   }, []);
-
-  async function handleMockLogin() {
-    setIsConnectingMock(true);
-    try {
-      const mockUser = await iniciarSesionResidenteMock();
-      setUser(mockUser);
-      navigate(rutaPrincipalPorRol(mockUser.role), { replace: true });
-    } catch (err) {
-      console.error("Error al iniciar sesión mock:", err);
-      setIsConnectingMock(false);
-    }
-  }
 
   async function handleGoogleLogin() {
     setIsConnectingGoogle(true);
@@ -422,36 +408,6 @@ export default function Login() {
               Ingresar
             </button>
           </form>
-
-          {/* Dev Mode Local Mock Login */}
-          {import.meta.env.DEV && (
-            <div className="mt-6 p-4 rounded-md bg-slate-900 border border-slate-800 text-left">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-teal-400 flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-teal-400" aria-hidden="true" />
-                  Entorno Local de Pruebas
-                </span>
-                <span className="text-xs text-slate-400 font-mono">DEV MODE</span>
-              </div>
-              <p className="text-xs text-slate-300 mb-3 leading-relaxed">
-                Inicia sesión al instante con un perfil simulado de residente activo para pruebas
-                locales.
-              </p>
-              <button
-                type="button"
-                onClick={handleMockLogin}
-                disabled={isConnectingMock}
-                className="btn btn-primary btn-sm w-full"
-              >
-                <span aria-hidden="true">⚡</span>
-                <span>
-                  {isConnectingMock
-                    ? "Iniciando sesión demo…"
-                    : "Ingresar como Residente Demo (Local)"}
-                </span>
-              </button>
-            </div>
-          )}
 
           {/* Legal disclaimer */}
           <p className="mt-6 text-center text-xs leading-relaxed text-slate-600">

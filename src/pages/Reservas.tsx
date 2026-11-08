@@ -38,16 +38,6 @@ interface CreateForm {
   duracion: number;
 }
 
-const ESPACIOS_FALLBACK: EspacioOpcion[] = [
-  { id: 1, nombre: "Quincho Los Aromos", tarifaHr: 25000, categoria: "Quincho" },
-  { id: 2, nombre: "Quincho Bajo", tarifaHr: 18000, categoria: "Quincho" },
-  { id: 3, nombre: "Piscina", tarifaHr: 0, categoria: "Piscina" },
-  { id: 4, nombre: "Sala Multiuso", tarifaHr: 8000, categoria: "Sala" },
-  { id: 5, nombre: "Sala de Juegos", tarifaHr: 5000, categoria: "Sala" },
-  { id: 6, nombre: "Gimnasio", tarifaHr: 0, categoria: "Gimnasio" },
-  { id: 7, nombre: "Cancha Multicancha", tarifaHr: 12000, categoria: "Cancha" },
-];
-
 const HORAS = [
   "08:00",
   "09:00",
@@ -66,74 +56,6 @@ const HORAS = [
   "22:00",
 ];
 const DURACIONES = [1, 2, 3, 4];
-
-const INITIAL_RESERVAS: Reserva[] = [
-  {
-    id: "R001",
-    espacio: "Quincho Los Aromos",
-    categoria: "Quincho",
-    imagen: "https://images.unsplash.com/photo-1622714384717-3f60c04d7c73?w=300&h=200&fit=crop",
-    fecha: "2026-08-23",
-    fechaDisplay: "Sáb 23 ago 2026",
-    hora: "18:00",
-    duracionHrs: 2,
-    precio: 25000,
-    estado: "confirmada",
-    codigo: "CONV-2026-R001",
-  },
-  {
-    id: "R002",
-    espacio: "Sala Multiuso",
-    categoria: "Sala",
-    imagen: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&h=200&fit=crop",
-    fecha: "2026-08-20",
-    fechaDisplay: "Mié 20 ago 2026",
-    hora: "10:00",
-    duracionHrs: 3,
-    precio: 8000,
-    estado: "pendiente",
-    codigo: "CONV-2026-R002",
-  },
-  {
-    id: "R003",
-    espacio: "Gimnasio",
-    categoria: "Gimnasio",
-    imagen: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=300&h=200&fit=crop",
-    fecha: "2026-08-15",
-    fechaDisplay: "Sáb 15 ago 2026",
-    hora: "08:00",
-    duracionHrs: 1,
-    precio: 0,
-    estado: "confirmada",
-    codigo: "CONV-2026-R003",
-  },
-  {
-    id: "R004",
-    espacio: "Piscina",
-    categoria: "Piscina",
-    imagen: "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=300&h=200&fit=crop",
-    fecha: "2026-08-10",
-    fechaDisplay: "Lun 10 ago 2026",
-    hora: "14:00",
-    duracionHrs: 2,
-    precio: 0,
-    estado: "cancelada",
-    codigo: "CONV-2026-R004",
-  },
-  {
-    id: "R005",
-    espacio: "Cancha Multicancha",
-    categoria: "Cancha",
-    imagen: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=300&h=200&fit=crop",
-    fecha: "2026-08-30",
-    fechaDisplay: "Dom 30 ago 2026",
-    hora: "16:00",
-    duracionHrs: 2,
-    precio: 12000,
-    estado: "pendiente",
-    codigo: "CONV-2026-R005",
-  },
-];
 
 function formatPrecio(precio: number): string {
   if (precio === 0) return "Gratis";
@@ -268,7 +190,7 @@ interface CreateModalProps {
 
 function CreateModal({ espacios, onClose, onConfirm }: CreateModalProps) {
   const today = new Date().toISOString().split("T")[0];
-  const defaultEspacio = espacios[0] ?? ESPACIOS_FALLBACK[0];
+  const defaultEspacio = espacios[0];
   const [form, setForm] = useState<CreateForm>({
     espacioId: defaultEspacio.id,
     fecha: today,
@@ -570,15 +492,14 @@ export default function Reservas() {
       .then(([espaciosData, reservasData]) => {
         if (!active) return;
 
-        const listaEspacios: EspacioOpcion[] =
-          Array.isArray(espaciosData) && espaciosData.length > 0
-            ? espaciosData.map((e) => ({
-                id: e.id,
-                nombre: e.nombre,
-                tarifaHr: e.tarifa_hora,
-                categoria: e.nombre.split(" ")[0],
-              }))
-            : ESPACIOS_FALLBACK;
+        const listaEspacios: EspacioOpcion[] = Array.isArray(espaciosData)
+          ? espaciosData.map((e) => ({
+              id: e.id,
+              nombre: e.nombre,
+              tarifaHr: e.tarifa_hora,
+              categoria: e.nombre.split(" ")[0],
+            }))
+          : [];
         setEspaciosDisponibles(listaEspacios);
 
         const map = new Map<number, EspacioOpcion>();
@@ -592,8 +513,8 @@ export default function Reservas() {
       })
       .catch(() => {
         if (active) {
-          setReservas(INITIAL_RESERVAS);
-          setEspaciosDisponibles(ESPACIOS_FALLBACK);
+          setReservas([]);
+          setEspaciosDisponibles([]);
         }
       })
       .finally(() => {
@@ -611,43 +532,28 @@ export default function Reservas() {
     : null;
 
   async function handleCreateConfirm(
-    data: Omit<Reserva, "id" | "codigo">,
+    _data: Omit<Reserva, "id" | "codigo">,
     payload?: { espacioId: number; fechaInicio: string; fechaFin: string },
   ) {
-    let newReserva: Reserva;
+    if (!payload) return;
 
-    if (payload) {
-      try {
-        const backendResult = await crearReserva({
-          espacio_id: payload.espacioId,
-          fecha_inicio: payload.fechaInicio,
-          fecha_fin: payload.fechaFin,
-        });
-        const map = new Map<number, EspacioOpcion>();
-        (espaciosDisponibles.length > 0 ? espaciosDisponibles : ESPACIOS_FALLBACK).forEach((e) =>
-          map.set(e.id, e),
-        );
-        newReserva = mapearBackendReserva(backendResult, map);
-        notify.success({ title: "Reserva creada exitosamente en el servidor" });
-      } catch (err) {
-        const newId = `R${String(reservas.length + 1).padStart(3, "0")}`;
-        newReserva = {
-          ...data,
-          id: newId,
-          codigo: `CONV-2026-${newId}`,
-        };
-        notify.warning({
-          title: "Reserva guardada localmente (modo offline)",
-          description: err instanceof Error ? err.message : undefined,
-        });
-      }
-    } else {
-      const newId = `R${String(reservas.length + 1).padStart(3, "0")}`;
-      newReserva = {
-        ...data,
-        id: newId,
-        codigo: `CONV-2026-${newId}`,
-      };
+    let newReserva: Reserva;
+    try {
+      const backendResult = await crearReserva({
+        espacio_id: payload.espacioId,
+        fecha_inicio: payload.fechaInicio,
+        fecha_fin: payload.fechaFin,
+      });
+      const map = new Map<number, EspacioOpcion>();
+      espaciosDisponibles.forEach((e) => map.set(e.id, e));
+      newReserva = mapearBackendReserva(backendResult, map);
+      notify.success({ title: "Reserva creada exitosamente en el servidor" });
+    } catch (err) {
+      notify.error({
+        title: "No se pudo crear la reserva",
+        description: err instanceof Error ? err.message : undefined,
+      });
+      return;
     }
 
     setReservas([newReserva, ...reservas]);
@@ -680,7 +586,11 @@ export default function Reservas() {
             </p>
           </div>
           {!isAdmin && (
-            <button onClick={() => setShowCreate(true)} className="btn btn-primary shrink-0">
+            <button
+              onClick={() => setShowCreate(true)}
+              disabled={espaciosDisponibles.length === 0}
+              className="btn btn-primary shrink-0"
+            >
               + Nueva reserva
             </button>
           )}
@@ -749,9 +659,9 @@ export default function Reservas() {
       </div>
 
       {/* Modals */}
-      {showCreate && (
+      {showCreate && espaciosDisponibles.length > 0 && (
         <CreateModal
-          espacios={espaciosDisponibles.length > 0 ? espaciosDisponibles : ESPACIOS_FALLBACK}
+          espacios={espaciosDisponibles}
           onClose={() => setShowCreate(false)}
           onConfirm={handleCreateConfirm}
         />

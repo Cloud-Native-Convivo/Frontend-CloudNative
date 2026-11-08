@@ -1,9 +1,7 @@
-import { IconDollar, IconCheck } from "../icons/Icons";
+import { IconCheck } from "../icons/Icons";
 
 interface SituacionResidenteCardProps {
   estado: "cargando" | "error" | "listo";
-  paid: boolean;
-  onPay: () => void;
   unidad?: string;
   monto?: number;
   vencimiento?: string | null;
@@ -11,13 +9,11 @@ interface SituacionResidenteCardProps {
 
 export function SituacionResidenteCard({
   estado,
-  paid,
-  onPay,
   unidad = "Mi unidad",
   monto = 0,
   vencimiento = null,
 }: SituacionResidenteCardProps) {
-  const isAlDia = paid || monto === 0;
+  const isAlDia = monto === 0;
 
   return (
     <div className="bg-white border border-slate-200 rounded-lg p-7 mb-7">
@@ -57,11 +53,6 @@ export function SituacionResidenteCard({
                 CLP {vencimiento ? `· Vence ${vencimiento}` : ""}
               </div>
             </div>
-            {!isAlDia && (
-              <button onClick={onPay} className="btn btn-primary">
-                <IconDollar className="w-[16px] h-[16px]" /> Pagar ahora
-              </button>
-            )}
             {isAlDia && (
               <div className="flex items-center gap-2 text-teal-600 font-semibold text-sm">
                 <IconCheck className="w-[18px] h-[18px]" /> Al día

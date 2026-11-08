@@ -16,7 +16,6 @@ describe("NavHeader role switcher removal", () => {
     render(
       <MemoryRouter>
         <NavHeader
-          ribbonH={0}
           navH={64}
           navLinks={[{ label: "Espacios", path: "/espacios", icon: <span>icon</span> }]}
           // eslint-disable-next-line jsx-a11y/aria-role -- prop del componente NavHeader, no atributo ARIA del DOM

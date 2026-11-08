@@ -1,11 +1,10 @@
 /* eslint-disable react/forbid-dom-props */
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router";
 import { IconHome, IconDollar, IconCalendar, IconTrendingUp } from "./icons/Icons";
 import { useAuth } from "../hooks/useAuth";
 import type { Role } from "../types";
 import { NavHeader } from "./layout/NavHeader";
-import { AnnouncementRibbon } from "./layout/AnnouncementRibbon";
 import { FloatingSidebar } from "./layout/FloatingSidebar";
 import { Footer } from "./layout/Footer";
 
@@ -99,14 +98,11 @@ const NAV_LINKS_BY_ROLE: Record<
 
 export default function Layout() {
   const { role, user, setUser } = useAuth();
-  const [ribbonVisible, setRibbonVisible] = useState(true);
   const location = useLocation();
   const isHome = location.pathname === "/";
 
   const navLinks = role ? NAV_LINKS_BY_ROLE[role] : [];
-  const RIBBON_H = ribbonVisible ? 32 : 0;
   const NAV_H = 64;
-  const TOP_OFFSET = RIBBON_H + NAV_H;
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -122,12 +118,8 @@ export default function Layout() {
         Saltar al contenido principal
       </a>
 
-      {/* Ribbon */}
-      {ribbonVisible && <AnnouncementRibbon onDismiss={() => setRibbonVisible(false)} />}
-
       {/* Nav */}
       <NavHeader
-        ribbonH={RIBBON_H}
         navH={NAV_H}
         navLinks={navLinks}
         role={role}
@@ -136,7 +128,7 @@ export default function Layout() {
       />
 
       {/* Page content */}
-      <main id="main-content" className="flex-1" style={{ paddingTop: isHome ? 0 : TOP_OFFSET }}>
+      <main id="main-content" className="flex-1" style={{ paddingTop: isHome ? 0 : NAV_H }}>
         <Outlet />
       </main>
 

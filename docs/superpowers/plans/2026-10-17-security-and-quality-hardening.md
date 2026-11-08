@@ -8,7 +8,7 @@
 
 **Tech Stack:** React 19, TypeScript 5.9, React Router 8, Vitest, Testing Library, Web Crypto API.
 
-**Spec:** [docs/superpowers/specs/2026-10-17-rol-jwt-condominio-onboarding-design.md](file:///C:/Users/river/Desktop/Codigo/Proyectos/cloud-native/Frontend-CloudNative/docs/superpowers/specs/2026-10-17-rol-jwt-condominio-onboarding-design.md)
+**Spec:** [../specs/2026-10-17-rol-jwt-condominio-onboarding-design.md](../specs/2026-10-17-rol-jwt-condominio-onboarding-design.md)
 
 ## Global Constraints
 

@@ -10,9 +10,6 @@
   .float-sidebar {
     display: none !important;
   }
-  .ribbon-dots {
-    display: none !important;
-  }
   .footer-grid {
     grid-template-columns: 1fr 1fr !important;
   }

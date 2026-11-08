@@ -49,7 +49,6 @@ src/
   auth/           # cognitoAuth (OAuth 2.0 PKCE con Google), storage auth
   components/     # Layout, FlipCard, RouteError, icons/Icons.tsx, subcomponentes por dominio
   context/        # authContext, AuthProvider (estado global de sesión)
-  data/           # Datasets mock (gastos, avisos, canales, registroFotos)
   hooks/          # useAuth (consumidor de AuthContext), AuthProvider (re-export)
   pages/          # Home, Login, AuthCallback, NotFound, RegistroCuenta, etc.
   redux/          # Placeholder para futura integración de store si aplica (YAGNI)
@@ -85,7 +84,7 @@ npm run typecheck
 npm run format
 ```
 
-Entorno local: en modo desarrollo, si no hay `VITE_BFF_URL` definida (clon nuevo, sin `.env`) el fallback de `src/api/client.ts` y de `src/services/*Api.ts` resuelve a `http://localhost:3000/api/v1` con `import.meta.env.DEV`; el build de producción sigue apuntando al API Gateway de AWS. Vite da prioridad a `.env.local` sobre `.env`, y ninguno de los dos se versiona: `.env` se copia de `.env.example` y por defecto apunta a AWS, así que para trabajar contra el ecosistema local crear `.env.local` con `VITE_BFF_URL=http://localhost:3000/api/v1` (mínimo; ver bloque local de `.env.example`), o usar `npm run dev:local`, que corre `check-local-env.mjs` antes de Vite y aborta con ese mismo recordatorio si falta `.env.local` o no define `VITE_BFF_URL`. El login demo local usa `VITE_JWKS_MOCK_URL` (`ms-jwks-mock` del compose, default `http://localhost:4000`) y solo aparece en dev (`Login.tsx`, gated por `import.meta.env.DEV`). El ecosistema local lo levanta `.\start-dev.ps1` desde la raíz del workspace (panel incluido, puerto 4200); acepta `--build` manual con `docker compose build <servicio>` si tocaste un Dockerfile.
+Entorno local: en modo desarrollo, si no hay `VITE_BFF_URL` definida (clon nuevo, sin `.env`) el fallback de `src/api/client.ts` y de `src/services/*Api.ts` resuelve a `http://localhost:3000/api/v1` con `import.meta.env.DEV`; el build de producción sigue apuntando al API Gateway de AWS. Vite da prioridad a `.env.local` sobre `.env`, y ninguno de los dos se versiona: `.env` se copia de `.env.example` y por defecto apunta a AWS, así que para trabajar contra el ecosistema local crear `.env.local` con `VITE_BFF_URL=http://localhost:3000/api/v1` (mínimo; ver bloque local de `.env.example`), o usar `npm run dev:local`, que corre `check-local-env.mjs` antes de Vite y aborta con ese mismo recordatorio si falta `.env.local` o no define `VITE_BFF_URL`. El login demo local (`mockAuth.ts`, `VITE_JWKS_MOCK_URL`) se eliminó: el login es siempre Cognito con Google. El ecosistema local lo levanta `.\start-dev.ps1` desde la raíz del workspace (panel incluido, puerto 4200); acepta `--build` manual con `docker compose build <servicio>` si tocaste un Dockerfile.
 
 ## 5. Estilo de código
 

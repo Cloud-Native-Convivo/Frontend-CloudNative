@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { describe, expect, it, vi } from "vitest";
 import { AuthContext } from "@/hooks/useAuth";
@@ -68,7 +68,7 @@ describe("ResidenteDashboard (Editorial Residencial)", () => {
     expect(screen.getByRole("heading", { level: 1, name: /Buenos días, Alejandra/i })).toBeInTheDocument();
     expect(screen.getByText(/Torre A · Depto 402B/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Reservar espacio/i })).toHaveAttribute("href", "/espacios");
-    expect(screen.getByRole("link", { name: /Pagar gastos/i })).toHaveAttribute("href", "/gastos");
+    expect(screen.getByRole("link", { name: /Revisar gastos/i })).toHaveAttribute("href", "/gastos");
   });
 
   it("renderiza las tarjetas de KPIs con sus valores y enlaces de micro-acción", async () => {
@@ -76,45 +76,32 @@ describe("ResidenteDashboard (Editorial Residencial)", () => {
     await screen.findByText(/Próxima Reserva/i);
 
     expect(screen.getByText(/Próxima Reserva/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/Quincho Los Aromos/i).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByRole("link", { name: /Ver reserva/i })).toHaveAttribute("href", "/reservas");
+    expect(screen.getByText(/Sin reservas/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Ver reservas/i })).toHaveAttribute("href", "/reservas");
 
     expect(screen.getAllByText(/Gastos Comunes/i).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText(/\$65\.000 CLP/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Pagar en línea/i })).toHaveAttribute("href", "/gastos");
+    expect(screen.getByText(/Sin información/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Ver gastos/i })).toHaveAttribute("href", "/gastos");
   });
 
-  it("permite abrir y cerrar el modal interactivo de código QR de visita", async () => {
+  it("no muestra datos ficticios en el panel", async () => {
     renderResidenteDashboard();
-    await screen.findByRole("heading", { level: 3, name: "Carlos Fuentes" });
+    await screen.findByText(/Próxima Reserva/i);
 
-    // Verify visit pass card exists via heading
-    expect(screen.getByRole("heading", { level: 3, name: "Carlos Fuentes" })).toBeInTheDocument();
-
-    // Click on "Ver QR" for Carlos Fuentes
-    const verQrBtns = screen.getAllByRole("button", { name: /Ver QR/i });
-    expect(verQrBtns.length).toBeGreaterThanOrEqual(1);
-    fireEvent.click(verQrBtns[0]);
-
-    // Modal should be open
-    expect(screen.getByRole("heading", { level: 2, name: /Código de acceso/i })).toBeInTheDocument();
-    expect(screen.getAllByText(/VIS-8492-CF/i).length).toBeGreaterThanOrEqual(2);
-
-    // Close modal
-    const closeBtn = screen.getByRole("button", { name: "Cerrar" });
-    fireEvent.click(closeBtn);
-
-    // Modal should be closed
-    expect(screen.queryByRole("heading", { level: 2, name: /Código de acceso/i })).not.toBeInTheDocument();
+    expect(screen.queryByText(/Quincho Los Aromos/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/\$65\.000/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Carlos Fuentes/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Corte de agua programado/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Incidentes Activos/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Correspondencia/i)).not.toBeInTheDocument();
   });
 
-  it("renderiza el dock de accesos directos y gaceta de comunicados", async () => {
+  it("renderiza el dock de accesos directos y la gaceta vacía", async () => {
     renderResidenteDashboard();
     await screen.findByRole("heading", { level: 2, name: /Gaceta & Comunicados/i });
 
-    expect(screen.getByRole("heading", { level: 2, name: /Gaceta & Comunicados/i })).toBeInTheDocument();
-    expect(screen.getByText(/Corte de agua programado/i)).toBeInTheDocument();
+    expect(screen.getByText(/Sin comunicados publicados/i)).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 2, name: /Accesos Directos/i })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 2, name: /Actividad Reciente/i })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { level: 2, name: /Actividad Reciente/i })).not.toBeInTheDocument();
   });
 });

@@ -2,34 +2,21 @@ import type { Role } from "../../types";
 
 interface VisitasHeaderProps {
   role: Role | null;
-  showingResidente: boolean;
-  onOpenPreRegistro: () => void;
 }
 
-export function VisitasHeader({ role, showingResidente, onOpenPreRegistro }: VisitasHeaderProps) {
+export function VisitasHeader({ role }: VisitasHeaderProps) {
   const subtitle =
     role === "residente"
-      ? "Pre-registra y gestiona las visitas a tu unidad"
+      ? "Visitas a tu unidad"
       : role === "conserje"
-        ? "Valida accesos y registra entradas y salidas"
-        : "Gestión completa de visitas del condominio";
+        ? "Accesos y visitas del condominio"
+        : "Visitas del condominio";
 
   return (
     <header className="bg-text px-4 pt-8 pb-6">
-      <div className="max-w-content mx-auto flex items-start justify-between gap-4">
-        <div>
-          <h1 className="font-display text-4xl text-white">Visitas</h1>
-          <p className="text-white/60 mt-1 text-sm">{subtitle}</p>
-        </div>
-        {showingResidente && role !== "conserje" && (
-          <button
-            onClick={onOpenPreRegistro}
-            className="btn btn-primary whitespace-nowrap mt-1"
-            data-cuelume-press="tick"
-          >
-            + Registrar visita
-          </button>
-        )}
+      <div className="max-w-content mx-auto">
+        <h1 className="font-display text-4xl text-white">Visitas</h1>
+        <p className="text-white/60 mt-1 text-sm">{subtitle}</p>
       </div>
     </header>
   );

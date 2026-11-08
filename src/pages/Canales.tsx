@@ -1,37 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
-import { channels } from "../data";
 import { FlipCard } from "../components/FlipCard";
-import {
-  IconPhone,
-  IconMail,
-  IconShield,
-  IconAlertTriangle,
-  IconBell,
-  IconHome,
-  IconDollar,
-  IconUsers,
-} from "../components/icons/Icons";
-
-const urgenciaBadge: Record<
-  string,
-  {
-    label: string;
-    className: string;
-  }
-> = {
-  alta: { label: "Prioridad alta", className: "text-alert-yellow bg-yellow-50" },
-  media: { label: "Prioridad media", className: "text-primary bg-teal-50" },
-  critica: { label: "Emergencia", className: "text-alert-red bg-rose-50" },
-};
-
-const iconMap: Record<string, React.ReactNode> = {
-  Conserjería: <IconBell className="w-[22px] h-[22px]" />,
-  "Comité de administración": <IconHome className="w-[22px] h-[22px]" />,
-  Administración: <IconDollar className="w-[22px] h-[22px]" />,
-  "Seguridad del sector": <IconShield className="w-[22px] h-[22px]" />,
-  Emergencias: <IconAlertTriangle className="w-[22px] h-[22px]" />,
-};
+import { IconShield, IconAlertTriangle, IconBell, IconUsers } from "../components/icons/Icons";
 
 interface FlipCardData {
   title: string;
@@ -42,7 +12,7 @@ interface FlipCardData {
 const flipCards: FlipCardData[] = [
   {
     title: "Conserjería 24/7",
-    desc: "Llama directamente desde la plataforma — interno 100.",
+    desc: "Contacto directo con la conserjería desde la plataforma.",
     icon: <IconBell className="w-[28px] h-[28px] text-primary" />,
   },
   {
@@ -145,98 +115,10 @@ export default function Canales() {
           </div>
         </div>
 
-        {/* Channel cards */}
-        <div className="flex flex-col gap-4 mb-10">
-          {channels.map((c) => {
-            const badge = urgenciaBadge[c.urgencia];
-            return (
-              <div
-                key={c.area}
-                className="bg-white border border-border hover:border-slate-300 rounded-lg py-6 px-7 grid grid-cols-[56px_1fr_auto] gap-5 items-center transition-[border-color,box-shadow] duration-200 hover:shadow-[0_6px_24px_rgba(0,0,0,0.07)]"
-              >
-                <div
-                  className={`w-[52px] h-[52px] rounded-lg flex items-center justify-center shrink-0 ${
-                    c.urgencia === "critica"
-                      ? "bg-rose-50 text-alert-red"
-                      : "bg-teal-100 text-accent"
-                  }`}
-                >
-                  {iconMap[c.area]}
-                </div>
-                <div>
-                  <div className="flex items-center gap-3 mb-1 flex-wrap">
-                    <h3 className="font-display text-lg text-text m-0 font-normal">{c.area}</h3>
-                    <span className={`text-xs font-bold py-1 px-3 rounded-full ${badge.className}`}>
-                      {badge.label}
-                    </span>
-                  </div>
-                  <div className="text-sm text-muted mb-3">{c.resp}</div>
-                  <div className="flex gap-5 flex-wrap">
-                    <div className="flex items-center gap-2 text-sm text-text font-semibold">
-                      <IconPhone className="w-[14px] h-[14px] text-primary" /> {c.contacto}
-                    </div>
-                    {c.email && (
-                      <div className="flex items-center gap-2 text-sm text-primary">
-                        <IconMail className="w-[14px] h-[14px]" />
-                        <a href={`mailto:${c.email}`} className="text-primary no-underline">
-                          {c.email}
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <div className="text-xs text-slate-400 mb-3">{c.horario}</div>
-                  {c.contacto.match(/\d{3}/) && (
-                    <a
-                      href={`tel:${c.contacto.split("/")[0].trim().replace(/\s/g, "")}`}
-                      className={`btn btn-primary btn-sm ${
-                        c.urgencia === "critica"
-                          ? "bg-alert-red text-white hover:bg-alert-red/90"
-                          : ""
-                      }`}
-                    >
-                      <IconPhone className="w-[13px] h-[13px]" /> Llamar
-                    </a>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Security info */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="bg-white border border-border rounded-lg p-7">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="text-primary">
-                <IconShield className="w-[24px] h-[24px]" />
-              </div>
-              <h3 className="font-display text-xl text-text m-0 font-normal">Plan Cuadrante</h3>
-            </div>
-            <p className="text-sm text-muted leading-[1.7] m-0 mb-4">
-              Ficha del sector con el cuadrante de seguridad vigente y el contacto del funcionario a
-              cargo, mantenida por el comité.
-            </p>
-            <div className="text-sm text-text font-medium">Comisaría 12a — Las Condes</div>
-            <div className="mt-2 text-sm text-text font-medium">Cuadrante N° 4 — Sector Norte</div>
-          </div>
-
-          <div className="bg-white border border-border rounded-lg p-7">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="text-primary">
-                <IconBell className="w-[24px] h-[24px]" />
-              </div>
-              <h3 className="font-display text-xl text-text m-0 font-normal">
-                Notificaciones push
-              </h3>
-            </div>
-            <p className="text-sm text-muted leading-[1.7] m-0 mb-5">
-              Activa las notificaciones para recibir alertas de seguridad, mantenimientos
-              programados y avisos urgentes directamente en tu dispositivo.
-            </p>
-            <button className="btn btn-primary">Activar notificaciones</button>
-          </div>
+        {/* Directorio del condominio: sin servicio de contactos en el backend */}
+        <div className="text-center py-10 text-muted">
+          <p className="text-lg font-semibold">Sin contactos registrados</p>
+          <p className="text-sm mt-1">El directorio del condominio aún no está disponible.</p>
         </div>
       </div>
 

@@ -55,7 +55,6 @@ export function Footer() {
                 {e.label}
               </a>
             ))}
-            <p className="text-sm text-white/45 m-0">Conserjería: interno 100</p>
           </div>
         </div>
         <div className="border-t border-white/5 pt-5 flex justify-between flex-wrap gap-2">

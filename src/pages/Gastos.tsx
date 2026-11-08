@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import { gastos } from "../data";
 import { useAuth } from "../hooks/useAuth";
-import { notify } from "../utils/notify";
 import { sileo } from "sileo";
 import {
   obtenerResumenGastos,
@@ -16,96 +14,23 @@ import {
   IconHome,
 } from "../components/icons/Icons";
 import { FlipCard } from "../components/FlipCard";
-import { PayModal } from "../components/gastos/PayModal";
 import { DesgloseMensualCard } from "../components/gastos/DesgloseMensualCard";
 import { HistorialPagosTable, type HistorialEntry } from "../components/gastos/HistorialPagosTable";
 import { SituacionResidenteCard } from "../components/gastos/SituacionResidenteCard";
+import {
+  agruparPorPeriodo,
+  desglosePeriodo,
+  deudaPorUnidad,
+  formatPesos,
+} from "../utils/gastosResumen";
 
-const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto"];
-
-interface UnidadEntry {
-  unidad: string;
-  estado: string;
-  monto: string;
-  colorClass: string;
-  bgClass: string;
-}
-
-const historial: HistorialEntry[] = [
-  {
-    mes: "Agosto 2026",
-    total: "$600.000",
-    estado: "Al día",
-    colorClass: "text-teal-600 bg-teal-600/10",
-  },
-  {
-    mes: "Julio 2026",
-    total: "$600.000",
-    estado: "Al día",
-    colorClass: "text-teal-600 bg-teal-600/10",
-  },
-  {
-    mes: "Junio 2026",
-    total: "$595.000",
-    estado: "Al día",
-    colorClass: "text-teal-600 bg-teal-600/10",
-  },
-  {
-    mes: "Mayo 2026",
-    total: "$595.000",
-    estado: "Pagado",
-    colorClass: "text-teal-600 bg-teal-600/10",
-  },
-  {
-    mes: "Abril 2026",
-    total: "$590.000",
-    estado: "Pagado",
-    colorClass: "text-teal-600 bg-teal-600/10",
-  },
-  {
-    mes: "Marzo 2026",
-    total: "$590.000",
-    estado: "Pagado",
-    colorClass: "text-teal-600 bg-teal-600/10",
-  },
-];
-
-const unidades: UnidadEntry[] = [
-  {
-    unidad: "Apto 301 — Torre A",
-    estado: "Al día",
-    monto: "$0",
-    colorClass: "text-teal-600 border-teal-600/20",
-    bgClass: "bg-teal-50",
-  },
-  {
-    unidad: "Apto 502 — Torre A",
-    estado: "Pendiente",
-    monto: "$600.000",
-    colorClass: "text-yellow-500 border-yellow-500/20",
-    bgClass: "bg-yellow-50",
-  },
-  {
-    unidad: "Apto 108 — Torre B",
-    estado: "Moroso",
-    monto: "$1.800.000",
-    colorClass: "text-rose-600 border-rose-600/20",
-    bgClass: "bg-rose-50",
-  },
-  {
-    unidad: "Apto 710 — Torre B",
-    estado: "Al día",
-    monto: "$0",
-    colorClass: "text-teal-600 border-teal-600/20",
-    bgClass: "bg-teal-50",
-  },
-  {
-    unidad: "Apto 204 — Torre C",
-    estado: "Al día",
-    monto: "$0",
-    colorClass: "text-teal-600 border-teal-600/20",
-    bgClass: "bg-teal-50",
-  },
+const COLORES_DESGLOSE = [
+  "bg-teal-600",
+  "bg-yellow-500",
+  "bg-sky-500",
+  "bg-rose-500",
+  "bg-violet-500",
+  "bg-slate-500",
 ];
 
 const FLIP_CARD_DATA = [
@@ -113,11 +38,6 @@ const FLIP_CARD_DATA = [
     title: "Desglose mensual",
     description: "Cada peso desglosado por categoría — portería, limpieza, jardín y más.",
     Icon: IconDollar,
-  },
-  {
-    title: "Pago seguro",
-    description: "WebPay, transferencia o tarjeta. Pagos procesados en segundos.",
-    Icon: IconShield,
   },
   {
     title: "Alertas automáticas",
@@ -140,7 +60,7 @@ const alternatingSections = [
   },
   {
     title: "Sin morosidad",
-    body: "Recibe alertas automáticas antes del vencimiento y paga en segundos desde tu teléfono o computador. Historial de pagos siempre disponible para descargar en PDF. Mantente al día sin esfuerzo.",
+    body: "Recibe alertas automáticas antes del vencimiento. Historial de pagos siempre disponible para descargar en PDF. Mantente al día sin esfuerzo.",
     imgUrl: "https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=700&h=500&fit=crop",
     imgRight: false,
   },
@@ -150,11 +70,29 @@ export default function Gastos() {
   const { role, user } = useAuth();
   const isAdmin = role === "admin";
 
-  const [selectedMes, setSelectedMes] = useState("Agosto");
-  const [showPayModal, setShowPayModal] = useState(false);
-  const [paid, setPaid] = useState(false);
+  const [selectedClave, setSelectedClave] = useState<string | null>(null);
   const [resumen, setResumen] = useState<GastosResumen | null>(null);
   const [gastosEstado, setGastosEstado] = useState<"cargando" | "error" | "listo">("cargando");
+
+  // Todo se calcula con los gastos reales del BFF; sin gastos quedan listas vacías.
+  const gastosBackend = resumen?.gastos ?? [];
+  const periodos = agruparPorPeriodo(gastosBackend);
+  const claveActiva = selectedClave ?? periodos[0]?.clave ?? "";
+  const periodoActual = periodos.find((p) => p.clave === claveActiva);
+  const desglose = desglosePeriodo(gastosBackend, claveActiva).map((d, i) => ({
+    item: d.concepto,
+    monto: formatPesos(d.monto),
+    pct: d.pct,
+    color: COLORES_DESGLOSE[i % COLORES_DESGLOSE.length],
+  }));
+  const historial: HistorialEntry[] = periodos.map((p) => ({
+    mes: p.etiqueta,
+    total: formatPesos(p.total),
+    estado: p.pendiente > 0 ? "Pendiente" : "Pagado",
+    colorClass:
+      p.pendiente > 0 ? "text-yellow-500 bg-yellow-500/10" : "text-teal-600 bg-teal-600/10",
+  }));
+  const unidades = deudaPorUnidad(gastosBackend);
 
   useEffect(() => {
     let active = true;
@@ -163,9 +101,6 @@ export default function Gastos() {
         const data = await obtenerResumenGastos();
         if (!active) return;
         setResumen(data);
-        if (data.alDia) {
-          setPaid(true);
-        }
         setGastosEstado("listo");
       } catch {
         // No mostrar un saldo/fecha inventados: si no se pudo cargar, decirlo.
@@ -179,7 +114,7 @@ export default function Gastos() {
   }, []);
 
   const handleDescargarPdf = (mes?: string) => {
-    const mesObjetivo = mes ?? selectedMes;
+    const mesObjetivo = mes ?? periodoActual?.etiqueta;
     void sileo.promise(
       solicitarYDescargarPdfGastos({
         unidadId: user?.unidad,
@@ -215,7 +150,7 @@ export default function Gastos() {
           <p className="text-lg text-white/65 m-0 max-w-content leading-[1.65]">
             {isAdmin
               ? "Gestiona los gastos comunes de todas las unidades. Edita montos, categorías y revisa el estado de deuda del condominio."
-              : "Revisa y paga tus gastos comunes en línea. Desglose mensual transparente, historial completo y alertas automáticas."}
+              : "Revisa tus gastos comunes. Desglose mensual transparente e historial completo."}
           </p>
         </div>
       </div>
@@ -224,20 +159,24 @@ export default function Gastos() {
         {!isAdmin && (
           <SituacionResidenteCard
             estado={gastosEstado}
-            paid={paid}
-            onPay={() => setShowPayModal(true)}
             unidad={user?.unidad ? `Unidad ${user.unidad}` : undefined}
             monto={resumen ? resumen.totalPendiente : undefined}
             vencimiento={resumen?.proximoVencimiento}
           />
         )}
+        {isAdmin && gastosEstado === "error" && (
+          <p className="text-sm text-red-600 font-semibold mb-5">
+            No pudimos cargar los gastos del condominio. Intenta más tarde.
+          </p>
+        )}
 
         <div className="grid grid-cols-2 gap-6 mb-7">
           <DesgloseMensualCard
-            selectedMes={selectedMes}
-            onSelectMes={setSelectedMes}
-            meses={meses}
-            gastos={gastos}
+            periodos={periodos}
+            selectedClave={claveActiva}
+            onSelectPeriodo={setSelectedClave}
+            gastos={desglose}
+            total={formatPesos(periodoActual?.total ?? 0)}
           />
 
           {isAdmin && (
@@ -245,25 +184,37 @@ export default function Gastos() {
               <h3 className="font-serif text-xl text-text m-0 mb-6 font-normal">
                 Estado por unidad
               </h3>
+              {unidades.length === 0 && (
+                <p className="text-sm text-slate-400 m-0">Sin unidades con gastos registrados.</p>
+              )}
               <div className="flex flex-col gap-3">
-                {unidades.map((u) => (
-                  <div
-                    key={u.unidad}
-                    className={`flex justify-between items-center py-3 px-4 rounded-md border ${u.bgClass} ${u.colorClass.split(" ")[1]}`}
-                  >
-                    <div>
-                      <div className="text-sm font-semibold text-text">{u.unidad}</div>
-                      <div className="text-xs text-slate-400">
-                        {u.estado === "Al día" ? "Sin deuda" : `Deuda: ${u.monto}`}
-                      </div>
-                    </div>
-                    <span
-                      className={`text-xs font-bold py-1 px-3 rounded-full ${u.colorClass.split(" ")[0]} ${u.bgClass}`}
+                {unidades.map((u) => {
+                  const alDia = u.deuda === 0;
+                  return (
+                    <div
+                      key={u.unidad}
+                      className={`flex justify-between items-center py-3 px-4 rounded-md border ${
+                        alDia
+                          ? "bg-teal-50 border-teal-600/20"
+                          : "bg-yellow-50 border-yellow-500/20"
+                      }`}
                     >
-                      {u.estado}
-                    </span>
-                  </div>
-                ))}
+                      <div>
+                        <div className="text-sm font-semibold text-text">{u.unidad}</div>
+                        <div className="text-xs text-slate-400">
+                          {alDia ? "Sin deuda" : `Deuda: ${formatPesos(u.deuda)}`}
+                        </div>
+                      </div>
+                      <span
+                        className={`text-xs font-bold py-1 px-3 rounded-full ${
+                          alDia ? "text-teal-600 bg-teal-50" : "text-yellow-500 bg-yellow-50"
+                        }`}
+                      >
+                        {alDia ? "Al día" : "Con deuda"}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -350,7 +301,7 @@ export default function Gastos() {
             <IconHome className="w-7 h-7 text-teal-300 shrink-0" />
             <div>
               <div className="text-sm text-white/50 mb-1">¿Eres residente?</div>
-              <div className="text-base font-bold text-white">Paga tus gastos</div>
+              <div className="text-base font-bold text-white">Revisa tus gastos</div>
             </div>
           </a>
           <a
@@ -365,20 +316,6 @@ export default function Gastos() {
           </a>
         </div>
       </div>
-
-      {showPayModal && (
-        <PayModal
-          onClose={() => setShowPayModal(false)}
-          onConfirm={() => {
-            setPaid(true);
-            setShowPayModal(false);
-            notify.success({
-              title: "Pago procesado exitosamente",
-              description: "Tu comprobante ha sido emitido y tu estado está al día.",
-            });
-          }}
-        />
-      )}
     </div>
   );
 }

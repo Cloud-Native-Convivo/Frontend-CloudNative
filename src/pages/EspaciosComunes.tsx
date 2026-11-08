@@ -35,135 +35,6 @@ interface DetalleModalProps {
   onClose: () => void;
 }
 
-const ESPACIOS: Espacio[] = [
-  {
-    id: 1,
-    nombre: "Quincho Los Aromos",
-    categoria: "Quincho",
-    capacidad: 30,
-    tarifa: 25000,
-    disponibleHoy: true,
-    imagen: "https://images.unsplash.com/photo-1622714384717-3f60c04d7c73?w=600&h=400&fit=crop",
-    descripcion:
-      "Amplio quincho techado con parrilla de última generación y cocina equipada. Ideal para reuniones familiares y celebraciones. Cuenta con mesas, sillas y servicio de agua caliente.",
-    horario: "Lunes a domingo, 10:00 – 22:00 hrs",
-    reglas: [
-      "Máximo 30 personas incluyendo menores de edad.",
-      "Dejar el espacio limpio al finalizar la reserva.",
-      "Prohibido el uso de parlantes después de las 22:00 hrs.",
-    ],
-    deposito: 50000,
-  },
-  {
-    id: 2,
-    nombre: "Quincho Bajo",
-    categoria: "Quincho",
-    capacidad: 20,
-    tarifa: 18000,
-    disponibleHoy: true,
-    imagen: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&h=400&fit=crop",
-    descripcion:
-      "Quincho más íntimo ubicado en el nivel inferior del conjunto, con vista al jardín. Perfecto para reuniones pequeñas. Dispone de parrilla a carbón y zona de lavado.",
-    horario: "Lunes a domingo, 10:00 – 22:00 hrs",
-    reglas: [
-      "Máximo 20 personas.",
-      "No se permite el ingreso de mascotas al espacio cerrado.",
-      "El arrendatario es responsable de cualquier daño al mobiliario.",
-    ],
-    deposito: 36000,
-  },
-  {
-    id: 3,
-    nombre: "Piscina",
-    categoria: "Piscina",
-    capacidad: 50,
-    tarifa: 0,
-    disponibleHoy: true,
-    imagen: "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=600&h=400&fit=crop",
-    descripcion:
-      "Piscina semiolímpica disponible exclusivamente para residentes del condominio y sus invitados. Cuenta con zona de piscina temperada para niños y solarium con reposeras.",
-    horario: "Lunes a domingo, 09:00 – 20:00 hrs (temporada)",
-    reglas: [
-      "Uso exclusivo para residentes y máximo 2 invitados por unidad.",
-      "Obligatorio ducha previa al ingreso a la piscina.",
-      "Menores de 12 años deben ir acompañados de un adulto.",
-    ],
-    deposito: 0,
-  },
-  {
-    id: 4,
-    nombre: "Sala Multiuso / Cowork",
-    categoria: "Sala",
-    capacidad: 15,
-    tarifa: 8000,
-    disponibleHoy: true,
-    imagen: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop",
-    descripcion:
-      "Sala equipada con proyector, pizarrón, wifi de alta velocidad y estaciones de trabajo individuales. Habilitada para reuniones de trabajo, talleres o clases particulares.",
-    horario: "Lunes a viernes, 08:00 – 21:00 hrs. Sábado, 09:00 – 18:00 hrs.",
-    reglas: [
-      "Reserva mínima de 2 horas.",
-      "Dejar el proyector y equipos apagados al salir.",
-      "Mantener un ambiente de trabajo tranquilo.",
-    ],
-    deposito: 16000,
-  },
-  {
-    id: 5,
-    nombre: "Sala de Juegos",
-    categoria: "Sala",
-    capacidad: 10,
-    tarifa: 5000,
-    disponibleHoy: false,
-    imagen: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop",
-    descripcion:
-      "Sala recreativa con mesa de ping pong, futbolín, consolas de videojuegos y juegos de mesa. Pensada para el entretenimiento de residentes de todas las edades.",
-    horario: "Lunes a domingo, 10:00 – 23:00 hrs",
-    reglas: [
-      "Máximo 10 personas simultáneamente.",
-      "Cuidar el equipamiento y reportar cualquier daño.",
-      "Menores de 14 años deben estar acompañados por un adulto después de las 21:00 hrs.",
-    ],
-    deposito: 10000,
-  },
-  {
-    id: 6,
-    nombre: "Gimnasio",
-    categoria: "Gimnasio",
-    capacidad: 12,
-    tarifa: 0,
-    disponibleHoy: true,
-    imagen: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop",
-    descripcion:
-      "Gimnasio completamente equipado con máquinas cardiovasculares, zona de pesas libres y área de estiramiento. Acceso gratuito para todos los residentes del condominio.",
-    horario: "Todos los días, 06:00 – 23:00 hrs",
-    reglas: [
-      "Uso de toalla obligatorio en las máquinas.",
-      "Devolver las pesas y equipos a su lugar tras su uso.",
-      "No se permite el ingreso con alimentos ni bebidas distintas al agua.",
-    ],
-    deposito: 0,
-  },
-  {
-    id: 7,
-    nombre: "Cancha Multicancha",
-    categoria: "Cancha",
-    capacidad: 22,
-    tarifa: 12000,
-    disponibleHoy: true,
-    imagen: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=400&fit=crop",
-    descripcion:
-      "Cancha techada habilitada para fútbol sala, básquetbol y volleyball. Superficie de piso flotante de alto rendimiento con iluminación LED para uso nocturno.",
-    horario: "Lunes a domingo, 08:00 – 22:00 hrs",
-    reglas: [
-      "Reserva por bloques de 1 hora.",
-      "Uso de calzado deportivo adecuado obligatorio.",
-      "No se permite ingresar con bebidas alcohólicas.",
-    ],
-    deposito: 24000,
-  },
-];
-
 function formatTarifa(tarifa: number): string {
   if (tarifa === 0) return "Gratis para residentes";
   return `$${tarifa.toLocaleString("es-CL")} / reserva`;
@@ -479,7 +350,7 @@ export default function EspaciosComunes() {
       })
       .catch(() => {
         if (active) {
-          setEspacios(ESPACIOS);
+          setEspacios([]);
         }
       })
       .finally(() => {

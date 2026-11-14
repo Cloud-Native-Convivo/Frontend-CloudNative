@@ -5,6 +5,7 @@ import { notify } from "../utils/notify";
 import {
   listarMisReservas,
   crearReserva,
+  cancelarReserva,
   listarEspacios,
   type BackendReserva,
 } from "../services/espaciosApi";
@@ -458,7 +459,7 @@ function mapearBackendReserva(
   };
 
   return {
-    id: `R${String(b.id).padStart(3, "0")}`,
+    id: String(b.id),
     espacio: espacioOpcion.nombre,
     categoria: espacioOpcion.categoria || espacioOpcion.nombre.split(" ")[0],
     imagen:
@@ -470,12 +471,12 @@ function mapearBackendReserva(
     duracionHrs,
     precio: duracionHrs > 0 ? Math.round(b.monto_total / duracionHrs) : b.monto_total,
     estado: estadoMap[b.estado.toLowerCase()] ?? "pendiente",
-    codigo: `CONV-2026-R${String(b.id).padStart(3, "0")}`,
+    codigo: `CONV-${new Date(b.creado_en).getFullYear() || yyyy}-R${String(b.id).padStart(3, "0")}`,
   };
 }
 
 export default function Reservas() {
-  const { role } = useAuth();
+  const { role, user } = useAuth();
   const isAdmin = role === "admin";
 
   const [espaciosDisponibles, setEspaciosDisponibles] = useState<EspacioOpcion[]>([]);
@@ -486,40 +487,37 @@ export default function Reservas() {
   const [cancelTarget, setCancelTarget] = useState<string | null>(null);
   const [blockTarget, setBlockTarget] = useState<string | null>(null);
 
+  // Fuente de verdad: el servidor. Se usa al montar y tras cada mutación confirmada.
+  async function cargarDatos(esActivo: () => boolean = () => true) {
+    try {
+      const [espaciosData, reservasData] = await Promise.all([
+        listarEspacios().catch(() => []),
+        listarMisReservas().catch(() => []),
+      ]);
+      if (!esActivo()) return;
+
+      const listaEspacios: EspacioOpcion[] = Array.isArray(espaciosData)
+        ? espaciosData.map((e) => ({
+            id: e.id,
+            nombre: e.nombre,
+            tarifaHr: e.tarifa_hora,
+            categoria: e.nombre.split(" ")[0],
+          }))
+        : [];
+      setEspaciosDisponibles(listaEspacios);
+
+      const map = new Map(listaEspacios.map((esp) => [esp.id, esp]));
+      setReservas(
+        Array.isArray(reservasData) ? reservasData.map((r) => mapearBackendReserva(r, map)) : [],
+      );
+    } finally {
+      if (esActivo()) setLoading(false);
+    }
+  }
+
   useEffect(() => {
     let active = true;
-    Promise.all([listarEspacios().catch(() => []), listarMisReservas().catch(() => [])])
-      .then(([espaciosData, reservasData]) => {
-        if (!active) return;
-
-        const listaEspacios: EspacioOpcion[] = Array.isArray(espaciosData)
-          ? espaciosData.map((e) => ({
-              id: e.id,
-              nombre: e.nombre,
-              tarifaHr: e.tarifa_hora,
-              categoria: e.nombre.split(" ")[0],
-            }))
-          : [];
-        setEspaciosDisponibles(listaEspacios);
-
-        const map = new Map<number, EspacioOpcion>();
-        listaEspacios.forEach((esp) => map.set(esp.id, esp));
-
-        if (Array.isArray(reservasData)) {
-          setReservas(reservasData.map((r) => mapearBackendReserva(r, map)));
-        } else {
-          setReservas([]);
-        }
-      })
-      .catch(() => {
-        if (active) {
-          setReservas([]);
-          setEspaciosDisponibles([]);
-        }
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
+    void cargarDatos(() => active);
     return () => {
       active = false;
     };
@@ -537,17 +535,13 @@ export default function Reservas() {
   ) {
     if (!payload) return;
 
-    let newReserva: Reserva;
     try {
-      const backendResult = await crearReserva({
+      await crearReserva({
         espacio_id: payload.espacioId,
         fecha_inicio: payload.fechaInicio,
         fecha_fin: payload.fechaFin,
       });
-      const map = new Map<number, EspacioOpcion>();
-      espaciosDisponibles.forEach((e) => map.set(e.id, e));
-      newReserva = mapearBackendReserva(backendResult, map);
-      notify.success({ title: "Reserva creada exitosamente en el servidor" });
+      notify.success({ title: "Reserva creada" });
     } catch (err) {
       notify.error({
         title: "No se pudo crear la reserva",
@@ -556,19 +550,34 @@ export default function Reservas() {
       return;
     }
 
-    setReservas([newReserva, ...reservas]);
     setShowCreate(false);
+    await cargarDatos();
   }
 
-  function handleCancelConfirm() {
+  // Bloquear por mantenimiento usa el mismo DELETE: el backend lo autoriza para admin/conserje.
+  async function cancelarEnServidor(id: string) {
+    try {
+      await cancelarReserva(Number(id));
+      notify.success({ title: "Reserva cancelada" });
+    } catch (err) {
+      notify.error({
+        title: "No se pudo cancelar la reserva",
+        description: err instanceof Error ? err.message : undefined,
+      });
+      return;
+    }
+    await cargarDatos();
+  }
+
+  async function handleCancelConfirm() {
     if (!cancelTarget) return;
-    setReservas(reservas.map((r) => (r.id === cancelTarget ? { ...r, estado: "cancelada" } : r)));
+    await cancelarEnServidor(cancelTarget);
     setCancelTarget(null);
   }
 
-  function handleBlockConfirm() {
+  async function handleBlockConfirm() {
     if (!blockTarget) return;
-    setReservas(reservas.map((r) => (r.id === blockTarget ? { ...r, estado: "cancelada" } : r)));
+    await cancelarEnServidor(blockTarget);
     setBlockTarget(null);
   }
 
@@ -582,7 +591,7 @@ export default function Reservas() {
               {isAdmin ? "Reservas del condominio" : "Mis Reservas"}
             </h1>
             <p className="text-white/60 mt-1">
-              {isAdmin ? "Gestión y bloqueo por mantenimiento" : "Torres del Parque"}
+              {isAdmin ? "Gestión y bloqueo por mantenimiento" : (user?.condominioNombre ?? "")}
             </p>
           </div>
           {!isAdmin && (

@@ -226,7 +226,7 @@ export function StepReglamento({
         role="region"
         aria-label="Reglamento interno"
       >
-        <p className="font-semibold text-text mb-2">Reglamento Interno — Torres del Parque</p>
+        <p className="font-semibold text-text mb-2">Reglamento Interno</p>
         {[
           ["1. Horarios de silencio.", "Entre 22:00 y 08:00 hrs no se permitirán ruidos molestos."],
           ["2. Espacios comunes.", "Deben reservarse con anticipación en la plataforma."],

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
+import { categoriaDeEspacio } from "../utils/categoriaEspacio";
 import { listarEspacios, type BackendEspacio } from "../services/espaciosApi";
 
 interface Espacio {
@@ -10,7 +11,6 @@ interface Espacio {
   capacidad: number;
   tarifa: number;
   disponibleHoy: boolean;
-  imagen: string;
   descripcion: string;
   horario: string;
   reglas: string[];
@@ -65,15 +65,8 @@ function DetalleModal({ espacio, onClose }: DetalleModalProps) {
     >
       {/* Panel */}
       <div className="relative z-10 bg-white rounded-lg shadow-2xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Image */}
-        <div className="relative">
-          <img
-            src={espacio.imagen}
-            alt={espacio.nombre}
-            className="w-full aspect-video object-cover rounded-t-lg"
-            loading="lazy"
-            decoding="async"
-          />
+        {/* Cabecera sin imagen: el backend no guarda fotos de los espacios */}
+        <div className="relative h-16 rounded-t-lg bg-slate-50 border-b border-border">
           <button
             ref={closeRef}
             onClick={handleClose}
@@ -210,15 +203,8 @@ function DetalleModal({ espacio, onClose }: DetalleModalProps) {
 function EspacioCard({ espacio, onVerDetalle, isAdmin }: EspacioCardProps) {
   return (
     <article className="bg-white rounded-md border border-border shadow-sm hover:shadow-md transition-shadow flex flex-col overflow-hidden">
-      {/* Image */}
-      <div className="relative">
-        <img
-          src={espacio.imagen}
-          alt={espacio.nombre}
-          className="w-full aspect-video object-cover rounded-t-md"
-          loading="lazy"
-          decoding="async"
-        />
+      {/* Cabecera sin imagen: el backend no guarda fotos de los espacios */}
+      <div className="relative h-12 bg-slate-50 border-b border-border">
         {/* Availability badge */}
         <span
           className={`absolute top-2.5 right-2.5 inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${
@@ -292,26 +278,8 @@ function EspacioCard({ espacio, onVerDetalle, isAdmin }: EspacioCardProps) {
   );
 }
 
-const IMAGENES_CATEGORIA: Record<string, string> = {
-  Quincho: "https://images.unsplash.com/photo-1622714384717-3f60c04d7c73?w=600&h=400&fit=crop",
-  Piscina: "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=600&h=400&fit=crop",
-  Sala: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop",
-  Gimnasio: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop",
-  Cancha: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=400&fit=crop",
-};
-
-function inferirCategoria(nombre: string, ubicacion?: string | null): string {
-  const n = `${nombre} ${ubicacion || ""}`.toLowerCase();
-  if (n.includes("quincho") || n.includes("parrilla") || n.includes("asador")) return "Quincho";
-  if (n.includes("piscina") || n.includes("alberca")) return "Piscina";
-  if (n.includes("gimnasio") || n.includes("gym")) return "Gimnasio";
-  if (n.includes("cancha") || n.includes("padel") || n.includes("tenis") || n.includes("futbol"))
-    return "Cancha";
-  return "Sala";
-}
-
 function mapearBackendEspacio(b: BackendEspacio): Espacio {
-  const categoria = inferirCategoria(b.nombre, b.ubicacion);
+  const categoria = categoriaDeEspacio(b.nombre, b.ubicacion);
   return {
     id: b.id,
     nombre: b.nombre,
@@ -319,7 +287,7 @@ function mapearBackendEspacio(b: BackendEspacio): Espacio {
     capacidad: b.capacidad,
     tarifa: b.tarifa_hora,
     disponibleHoy: b.estado === "activo",
-    imagen: IMAGENES_CATEGORIA[categoria] || IMAGENES_CATEGORIA.Sala,
+
     descripcion:
       b.descripcion ||
       `Espacio común disponible para reserva de residentes${b.ubicacion ? ` en sector ${b.ubicacion}` : ""}.`,

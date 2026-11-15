@@ -40,7 +40,7 @@ export function CamposUnidad({
               type="text"
               value={form.torre}
               onChange={onChange}
-              placeholder="Ej: Torre B (vacío si hay una sola)"
+              placeholder="Ej: B (vacío si hay una sola)"
               aria-label="Torre (opcional)"
               aria-invalid={!!errors.torre}
               aria-describedby={errors.torre ? "torre-error" : undefined}

@@ -46,7 +46,19 @@ export function validateUnit(form: StepUnitForm): StepErrors {
   return errs;
 }
 
-/** Texto de unidad que se envía en la solicitud de asignación. */
+/** Campos de unidad que espera ms-condominios: en casas solo el número. */
+export function datosSolicitud(form: StepUnitForm): {
+  numero: string;
+  piso?: string;
+  torre?: string;
+} {
+  const numero = form.numero.trim();
+  if (esDeCasas(form.condominioTipo)) return { numero };
+  const torre = form.torre.trim();
+  return { numero, piso: form.piso.trim(), ...(torre ? { torre } : {}) };
+}
+
+/** Texto de unidad para la sesión cuando el servidor no lo devuelve (409 ya aprobada). */
 export function componerUnidad(form: StepUnitForm): string {
   const numero = form.numero.trim();
   if (esDeCasas(form.condominioTipo)) return `Casa ${numero}`;

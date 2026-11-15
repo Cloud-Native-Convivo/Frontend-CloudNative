@@ -20,10 +20,34 @@ export async function obtenerCondominios(): Promise<CondominioItem[]> {
   return datos.items ?? [];
 }
 
-export async function solicitarAsignacion(datos: {
+export interface DatosSolicitud {
   condominio_id: number;
-  unidad: string;
-}): Promise<{ estado: string }> {
+  numero: string;
+  piso?: string;
+  torre?: string;
+}
+
+/** 422 de ms-condominios: la unidad no existe o no corresponde al tipo del condominio. */
+export class UnidadRechazadaError extends Error {}
+
+const MENSAJE_UNIDAD_GENERICO = "Revisa los datos de tu unidad.";
+
+// Los 422 de negocio traen `message`; los de validación de Pydantic traen `detail`
+// (un arreglo en inglés que no se muestra tal cual).
+async function mensajeDe422(respuesta: Response): Promise<string> {
+  try {
+    const cuerpo = (await respuesta.json()) as { message?: unknown; detail?: unknown };
+    if (typeof cuerpo.message === "string") return cuerpo.message;
+    if (typeof cuerpo.detail === "string") return cuerpo.detail;
+  } catch {
+    // Cuerpo vacío o no JSON: se usa el mensaje genérico.
+  }
+  return MENSAJE_UNIDAD_GENERICO;
+}
+
+export async function solicitarAsignacion(
+  datos: DatosSolicitud,
+): Promise<{ estado: string; unidad?: string }> {
   const respuesta = await fetchConAuth(`${API_BASE_URL}/condominios/solicitudes`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -31,6 +55,7 @@ export async function solicitarAsignacion(datos: {
   });
   // 409 = solicitud ya aprobada — no es un error, redirigir al dashboard.
   if (respuesta.status === 409) return { estado: "aprobada" };
+  if (respuesta.status === 422) throw new UnidadRechazadaError(await mensajeDe422(respuesta));
   if (!respuesta.ok) throw new Error(`No pudimos enviar tu solicitud (HTTP ${respuesta.status}).`);
   return respuesta.json();
 }

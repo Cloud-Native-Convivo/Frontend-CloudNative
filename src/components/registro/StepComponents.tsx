@@ -16,7 +16,7 @@ type OnCampoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
 /**
  * Torre, piso y número según el tipo del condominio (Ley 21.442): un condominio
  * de casas (tipo B) solo pide el número. Texto libre: el residente no puede listar
- * las unidades reales y el admin valida la unidad al aprobar la solicitud.
+ * las unidades reales; ms-condominios rechaza con 422 una unidad que no existe.
  */
 export function CamposUnidad({
   form,

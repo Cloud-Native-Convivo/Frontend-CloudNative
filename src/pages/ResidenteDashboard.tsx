@@ -295,8 +295,9 @@ export default function ResidenteDashboard() {
                 : (await obtenerCondominios().catch(() => [])).find(
                     (c) => String(c.id) === condominioId,
                   )?.nombre;
-            if (!activo) return;
-            setUser({ ...user, condominioId, condominioNombre, unidad: solicitud.unidad });
+            if (activo) {
+              setUser({ ...user, condominioId, condominioNombre, unidad: solicitud.unidad });
+            }
           }
           setAsignacionVerificada(true);
         } else if (solicitud) {

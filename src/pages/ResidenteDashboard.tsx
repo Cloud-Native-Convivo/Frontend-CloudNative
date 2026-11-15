@@ -287,19 +287,21 @@ export default function ResidenteDashboard() {
         if (!activo || !user) return;
         if (solicitud?.estado === "aprobada") {
           const condominioId = String(solicitud.condominio_id);
-          if (user.condominioId !== condominioId || user.unidad !== solicitud.unidad) {
-            // Si cambió el condominio, el nombre guardado es del anterior: se busca el real.
-            const condominioNombre =
-              user.condominioId === condominioId
-                ? user.condominioNombre
-                : (await obtenerCondominios().catch(() => [])).find(
-                    (c) => String(c.id) === condominioId,
-                  )?.nombre;
-            if (activo) {
+          const cambio = user.condominioId !== condominioId || user.unidad !== solicitud.unidad;
+          // Si cambió el condominio, el nombre guardado es del anterior: se busca el real.
+          const condominioNombre =
+            user.condominioId === condominioId
+              ? user.condominioNombre
+              : (await obtenerCondominios().catch(() => [])).find(
+                  (c) => String(c.id) === condominioId,
+                )?.nombre;
+          // Tras el await, todo setter queda detrás de `activo` (el efecto pudo re-ejecutarse).
+          if (activo) {
+            if (cambio) {
               setUser({ ...user, condominioId, condominioNombre, unidad: solicitud.unidad });
             }
+            setAsignacionVerificada(true);
           }
-          setAsignacionVerificada(true);
         } else if (solicitud) {
           setAsignacionVerificada(false);
         }

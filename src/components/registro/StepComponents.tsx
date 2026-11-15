@@ -1,18 +1,94 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 import { useEffect, useState } from "react";
 import { Field } from "./FormFields";
-import { inputClass, type StepUnitForm, type StepAccountForm, type StepErrors } from "./types";
+import {
+  esDeCasas,
+  inputClass,
+  type StepUnitForm,
+  type StepAccountForm,
+  type StepErrors,
+} from "./types";
 import { obtenerCondominios } from "../../services/condominiosApi";
 import type { CondominioItem } from "../../types";
 
-export function StepUnit({
+type OnCampoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+
+/**
+ * Torre, piso y número según el tipo del condominio (Ley 21.442): un condominio
+ * de casas (tipo B) solo pide el número. Texto libre: el residente no puede listar
+ * las unidades reales y el admin valida la unidad al aprobar la solicitud.
+ */
+export function CamposUnidad({
   form,
   errors,
   onChange,
 }: {
   form: StepUnitForm;
   errors: StepErrors;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  onChange: OnCampoChange;
+}) {
+  const casas = esDeCasas(form.condominioTipo);
+  const etiquetaNumero = casas ? "Número de casa o sitio" : "Número de unidad";
+  return (
+    <>
+      {!casas && (
+        <>
+          <Field label="Torre (opcional)" id="torre" error={errors.torre}>
+            <input
+              id="torre"
+              name="torre"
+              type="text"
+              value={form.torre}
+              onChange={onChange}
+              placeholder="Ej: Torre B (vacío si hay una sola)"
+              aria-invalid={!!errors.torre}
+              aria-describedby={errors.torre ? "torre-error" : undefined}
+              className={inputClass(errors.torre)}
+            />
+          </Field>
+          <Field label="Piso" id="piso" error={errors.piso}>
+            <input
+              id="piso"
+              name="piso"
+              type="text"
+              inputMode="numeric"
+              value={form.piso}
+              onChange={onChange}
+              placeholder="Ej: 5"
+              aria-invalid={!!errors.piso}
+              aria-describedby={errors.piso ? "piso-error" : undefined}
+              className={inputClass(errors.piso)}
+            />
+          </Field>
+        </>
+      )}
+      <Field label={etiquetaNumero} id="numero" error={errors.numero}>
+        <input
+          id="numero"
+          name="numero"
+          type="text"
+          value={form.numero}
+          onChange={onChange}
+          placeholder={casas ? "Ej: 24" : "Ej: 1204"}
+          aria-invalid={!!errors.numero}
+          aria-describedby={errors.numero ? "numero-error" : undefined}
+          className={inputClass(errors.numero)}
+        />
+      </Field>
+    </>
+  );
+}
+
+export function StepUnit({
+  form,
+  errors,
+  onChange,
+  onTipoChange,
+}: {
+  form: StepUnitForm;
+  errors: StepErrors;
+  onChange: OnCampoChange;
+  onTipoChange?: (tipo: string | undefined) => void;
 }) {
   const [condominios, setCondominios] = useState<CondominioItem[]>([]);
   const [cargando, setCargando] = useState(true);
@@ -68,7 +144,10 @@ export function StepUnit({
             id="condominioId"
             name="condominioId"
             value={form.condominioId}
-            onChange={onChange}
+            onChange={(e) => {
+              onChange(e);
+              onTipoChange?.(condominios.find((c) => String(c.id) === e.target.value)?.tipo);
+            }}
             aria-invalid={!!errors.condominioId}
             aria-describedby={errors.condominioId ? "condominioId-error" : undefined}
             className={inputClass(errors.condominioId)}
@@ -82,54 +161,7 @@ export function StepUnit({
           </select>
         )}
       </Field>
-      <Field label="Torre" id="torre" error={errors.torre}>
-        <select
-          id="torre"
-          name="torre"
-          value={form.torre}
-          onChange={onChange}
-          aria-invalid={!!errors.torre}
-          aria-describedby={errors.torre ? "torre-error" : undefined}
-          className={inputClass(errors.torre)}
-        >
-          <option value="">Selecciona torre</option>
-          <option value="Torre A">Torre A</option>
-          <option value="Torre B">Torre B</option>
-          <option value="Torre C">Torre C</option>
-        </select>
-      </Field>
-      <Field label="Piso" id="piso" error={errors.piso}>
-        <select
-          id="piso"
-          name="piso"
-          value={form.piso}
-          onChange={onChange}
-          aria-invalid={!!errors.piso}
-          aria-describedby={errors.piso ? "piso-error" : undefined}
-          className={inputClass(errors.piso)}
-        >
-          <option value="">Selecciona piso</option>
-          {Array.from({ length: 12 }, (_, i) => i + 1).map((p) => (
-            <option key={p} value={String(p)}>
-              {p}°
-            </option>
-          ))}
-        </select>
-      </Field>
-      <Field label="Número de unidad" id="numero" error={errors.numero}>
-        <input
-          id="numero"
-          name="numero"
-          type="text"
-          value={form.numero}
-          onChange={onChange}
-          placeholder="Ej: 1204"
-          aria-label="Número de unidad"
-          aria-invalid={!!errors.numero}
-          aria-describedby={errors.numero ? "numero-error" : undefined}
-          className={inputClass(errors.numero)}
-        />
-      </Field>
+      {form.condominioId && <CamposUnidad form={form} errors={errors} onChange={onChange} />}
     </div>
   );
 }

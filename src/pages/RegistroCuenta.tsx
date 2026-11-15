@@ -124,7 +124,16 @@ export default function RegistroCuenta() {
 
           <StepIndicator current={step} labels={["Unidad", "Cuenta", "Reglamento"]} />
 
-          {step === 1 && <StepUnit form={unitForm} errors={errors} onChange={handleUnit} />}
+          {step === 1 && (
+            <StepUnit
+              form={unitForm}
+              errors={errors}
+              onChange={handleUnit}
+              onTipoChange={(condominioTipo) =>
+                setUnitForm((p) => ({ ...p, condominioTipo, torre: "", piso: "" }))
+              }
+            />
+          )}
 
           {step === 2 && (
             <StepAccount form={accountForm} errors={errors} onChange={handleAccount} />

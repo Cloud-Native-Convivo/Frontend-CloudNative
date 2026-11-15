@@ -40,7 +40,7 @@ describe("CompletarRegistro Onboarding Page", () => {
 
   it("muestra campos de condominio y unidad cuando se accede con tokens pendientes", async () => {
     vi.spyOn(condominiosApi, "obtenerCondominios").mockResolvedValueOnce([
-      { id: "1", nombre: "Condominio Los Andes" },
+      { id: "1", nombre: "Condominio Los Andes", tipo: "A" },
     ]);
 
     renderPagina();
@@ -50,6 +50,9 @@ describe("CompletarRegistro Onboarding Page", () => {
     });
 
     expect(screen.getByLabelText(/condominio/i)).toBeInTheDocument();
+    // Sin condominio elegido no hay torre ni piso que adivinar.
+    expect(screen.queryByLabelText(/torre/i)).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText(/condominio/i), { target: { value: "1" } });
     expect(screen.getByLabelText(/torre/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/piso/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/número de unidad/i)).toBeInTheDocument();
@@ -91,10 +94,14 @@ describe("CompletarRegistro Onboarding Page", () => {
 
   it("al elegir condominio solicita asignación sin habilitar acceso comunitario", async () => {
     vi.spyOn(condominiosApi, "obtenerCondominios").mockResolvedValueOnce([
-      { id: "42", nombre: "Condominio Valparaíso" },
+      { id: "42", nombre: "Condominio Valparaíso", tipo: "A" },
     ]);
-    const spyCompletarSesion = vi.spyOn(sesionModule, "completarSesion").mockImplementation(() => {});
-    const solicitar = vi.spyOn(condominiosApi, "solicitarAsignacion").mockResolvedValue({ estado: "pendiente" });
+    const spyCompletarSesion = vi
+      .spyOn(sesionModule, "completarSesion")
+      .mockImplementation(() => {});
+    const solicitar = vi
+      .spyOn(condominiosApi, "solicitarAsignacion")
+      .mockResolvedValue({ estado: "pendiente" });
 
     renderPagina();
 
@@ -109,9 +116,40 @@ describe("CompletarRegistro Onboarding Page", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /guardar y continuar/i }));
 
-    await waitFor(() => expect(solicitar).toHaveBeenCalledWith({ condominio_id: 42, unidad: "Torre B · Piso 5 · Unidad 504" }));
+    await waitFor(() =>
+      expect(solicitar).toHaveBeenCalledWith({
+        condominio_id: 42,
+        unidad: "Torre B · Piso 5 · Unidad 504",
+      }),
+    );
     expect(spyCompletarSesion).not.toHaveBeenCalled();
     expect(await screen.findByText(/solicitud pendiente/i)).toBeInTheDocument();
+  });
+
+  it("en un condominio de casas (tipo B) pide solo el número de casa", async () => {
+    vi.spyOn(condominiosApi, "obtenerCondominios").mockResolvedValueOnce([
+      { id: "7", nombre: "Condominio Los Robles", tipo: "B" },
+    ]);
+    const solicitar = vi
+      .spyOn(condominiosApi, "solicitarAsignacion")
+      .mockResolvedValue({ estado: "pendiente" });
+
+    renderPagina();
+
+    await waitFor(() => {
+      expect(screen.getByText("Condominio Los Robles")).toBeInTheDocument();
+    });
+
+    fireEvent.change(screen.getByLabelText(/condominio/i), { target: { value: "7" } });
+    expect(screen.queryByLabelText(/torre/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/piso/i)).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText(/número de casa o sitio/i), { target: { value: "24" } });
+
+    fireEvent.click(screen.getByRole("button", { name: /guardar y continuar/i }));
+
+    await waitFor(() =>
+      expect(solicitar).toHaveBeenCalledWith({ condominio_id: 7, unidad: "Casa 24" }),
+    );
   });
 
   it("no consulta el catálogo si no hay sesión pendiente ni usuario activo", async () => {

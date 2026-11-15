@@ -3,6 +3,7 @@ export type Step = 1 | 2 | 3;
 export interface StepUnitForm {
   condominioId: string;
   condominioNombre?: string;
+  condominioTipo?: string;
   torre: string;
   piso: string;
   numero: string;
@@ -17,17 +18,40 @@ export interface StepAccountForm {
 
 export type StepErrors = Record<string, string>;
 
+const SOLO_TEXTO_UNIDAD = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s\-°]+$/;
+
+/** Ley 21.442: un condominio tipo B es de casas o sitios, sin torre ni piso. */
+export function esDeCasas(tipo?: string): boolean {
+  return tipo === "B";
+}
+
+/** La torre es opcional: un edificio de una sola torre no la necesita. */
 export function validateUnit(form: StepUnitForm): StepErrors {
   const errs: StepErrors = {};
   if (!form.condominioId) errs.condominioId = "Selecciona un condominio.";
-  if (!form.torre) errs.torre = "Selecciona una torre.";
-  if (!form.piso) errs.piso = "Selecciona un piso.";
+  if (!esDeCasas(form.condominioTipo)) {
+    if (form.torre.trim() && !SOLO_TEXTO_UNIDAD.test(form.torre.trim()))
+      errs.torre = "La torre contiene caracteres no permitidos.";
+    if (!form.piso.trim()) errs.piso = "Ingresa el piso.";
+    else if (!SOLO_TEXTO_UNIDAD.test(form.piso.trim()))
+      errs.piso = "El piso contiene caracteres no permitidos.";
+  }
   if (!form.numero.trim()) {
-    errs.numero = "Ingresa el número de unidad.";
-  } else if (!/^[a-zA-Z0-9\s\-°]+$/.test(form.numero.trim())) {
+    errs.numero = esDeCasas(form.condominioTipo)
+      ? "Ingresa el número de casa o sitio."
+      : "Ingresa el número de unidad.";
+  } else if (!SOLO_TEXTO_UNIDAD.test(form.numero.trim())) {
     errs.numero = "El número contiene caracteres no permitidos.";
   }
   return errs;
+}
+
+/** Texto de unidad que se envía en la solicitud de asignación. */
+export function componerUnidad(form: StepUnitForm): string {
+  const numero = form.numero.trim();
+  if (esDeCasas(form.condominioTipo)) return `Casa ${numero}`;
+  const torre = form.torre.trim();
+  return `${torre ? `${torre} · ` : ""}Piso ${form.piso.trim()} · Unidad ${numero}`;
 }
 
 export function validateAccount(form: StepAccountForm): StepErrors {

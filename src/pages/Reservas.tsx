@@ -531,6 +531,42 @@ function mapearBackendReserva(
   };
 }
 
+interface DatosReservas {
+  espacios: EspacioOpcion[];
+  reservas: Reserva[];
+}
+
+/**
+ * Fuente de verdad: el servidor. Se usa al montar y tras cada mutación confirmada.
+ * Sin setState adentro, para que el efecto de carga no actualice estado de forma síncrona.
+ */
+async function obtenerDatosReservas(): Promise<DatosReservas> {
+  const [espaciosData, reservasData] = await Promise.all([
+    listarEspacios().catch(() => []),
+    listarMisReservas().catch(() => []),
+  ]);
+
+  const espacios: EspacioOpcion[] = Array.isArray(espaciosData)
+    ? espaciosData.map((e) => ({
+        id: e.id,
+        nombre: e.nombre,
+        tarifaHr: e.tarifa_hora,
+        categoria: e.nombre.split(" ")[0],
+      }))
+    : [];
+
+  const map = new Map(espacios.map((esp) => [esp.id, esp]));
+  let reservas: Reserva[] = [];
+  try {
+    reservas = Array.isArray(reservasData)
+      ? reservasData.map((r) => mapearBackendReserva(r, map))
+      : [];
+  } catch {
+    // Una reserva con forma inesperada no debe dejar la pantalla cargando para siempre.
+  }
+  return { espacios, reservas };
+}
+
 export default function Reservas() {
   const { role, user } = useAuth();
   const isAdmin = role === "admin";
@@ -543,40 +579,17 @@ export default function Reservas() {
   const [cancelTarget, setCancelTarget] = useState<string | null>(null);
   const [blockTarget, setBlockTarget] = useState<string | null>(null);
 
-  // Fuente de verdad: el servidor. Se usa al montar y tras cada mutación confirmada.
-  // try/catch y no try/finally: React Compiler no memoiza un try sin catch.
-  async function cargarDatos(esActivo: () => boolean = () => true) {
-    const [espaciosData, reservasData] = await Promise.all([
-      listarEspacios().catch(() => []),
-      listarMisReservas().catch(() => []),
-    ]);
-    if (!esActivo()) return;
-
-    const listaEspacios: EspacioOpcion[] = Array.isArray(espaciosData)
-      ? espaciosData.map((e) => ({
-          id: e.id,
-          nombre: e.nombre,
-          tarifaHr: e.tarifa_hora,
-          categoria: e.nombre.split(" ")[0],
-        }))
-      : [];
-    setEspaciosDisponibles(listaEspacios);
-
-    const map = new Map(listaEspacios.map((esp) => [esp.id, esp]));
-    try {
-      setReservas(
-        Array.isArray(reservasData) ? reservasData.map((r) => mapearBackendReserva(r, map)) : [],
-      );
-    } catch {
-      // Una reserva con forma inesperada no debe dejar la pantalla cargando para siempre.
-      setReservas([]);
-    }
+  function aplicarDatos(datos: DatosReservas) {
+    setEspaciosDisponibles(datos.espacios);
+    setReservas(datos.reservas);
     setLoading(false);
   }
 
   useEffect(() => {
     let active = true;
-    void cargarDatos(() => active);
+    void obtenerDatosReservas().then((datos) => {
+      if (active) aplicarDatos(datos);
+    });
     return () => {
       active = false;
     };
@@ -610,7 +623,7 @@ export default function Reservas() {
     }
 
     setShowCreate(false);
-    await cargarDatos();
+    aplicarDatos(await obtenerDatosReservas());
   }
 
   // Bloquear por mantenimiento usa el mismo DELETE: el backend lo autoriza para admin/conserje.
@@ -625,7 +638,7 @@ export default function Reservas() {
       });
       return;
     }
-    await cargarDatos();
+    aplicarDatos(await obtenerDatosReservas());
   }
 
   async function handleCancelConfirm() {

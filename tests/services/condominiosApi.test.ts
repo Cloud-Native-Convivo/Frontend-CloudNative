@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { obtenerCondominios, obtenerSolicitudPropia } from "@/services/condominiosApi";
+import {
+  obtenerCondominios,
+  obtenerSolicitudPropia,
+  solicitarAsignacion,
+  UnidadRechazadaError,
+} from "@/services/condominiosApi";
 
 describe("condominiosApi", () => {
   beforeEach(() => {
@@ -22,9 +27,7 @@ describe("condominiosApi", () => {
   });
 
   it("retorna lista de condominios cuando fetch responde formato { items: [] }", async () => {
-    const mockData = [
-      { id: "1", nombre: "Condominio Central" },
-    ];
+    const mockData = [{ id: "1", nombre: "Condominio Central" }];
 
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
       ok: true,
@@ -51,7 +54,9 @@ describe("condominiosApi", () => {
   });
 
   it("consulta la asignación propia sin inventar un condominio por defecto", async () => {
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({ ok: true, json: async () => null } as Response);
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce({ ok: true, json: async () => null } as Response);
     expect(await obtenerSolicitudPropia()).toBeNull();
     expect(fetchSpy.mock.calls[0][0]).toMatch(/\/condominios\/solicitudes\/me$/);
   });
@@ -60,4 +65,46 @@ describe("condominiosApi", () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({ ok: false, status: 404 } as Response);
     expect(await obtenerSolicitudPropia()).toBeNull();
   });
+
+  it("envía torre, piso y número por separado en la solicitud", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response(JSON.stringify({ estado: "pendiente", unidad: "Piso 5 · Unidad 504" }), {
+        status: 201,
+      }),
+    );
+
+    const r = await solicitarAsignacion({ condominio_id: 1, numero: "504", piso: "5" });
+
+    expect(r).toEqual({ estado: "pendiente", unidad: "Piso 5 · Unidad 504" });
+    expect(JSON.parse(String(fetchMock.mock.calls[0][1]?.body))).toEqual({
+      condominio_id: 1,
+      numero: "504",
+      piso: "5",
+    });
+  });
+
+  // Tabla de decisión sobre el cuerpo del 422: message de negocio, detail de Pydantic, sin cuerpo.
+  it.each([
+    [
+      { message: "La unidad no existe en este condominio" },
+      "La unidad no existe en este condominio",
+    ],
+    [
+      { detail: [{ loc: ["body", "numero"], msg: "Field required" }] },
+      "Revisa los datos de tu unidad.",
+    ],
+    [null, "Revisa los datos de tu unidad."],
+  ])(
+    "un 422 con cuerpo %j lanza UnidadRechazadaError con un mensaje legible",
+    async (cuerpo, esperado) => {
+      vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+        new Response(cuerpo === null ? "" : JSON.stringify(cuerpo), { status: 422 }),
+      );
+
+      const intento = solicitarAsignacion({ condominio_id: 1, numero: "99" });
+
+      await expect(intento).rejects.toBeInstanceOf(UnidadRechazadaError);
+      await expect(intento).rejects.toThrow(esperado);
+    },
+  );
 });

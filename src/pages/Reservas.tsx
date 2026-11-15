@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { notify } from "../utils/notify";
 import {
   listarMisReservas,
   crearReserva,
+  cancelarReserva,
   listarEspacios,
   type BackendReserva,
 } from "../services/espaciosApi";
@@ -179,6 +180,58 @@ function ReservaCard({ reserva, onCancel, onBlock }: ReservaCardProps) {
   );
 }
 
+// closedby="any" agrega cerrar al hacer clic fuera; Safari aún no lo soporta.
+const soportaClosedBy =
+  typeof HTMLDialogElement !== "undefined" && "closedBy" in HTMLDialogElement.prototype;
+
+function cerrarDialogo(e: React.MouseEvent<HTMLElement>) {
+  e.currentTarget.closest("dialog")?.close();
+}
+
+interface ModalProps {
+  titleId: string;
+  onClose: () => void;
+  children: React.ReactNode;
+}
+
+/** Modal nativo: showModal() da foco contenido, Esc, fondo inerte y devuelve el foco al cerrar. */
+function Modal({ titleId, onClose, children }: ModalProps) {
+  const ref = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const dialog = ref.current;
+    if (!dialog) return;
+    // StrictMode monta el efecto dos veces: showModal() sobre uno ya abierto puede lanzar.
+    if (!dialog.open) dialog.showModal();
+    // Foco inicial explícito: en confirmaciones destructivas va a la acción segura.
+    dialog.querySelector<HTMLElement>("[data-autofocus]")?.focus();
+
+    if (soportaClosedBy) return;
+    // Fallback de clic fuera: se mide el puntero, porque el padding del <dialog> también es su target.
+    const cerrarSiClicFuera = (e: MouseEvent) => {
+      if (e.target !== dialog) return;
+      const r = dialog.getBoundingClientRect();
+      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+        dialog.close();
+      }
+    };
+    dialog.addEventListener("click", cerrarSiClicFuera);
+    return () => dialog.removeEventListener("click", cerrarSiClicFuera);
+  }, []);
+
+  return (
+    <dialog
+      ref={ref}
+      {...({ closedby: "any" } as object)}
+      aria-labelledby={titleId}
+      onClose={onClose}
+      className="m-auto w-[calc(100%-2rem)] max-w-narrow rounded-lg bg-white p-6 shadow-xl backdrop:bg-black/50"
+    >
+      {children}
+    </dialog>
+  );
+}
+
 interface CreateModalProps {
   espacios: EspacioOpcion[];
   onClose: () => void;
@@ -258,111 +311,111 @@ function CreateModal({ espacios, onClose, onConfirm }: CreateModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-narrow p-6">
-        <h2 className="font-display text-2xl text-text mb-5">Nueva reserva</h2>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <Modal titleId="crear-reserva-titulo" onClose={onClose}>
+      <h2 id="crear-reserva-titulo" className="font-display text-2xl text-text mb-5">
+        Nueva reserva
+      </h2>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <label htmlFor="espacio" className="text-sm font-medium text-text">
+            Selecciona un espacio
+          </label>
+          <select
+            id="espacio"
+            data-autofocus
+            value={form.espacioId}
+            onChange={(e) => setForm({ ...form, espacioId: Number(e.target.value) })}
+            className="border border-border rounded-md px-3 py-2 text-text bg-white focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            {espacios.map((esp) => (
+              <option key={esp.id} value={esp.id}>
+                {esp.nombre} —{" "}
+                {esp.tarifaHr === 0 ? "Gratis" : `$${esp.tarifaHr.toLocaleString("es-CL")}/hr`}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="fecha" className="text-sm font-medium text-text">
+            Fecha
+          </label>
+          <input
+            id="fecha"
+            type="date"
+            min={today}
+            value={form.fecha}
+            onChange={(e) => setForm({ ...form, fecha: e.target.value })}
+            required
+            className="border border-border rounded-md px-3 py-2 text-text bg-white focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
           <div className="flex flex-col gap-1">
-            <label htmlFor="espacio" className="text-sm font-medium text-text">
-              Selecciona un espacio
+            <label htmlFor="hora" className="text-sm font-medium text-text">
+              Hora inicio
             </label>
             <select
-              id="espacio"
-              value={form.espacioId}
-              onChange={(e) => setForm({ ...form, espacioId: Number(e.target.value) })}
+              id="hora"
+              value={form.hora}
+              onChange={(e) => setForm({ ...form, hora: e.target.value })}
               className="border border-border rounded-md px-3 py-2 text-text bg-white focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              {espacios.map((esp) => (
-                <option key={esp.id} value={esp.id}>
-                  {esp.nombre} —{" "}
-                  {esp.tarifaHr === 0 ? "Gratis" : `$${esp.tarifaHr.toLocaleString("es-CL")}/hr`}
+              {HORAS.map((h) => (
+                <option key={h} value={h}>
+                  {h}
                 </option>
               ))}
             </select>
           </div>
-
           <div className="flex flex-col gap-1">
-            <label htmlFor="fecha" className="text-sm font-medium text-text">
-              Fecha
+            <label htmlFor="duracion" className="text-sm font-medium text-text">
+              Duración
             </label>
-            <input
-              id="fecha"
-              type="date"
-              min={today}
-              value={form.fecha}
-              onChange={(e) => setForm({ ...form, fecha: e.target.value })}
-              required
+            <select
+              id="duracion"
+              value={form.duracion}
+              onChange={(e) => setForm({ ...form, duracion: Number(e.target.value) })}
               className="border border-border rounded-md px-3 py-2 text-text bg-white focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1">
-              <label htmlFor="hora" className="text-sm font-medium text-text">
-                Hora inicio
-              </label>
-              <select
-                id="hora"
-                value={form.hora}
-                onChange={(e) => setForm({ ...form, hora: e.target.value })}
-                className="border border-border rounded-md px-3 py-2 text-text bg-white focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                {HORAS.map((h) => (
-                  <option key={h} value={h}>
-                    {h}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="duracion" className="text-sm font-medium text-text">
-                Duración
-              </label>
-              <select
-                id="duracion"
-                value={form.duracion}
-                onChange={(e) => setForm({ ...form, duracion: Number(e.target.value) })}
-                className="border border-border rounded-md px-3 py-2 text-text bg-white focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                {DURACIONES.map((d) => (
-                  <option key={d} value={d}>
-                    {d} {d === 1 ? "hr" : "hrs"}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="bg-gray-50 rounded-md p-3 text-sm text-text">
-            <span className="font-medium">Total: </span>
-            {form.duracion} {form.duracion === 1 ? "hr" : "hrs"} &times;{" "}
-            {espacio.tarifaHr === 0 ? "Gratis" : `$${espacio.tarifaHr.toLocaleString("es-CL")}`} ={" "}
-            <span className="font-semibold text-primary">
-              {total === 0 ? "Gratis" : `$${total.toLocaleString("es-CL")}`}
-            </span>
-          </div>
-
-          <div className="flex flex-col gap-2 mt-1">
-            <button
-              type="submit"
-              className="btn btn-primary w-full"
-              data-cuelume-press="tick"
-              data-cuelume-release="success"
             >
-              Confirmar reserva
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="btn btn-tertiary w-full text-muted hover:text-text"
-            >
-              Cancelar
-            </button>
+              {DURACIONES.map((d) => (
+                <option key={d} value={d}>
+                  {d} {d === 1 ? "hr" : "hrs"}
+                </option>
+              ))}
+            </select>
           </div>
-        </form>
-      </div>
-    </div>
+        </div>
+
+        <div className="bg-gray-50 rounded-md p-3 text-sm text-text">
+          <span className="font-medium">Total: </span>
+          {form.duracion} {form.duracion === 1 ? "hr" : "hrs"} &times;{" "}
+          {espacio.tarifaHr === 0 ? "Gratis" : `$${espacio.tarifaHr.toLocaleString("es-CL")}`} ={" "}
+          <span className="font-semibold text-primary">
+            {total === 0 ? "Gratis" : `$${total.toLocaleString("es-CL")}`}
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-2 mt-1">
+          <button
+            type="submit"
+            className="btn btn-primary w-full"
+            data-cuelume-press="tick"
+            data-cuelume-release="success"
+          >
+            Confirmar reserva
+          </button>
+          <button
+            type="button"
+            onClick={cerrarDialogo}
+            className="btn btn-tertiary w-full text-muted hover:text-text"
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 }
 
@@ -374,31 +427,35 @@ interface CancelModalProps {
 
 function CancelModal({ reserva, onClose, onConfirm }: CancelModalProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-narrow p-6">
-        <h2 className="font-display text-xl text-text mb-2">¿Cancelar esta reserva?</h2>
-        <p className="text-sm text-muted mb-1">
-          <span className="font-medium text-text">{reserva.espacio}</span> — {reserva.fechaDisplay}{" "}
-          a las {reserva.hora} hrs
-        </p>
-        <p className="text-sm bg-yellow-50 border border-yellow-200 rounded-md p-3 text-text mt-3 mb-6">
-          ⚠️ Recuerda que las cancelaciones deben realizarse con al menos 24 horas de anticipación.
-          Esta acción no se puede deshacer.
-        </p>
-        <div className="flex gap-3">
-          <button onClick={onClose} className="btn btn-secondary flex-1">
-            Volver
-          </button>
-          <button
-            onClick={onConfirm}
-            className="btn btn-primary flex-1 bg-alert-red text-white hover:bg-alert-red/90"
-          >
-            Sí, cancelar
-          </button>
-        </div>
+    <Modal titleId="cancelar-reserva-titulo" onClose={onClose}>
+      <h2 id="cancelar-reserva-titulo" className="font-display text-xl text-text mb-2">
+        ¿Cancelar esta reserva?
+      </h2>
+      <p className="text-sm text-muted mb-1">
+        <span className="font-medium text-text">{reserva.espacio}</span> — {reserva.fechaDisplay} a
+        las {reserva.hora} hrs
+      </p>
+      <p className="text-sm bg-yellow-50 border border-yellow-200 rounded-md p-3 text-text mt-3 mb-6">
+        ⚠️ Recuerda que las cancelaciones deben realizarse con al menos 24 horas de anticipación.
+        Esta acción no se puede deshacer.
+      </p>
+      <div className="flex gap-3">
+        <button
+          type="button"
+          data-autofocus
+          onClick={cerrarDialogo}
+          className="btn btn-secondary flex-1"
+        >
+          Volver
+        </button>
+        <button
+          onClick={onConfirm}
+          className="btn btn-primary flex-1 bg-alert-red text-white hover:bg-alert-red/90"
+        >
+          Sí, cancelar
+        </button>
       </div>
-    </div>
+    </Modal>
   );
 }
 
@@ -458,7 +515,7 @@ function mapearBackendReserva(
   };
 
   return {
-    id: `R${String(b.id).padStart(3, "0")}`,
+    id: String(b.id),
     espacio: espacioOpcion.nombre,
     categoria: espacioOpcion.categoria || espacioOpcion.nombre.split(" ")[0],
     imagen:
@@ -470,12 +527,48 @@ function mapearBackendReserva(
     duracionHrs,
     precio: duracionHrs > 0 ? Math.round(b.monto_total / duracionHrs) : b.monto_total,
     estado: estadoMap[b.estado.toLowerCase()] ?? "pendiente",
-    codigo: `CONV-2026-R${String(b.id).padStart(3, "0")}`,
+    codigo: `CONV-${new Date(b.creado_en).getFullYear() || yyyy}-R${String(b.id).padStart(3, "0")}`,
   };
 }
 
+interface DatosReservas {
+  espacios: EspacioOpcion[];
+  reservas: Reserva[];
+}
+
+/**
+ * Fuente de verdad: el servidor. Se usa al montar y tras cada mutación confirmada.
+ * Sin setState adentro, para que el efecto de carga no actualice estado de forma síncrona.
+ */
+async function obtenerDatosReservas(): Promise<DatosReservas> {
+  const [espaciosData, reservasData] = await Promise.all([
+    listarEspacios().catch(() => []),
+    listarMisReservas().catch(() => []),
+  ]);
+
+  const espacios: EspacioOpcion[] = Array.isArray(espaciosData)
+    ? espaciosData.map((e) => ({
+        id: e.id,
+        nombre: e.nombre,
+        tarifaHr: e.tarifa_hora,
+        categoria: e.nombre.split(" ")[0],
+      }))
+    : [];
+
+  const map = new Map(espacios.map((esp) => [esp.id, esp]));
+  let reservas: Reserva[] = [];
+  try {
+    reservas = Array.isArray(reservasData)
+      ? reservasData.map((r) => mapearBackendReserva(r, map))
+      : [];
+  } catch {
+    // Una reserva con forma inesperada no debe dejar la pantalla cargando para siempre.
+  }
+  return { espacios, reservas };
+}
+
 export default function Reservas() {
-  const { role } = useAuth();
+  const { role, user } = useAuth();
   const isAdmin = role === "admin";
 
   const [espaciosDisponibles, setEspaciosDisponibles] = useState<EspacioOpcion[]>([]);
@@ -486,40 +579,17 @@ export default function Reservas() {
   const [cancelTarget, setCancelTarget] = useState<string | null>(null);
   const [blockTarget, setBlockTarget] = useState<string | null>(null);
 
+  function aplicarDatos(datos: DatosReservas) {
+    setEspaciosDisponibles(datos.espacios);
+    setReservas(datos.reservas);
+    setLoading(false);
+  }
+
   useEffect(() => {
     let active = true;
-    Promise.all([listarEspacios().catch(() => []), listarMisReservas().catch(() => [])])
-      .then(([espaciosData, reservasData]) => {
-        if (!active) return;
-
-        const listaEspacios: EspacioOpcion[] = Array.isArray(espaciosData)
-          ? espaciosData.map((e) => ({
-              id: e.id,
-              nombre: e.nombre,
-              tarifaHr: e.tarifa_hora,
-              categoria: e.nombre.split(" ")[0],
-            }))
-          : [];
-        setEspaciosDisponibles(listaEspacios);
-
-        const map = new Map<number, EspacioOpcion>();
-        listaEspacios.forEach((esp) => map.set(esp.id, esp));
-
-        if (Array.isArray(reservasData)) {
-          setReservas(reservasData.map((r) => mapearBackendReserva(r, map)));
-        } else {
-          setReservas([]);
-        }
-      })
-      .catch(() => {
-        if (active) {
-          setReservas([]);
-          setEspaciosDisponibles([]);
-        }
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
+    void obtenerDatosReservas().then((datos) => {
+      if (active) aplicarDatos(datos);
+    });
     return () => {
       active = false;
     };
@@ -537,17 +607,13 @@ export default function Reservas() {
   ) {
     if (!payload) return;
 
-    let newReserva: Reserva;
     try {
-      const backendResult = await crearReserva({
+      await crearReserva({
         espacio_id: payload.espacioId,
         fecha_inicio: payload.fechaInicio,
         fecha_fin: payload.fechaFin,
       });
-      const map = new Map<number, EspacioOpcion>();
-      espaciosDisponibles.forEach((e) => map.set(e.id, e));
-      newReserva = mapearBackendReserva(backendResult, map);
-      notify.success({ title: "Reserva creada exitosamente en el servidor" });
+      notify.success({ title: "Reserva creada" });
     } catch (err) {
       notify.error({
         title: "No se pudo crear la reserva",
@@ -556,19 +622,34 @@ export default function Reservas() {
       return;
     }
 
-    setReservas([newReserva, ...reservas]);
     setShowCreate(false);
+    aplicarDatos(await obtenerDatosReservas());
   }
 
-  function handleCancelConfirm() {
+  // Bloquear por mantenimiento usa el mismo DELETE: el backend lo autoriza para admin/conserje.
+  async function cancelarEnServidor(id: string) {
+    try {
+      await cancelarReserva(Number(id));
+      notify.success({ title: "Reserva cancelada" });
+    } catch (err) {
+      notify.error({
+        title: "No se pudo cancelar la reserva",
+        description: err instanceof Error ? err.message : undefined,
+      });
+      return;
+    }
+    aplicarDatos(await obtenerDatosReservas());
+  }
+
+  async function handleCancelConfirm() {
     if (!cancelTarget) return;
-    setReservas(reservas.map((r) => (r.id === cancelTarget ? { ...r, estado: "cancelada" } : r)));
+    await cancelarEnServidor(cancelTarget);
     setCancelTarget(null);
   }
 
-  function handleBlockConfirm() {
+  async function handleBlockConfirm() {
     if (!blockTarget) return;
-    setReservas(reservas.map((r) => (r.id === blockTarget ? { ...r, estado: "cancelada" } : r)));
+    await cancelarEnServidor(blockTarget);
     setBlockTarget(null);
   }
 
@@ -582,7 +663,7 @@ export default function Reservas() {
               {isAdmin ? "Reservas del condominio" : "Mis Reservas"}
             </h1>
             <p className="text-white/60 mt-1">
-              {isAdmin ? "Gestión y bloqueo por mantenimiento" : "Torres del Parque"}
+              {isAdmin ? "Gestión y bloqueo por mantenimiento" : (user?.condominioNombre ?? "")}
             </p>
           </div>
           {!isAdmin && (
@@ -674,34 +755,31 @@ export default function Reservas() {
         />
       )}
       {blockTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/50"
-            onClick={() => setBlockTarget(null)}
-            aria-hidden="true"
-          />
-          <div className="relative bg-white rounded-lg shadow-xl w-full max-w-narrow p-6">
-            <h2 className="font-display text-xl text-text mb-2">¿Bloquear por mantenimiento?</h2>
-            <p className="text-sm text-muted mb-6">
-              Esta reserva quedará cancelada y el espacio aparecerá no disponible en el período
-              correspondiente. La acción no se puede deshacer.
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setBlockTarget(null)}
-                className="flex-1 border border-border text-text font-medium py-3 rounded-md hover:bg-gray-50 transition-colors"
-              >
-                Volver
-              </button>
-              <button
-                onClick={handleBlockConfirm}
-                className="btn btn-primary flex-1 bg-alert-yellow text-text hover:bg-alert-yellow/90"
-              >
-                Confirmar bloqueo
-              </button>
-            </div>
+        <Modal titleId="bloquear-reserva-titulo" onClose={() => setBlockTarget(null)}>
+          <h2 id="bloquear-reserva-titulo" className="font-display text-xl text-text mb-2">
+            ¿Bloquear por mantenimiento?
+          </h2>
+          <p className="text-sm text-muted mb-6">
+            Esta reserva quedará cancelada y el espacio aparecerá no disponible en el período
+            correspondiente. La acción no se puede deshacer.
+          </p>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              data-autofocus
+              onClick={cerrarDialogo}
+              className="flex-1 border border-border text-text font-medium py-3 rounded-md hover:bg-gray-50 transition-colors"
+            >
+              Volver
+            </button>
+            <button
+              onClick={handleBlockConfirm}
+              className="btn btn-primary flex-1 bg-alert-yellow text-text hover:bg-alert-yellow/90"
+            >
+              Confirmar bloqueo
+            </button>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

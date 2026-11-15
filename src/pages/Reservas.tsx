@@ -544,31 +544,34 @@ export default function Reservas() {
   const [blockTarget, setBlockTarget] = useState<string | null>(null);
 
   // Fuente de verdad: el servidor. Se usa al montar y tras cada mutación confirmada.
+  // try/catch y no try/finally: React Compiler no memoiza un try sin catch.
   async function cargarDatos(esActivo: () => boolean = () => true) {
+    const [espaciosData, reservasData] = await Promise.all([
+      listarEspacios().catch(() => []),
+      listarMisReservas().catch(() => []),
+    ]);
+    if (!esActivo()) return;
+
+    const listaEspacios: EspacioOpcion[] = Array.isArray(espaciosData)
+      ? espaciosData.map((e) => ({
+          id: e.id,
+          nombre: e.nombre,
+          tarifaHr: e.tarifa_hora,
+          categoria: e.nombre.split(" ")[0],
+        }))
+      : [];
+    setEspaciosDisponibles(listaEspacios);
+
+    const map = new Map(listaEspacios.map((esp) => [esp.id, esp]));
     try {
-      const [espaciosData, reservasData] = await Promise.all([
-        listarEspacios().catch(() => []),
-        listarMisReservas().catch(() => []),
-      ]);
-      if (!esActivo()) return;
-
-      const listaEspacios: EspacioOpcion[] = Array.isArray(espaciosData)
-        ? espaciosData.map((e) => ({
-            id: e.id,
-            nombre: e.nombre,
-            tarifaHr: e.tarifa_hora,
-            categoria: e.nombre.split(" ")[0],
-          }))
-        : [];
-      setEspaciosDisponibles(listaEspacios);
-
-      const map = new Map(listaEspacios.map((esp) => [esp.id, esp]));
       setReservas(
         Array.isArray(reservasData) ? reservasData.map((r) => mapearBackendReserva(r, map)) : [],
       );
-    } finally {
-      if (esActivo()) setLoading(false);
+    } catch {
+      // Una reserva con forma inesperada no debe dejar la pantalla cargando para siempre.
+      setReservas([]);
     }
+    setLoading(false);
   }
 
   useEffect(() => {

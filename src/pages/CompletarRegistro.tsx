@@ -1,12 +1,18 @@
 import { useState, useEffect } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
-import { obtenerCondominios, solicitarAsignacion } from "../services/condominiosApi";
+import {
+  obtenerCondominios,
+  obtenerSolicitudPropia,
+  solicitarAsignacion,
+  UnidadRechazadaError,
+} from "../services/condominiosApi";
 import { completarSesion } from "../auth/sesion";
 import type { CognitoTokens } from "../auth/cognitoAuth";
 import type { CondominioItem, User } from "../types";
 import {
   componerUnidad,
+  datosSolicitud,
   inputClass,
   validateUnit,
   type StepUnitForm,
@@ -20,7 +26,8 @@ interface PendingAuth {
 
 interface FormularioUnidadProps {
   condominios: CondominioItem[];
-  onSubmit: (unidad: string, condominioId: string, condominioNombre?: string) => void;
+  /** Devuelve el mensaje a mostrar junto al número si el servidor rechaza la unidad. */
+  onSubmit: (form: StepUnitForm, condominioNombre?: string) => Promise<string | undefined>;
 }
 
 function FormularioUnidad({ condominios, onSubmit }: FormularioUnidadProps) {
@@ -49,16 +56,15 @@ function FormularioUnidad({ condominios, onSubmit }: FormularioUnidadProps) {
     }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const nuevosErrores = validateUnit(form);
-    if (Object.keys(nuevosErrores).length > 0) {
-      setErrores(nuevosErrores);
-      return;
-    }
+    setErrores(nuevosErrores);
+    if (Object.keys(nuevosErrores).length > 0) return;
 
     const condoSeleccionado = condominios.find((c) => String(c.id) === form.condominioId);
-    onSubmit(componerUnidad(form), form.condominioId, condoSeleccionado?.nombre);
+    const rechazo = await onSubmit(form, condoSeleccionado?.nombre);
+    if (rechazo) setErrores({ numero: rechazo });
   }
 
   return (
@@ -160,20 +166,37 @@ export default function CompletarRegistro() {
   const usuarioBase = pending?.usuario ?? activeUser!;
 
   const handleCompletar = async (
-    unidad: string,
-    condominioId: string,
+    form: StepUnitForm,
     condominioNombre?: string,
-  ) => {
+  ): Promise<string | undefined> => {
     try {
-      const respuesta = await solicitarAsignacion({ unidad, condominio_id: Number(condominioId) });
+      const respuesta = await solicitarAsignacion({
+        condominio_id: Number(form.condominioId),
+        ...datosSolicitud(form),
+      });
       if (respuesta.estado === "aprobada") {
-        // Ya aprobada (409 o respuesta directa): completar sesión y navegar.
-        const usuario = { ...usuarioBase, unidad, condominioId: condominioId, condominioNombre };
+        // 409 sin cuerpo: ya había una asignación aprobada, que puede ser de otro
+        // condominio. La sesión usa la asignación real, no lo escrito en el formulario.
+        const real = respuesta.unidad ? null : await obtenerSolicitudPropia();
+        if (!respuesta.unidad && !real) {
+          setEstadoSolicitud("error");
+          return;
+        }
+        const condominioId = real ? String(real.condominio_id) : form.condominioId;
+        const usuario = {
+          ...usuarioBase,
+          unidad: real?.unidad ?? respuesta.unidad ?? componerUnidad(form),
+          condominioId,
+          condominioNombre: real
+            ? condominios.find((c) => String(c.id) === condominioId)?.nombre
+            : condominioNombre,
+        };
         completarSesion(tokens, usuario, setUser, navigate);
         return;
       }
       setEstadoSolicitud(respuesta.estado);
-    } catch {
+    } catch (err) {
+      if (err instanceof UnidadRechazadaError) return err.message;
       setEstadoSolicitud("error");
     }
   };

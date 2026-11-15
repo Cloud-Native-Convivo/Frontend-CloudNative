@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { StepUnit } from "@/components/registro/StepComponents";
-import { componerUnidad, validateUnit } from "@/components/registro/types";
+import { componerUnidad, datosSolicitud, validateUnit } from "@/components/registro/types";
 import * as condominiosApi from "@/services/condominiosApi";
 
 describe("StepUnit con selección obligatoria de condominio", () => {
@@ -42,11 +42,18 @@ describe("StepUnit con selección obligatoria de condominio", () => {
     const casa = { ...base, condominioTipo: "B" };
     expect(validateUnit(casa)).toEqual({});
     expect(componerUnidad(casa)).toBe("Casa 24");
+    expect(datosSolicitud({ ...casa, torre: "X", piso: "9" })).toEqual({ numero: "24" });
 
     // Tipo A (edificio): el piso es obligatorio, la torre no.
     const edificio = { ...base, condominioTipo: "A" };
     expect(validateUnit(edificio)).toEqual({ piso: "Ingresa el piso." });
     expect(componerUnidad({ ...edificio, piso: "3" })).toBe("Piso 3 · Unidad 24");
+    expect(datosSolicitud({ ...edificio, piso: " 3 " })).toEqual({ numero: "24", piso: "3" });
+    expect(datosSolicitud({ ...edificio, torre: "Torre B", piso: "3" })).toEqual({
+      numero: "24",
+      piso: "3",
+      torre: "Torre B",
+    });
     expect(componerUnidad({ ...edificio, torre: "Torre B", piso: "3" })).toBe(
       "Torre B · Piso 3 · Unidad 24",
     );

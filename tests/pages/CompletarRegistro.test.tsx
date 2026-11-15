@@ -119,7 +119,9 @@ describe("CompletarRegistro Onboarding Page", () => {
     await waitFor(() =>
       expect(solicitar).toHaveBeenCalledWith({
         condominio_id: 42,
-        unidad: "Torre B · Piso 5 · Unidad 504",
+        numero: "504",
+        piso: "5",
+        torre: "Torre B",
       }),
     );
     expect(spyCompletarSesion).not.toHaveBeenCalled();
@@ -147,8 +149,57 @@ describe("CompletarRegistro Onboarding Page", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /guardar y continuar/i }));
 
-    await waitFor(() =>
-      expect(solicitar).toHaveBeenCalledWith({ condominio_id: 7, unidad: "Casa 24" }),
+    await waitFor(() => expect(solicitar).toHaveBeenCalledWith({ condominio_id: 7, numero: "24" }));
+  });
+
+  it("muestra junto al número el rechazo del servidor cuando la unidad no existe (422)", async () => {
+    vi.spyOn(condominiosApi, "obtenerCondominios").mockResolvedValueOnce([
+      { id: "7", nombre: "Condominio Los Robles", tipo: "B" },
+    ]);
+    vi.spyOn(condominiosApi, "solicitarAsignacion").mockRejectedValue(
+      new condominiosApi.UnidadRechazadaError("La unidad no existe en este condominio"),
+    );
+
+    renderPagina();
+
+    fireEvent.change(await screen.findByLabelText(/condominio/i), { target: { value: "7" } });
+    fireEvent.change(screen.getByLabelText(/número de casa o sitio/i), { target: { value: "99" } });
+    fireEvent.click(screen.getByRole("button", { name: /guardar y continuar/i }));
+
+    expect(await screen.findByText("La unidad no existe en este condominio")).toBeInTheDocument();
+    expect(screen.getByLabelText(/número de casa o sitio/i)).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
+    expect(screen.queryByText(/no pudimos enviar la solicitud/i)).not.toBeInTheDocument();
+  });
+
+  it("con 409 (ya aprobada) usa la asignación real y no la escrita en el formulario", async () => {
+    vi.spyOn(condominiosApi, "obtenerCondominios").mockResolvedValueOnce([
+      { id: "1", nombre: "Condominio Test", tipo: "A" },
+      { id: "7", nombre: "Condominio Los Robles", tipo: "B" },
+    ]);
+    vi.spyOn(condominiosApi, "solicitarAsignacion").mockResolvedValue({ estado: "aprobada" });
+    vi.spyOn(condominiosApi, "obtenerSolicitudPropia").mockResolvedValue({
+      condominio_id: 1,
+      unidad: "Torre A · Piso 3 · Unidad 120",
+      estado: "aprobada",
+    });
+    const completar = vi.spyOn(sesionModule, "completarSesion").mockImplementation(() => {});
+
+    renderPagina();
+
+    fireEvent.change(await screen.findByLabelText(/condominio/i), { target: { value: "7" } });
+    fireEvent.change(screen.getByLabelText(/número de casa o sitio/i), { target: { value: "24" } });
+    fireEvent.click(screen.getByRole("button", { name: /guardar y continuar/i }));
+
+    await waitFor(() => expect(completar).toHaveBeenCalled());
+    expect(completar.mock.calls[0][1]).toEqual(
+      expect.objectContaining({
+        condominioId: "1",
+        condominioNombre: "Condominio Test",
+        unidad: "Torre A · Piso 3 · Unidad 120",
+      }),
     );
   });
 

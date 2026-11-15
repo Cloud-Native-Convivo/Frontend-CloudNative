@@ -59,6 +59,9 @@ describe("Reservas con datos reales", () => {
     expect(screen.queryByText(/Torres del Parque/)).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
+    const dialogo = screen.getByRole("dialog", { name: "¿Cancelar esta reserva?" });
+    expect(dialogo).toHaveAttribute("open");
+    expect(screen.getByRole("button", { name: "Volver" })).toHaveFocus();
     fireEvent.click(screen.getByRole("button", { name: "Sí, cancelar" }));
 
     await waitFor(() => expect(cancelar).toHaveBeenCalledWith(7));
@@ -80,5 +83,19 @@ describe("Reservas con datos reales", () => {
       expect(screen.queryByRole("button", { name: "Sí, cancelar" })).not.toBeInTheDocument(),
     );
     expect(screen.getByText(/Confirmada/, { selector: "span" })).toBeInTheDocument();
+  });
+
+  it("Volver cierra el diálogo nativo sin llamar al servidor", async () => {
+    vi.spyOn(espaciosApi, "listarEspacios").mockResolvedValue([]);
+    vi.spyOn(espaciosApi, "listarMisReservas").mockResolvedValue([reservaEnDias(3)]);
+    const cancelar = vi.spyOn(espaciosApi, "cancelarReserva");
+
+    renderReservas();
+
+    fireEvent.click(await screen.findByRole("button", { name: "Cancelar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Volver" }));
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(cancelar).not.toHaveBeenCalled();
   });
 });

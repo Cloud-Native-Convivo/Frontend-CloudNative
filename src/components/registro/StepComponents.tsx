@@ -41,6 +41,7 @@ export function CamposUnidad({
               value={form.torre}
               onChange={onChange}
               placeholder="Ej: Torre B (vacío si hay una sola)"
+              aria-label="Torre (opcional)"
               aria-invalid={!!errors.torre}
               aria-describedby={errors.torre ? "torre-error" : undefined}
               className={inputClass(errors.torre)}
@@ -55,6 +56,7 @@ export function CamposUnidad({
               value={form.piso}
               onChange={onChange}
               placeholder="Ej: 5"
+              aria-label="Piso"
               aria-invalid={!!errors.piso}
               aria-describedby={errors.piso ? "piso-error" : undefined}
               className={inputClass(errors.piso)}
@@ -70,6 +72,7 @@ export function CamposUnidad({
           value={form.numero}
           onChange={onChange}
           placeholder={casas ? "Ej: 24" : "Ej: 1204"}
+          aria-label={etiquetaNumero}
           aria-invalid={!!errors.numero}
           aria-describedby={errors.numero ? "numero-error" : undefined}
           className={inputClass(errors.numero)}

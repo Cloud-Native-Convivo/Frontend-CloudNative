@@ -3,6 +3,7 @@ import { Navigate, useLocation, useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import {
   obtenerCondominios,
+  obtenerSolicitudPropia,
   solicitarAsignacion,
   UnidadRechazadaError,
 } from "../services/condominiosApi";
@@ -174,12 +175,21 @@ export default function CompletarRegistro() {
         ...datosSolicitud(form),
       });
       if (respuesta.estado === "aprobada") {
-        // Ya aprobada (409 o respuesta directa): completar sesión y navegar.
+        // 409 sin cuerpo: ya había una asignación aprobada, que puede ser de otro
+        // condominio. La sesión usa la asignación real, no lo escrito en el formulario.
+        const real = respuesta.unidad ? null : await obtenerSolicitudPropia();
+        if (!respuesta.unidad && !real) {
+          setEstadoSolicitud("error");
+          return;
+        }
+        const condominioId = real ? String(real.condominio_id) : form.condominioId;
         const usuario = {
           ...usuarioBase,
-          unidad: respuesta.unidad ?? componerUnidad(form),
-          condominioId: form.condominioId,
-          condominioNombre,
+          unidad: real?.unidad ?? respuesta.unidad ?? componerUnidad(form),
+          condominioId,
+          condominioNombre: real
+            ? condominios.find((c) => String(c.id) === condominioId)?.nombre
+            : condominioNombre,
         };
         completarSesion(tokens, usuario, setUser, navigate);
         return;

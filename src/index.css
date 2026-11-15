@@ -174,3 +174,12 @@ body {
   background: #cbd5e1;
   border-radius: 6px;
 }
+
+/* Evita que el scroll sobre el fondo o dentro de un modal mueva la página de atrás. */
+dialog:modal {
+  overscroll-behavior: contain;
+}
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+}

@@ -334,7 +334,7 @@ function mapearBackendEspacio(b: BackendEspacio): Espacio {
 }
 
 export default function EspaciosComunes() {
-  const { role } = useAuth();
+  const { role, user } = useAuth();
   const isAdmin = role === "admin";
 
   const [espacios, setEspacios] = useState<Espacio[]>([]);
@@ -390,7 +390,8 @@ export default function EspaciosComunes() {
       <header className="bg-text px-6 py-8">
         <h1 className="font-display text-3xl text-white">Espacios Comunes</h1>
         <p className="text-slate-300 text-sm mt-1">
-          {espacios.length} espacios disponibles en Torres del Parque{" "}
+          {espacios.length} espacios disponibles
+          {user?.condominioNombre ? ` en ${user.condominioNombre}` : ""}{" "}
           {loading ? "(cargando...)" : ""}
         </p>
       </header>

@@ -1,5 +1,6 @@
-import { API_BASE_URL as BFF_BASE_URL } from "../api/client";
+import { API_BASE_URL as BFF_BASE_URL, getAuthHeaders } from "../api/client";
 import { fetchConAuth } from "../auth/tokenManager";
+import { pollJobStatus } from "../lib/jobPolling";
 import { getCondominioIdActual } from "../utils/authStorage";
 
 const API_BASE_URL = `${BFF_BASE_URL}/espacios-comunes`;
@@ -56,7 +57,29 @@ export async function listarMisReservas(): Promise<BackendReserva[]> {
   return response.json();
 }
 
-export async function crearReserva(datos: CrearReservaPayload): Promise<BackendReserva> {
+/**
+ * El BFF encola las mutaciones de reservas y responde 202 con un ticket:
+ * se sondea el job hasta COMPLETADO (o lanza si FALLIDO / se agota el tiempo).
+ */
+async function esperarMutacion(response: Response): Promise<void> {
+  if (response.status !== 202) return;
+  const { status_url } = (await response.json()) as { status_url: string };
+  await pollJobStatus(new URL(status_url, BFF_BASE_URL).href, {
+    intervalMs: 2000,
+    maxAttempts: 15,
+    headers: getAuthHeaders(),
+  });
+}
+
+export async function cancelarReserva(id: number): Promise<void> {
+  const response = await fetchConAuth(`${API_BASE_URL}/reservas/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    throw new Error(`Error al cancelar reserva: HTTP ${response.status}`);
+  }
+  await esperarMutacion(response);
+}
+
+export async function crearReserva(datos: CrearReservaPayload): Promise<void> {
   const response = await fetchConAuth(`${API_BASE_URL}/reservas/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -67,5 +90,5 @@ export async function crearReserva(datos: CrearReservaPayload): Promise<BackendR
     const errBody = await response.text();
     throw new Error(`Error al crear reserva (HTTP ${response.status}): ${errBody}`);
   }
-  return response.json();
+  await esperarMutacion(response);
 }

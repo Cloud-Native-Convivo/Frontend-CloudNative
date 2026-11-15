@@ -120,7 +120,7 @@ export default function RegistroCuenta() {
           </div>
 
           <h2 className="font-display text-text text-3xl mb-1">Crear cuenta</h2>
-          <p className="text-muted text-sm mb-6">Registro de residente — Torres del Parque</p>
+          <p className="text-muted text-sm mb-6">Registro de residente</p>
 
           <StepIndicator current={step} labels={["Unidad", "Cuenta", "Reglamento"]} />
 

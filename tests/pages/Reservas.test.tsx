@@ -98,4 +98,28 @@ describe("Reservas con datos reales", () => {
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
     expect(cancelar).not.toHaveBeenCalled();
   });
+
+  it("mientras el servidor procesa la cancelación, el botón queda deshabilitado", async () => {
+    vi.spyOn(espaciosApi, "listarEspacios").mockResolvedValue([]);
+    vi.spyOn(espaciosApi, "listarMisReservas").mockResolvedValue([reservaEnDias(3)]);
+    let terminar: () => void = () => {};
+    const cancelar = vi
+      .spyOn(espaciosApi, "cancelarReserva")
+      .mockReturnValue(new Promise<void>((r) => (terminar = r)));
+
+    renderReservas();
+
+    fireEvent.click(await screen.findByRole("button", { name: "Cancelar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Sí, cancelar" }));
+
+    const boton = await screen.findByRole("button", { name: "Cancelando…" });
+    expect(boton).toBeDisabled();
+    fireEvent.click(boton);
+    expect(cancelar).toHaveBeenCalledTimes(1);
+
+    terminar();
+    await waitFor(() =>
+      expect(screen.queryByRole("button", { name: "Cancelando…" })).not.toBeInTheDocument(),
+    );
+  });
 });

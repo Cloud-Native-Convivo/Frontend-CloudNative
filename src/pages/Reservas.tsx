@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import { notify } from "../utils/notify";
+import { categoriaDeEspacio } from "../utils/categoriaEspacio";
 import {
   listarMisReservas,
   crearReserva,
@@ -14,7 +15,6 @@ interface Reserva {
   id: string;
   espacio: string;
   categoria: string;
-  imagen: string;
   fecha: string;
   fechaDisplay: string;
   hora: string;
@@ -28,7 +28,6 @@ interface EspacioOpcion {
   id: number;
   nombre: string;
   tarifaHr: number;
-  imagen?: string;
   categoria?: string;
 }
 
@@ -125,13 +124,6 @@ function ReservaCard({ reserva, onCancel, onBlock }: ReservaCardProps) {
     <div className="flex bg-white border border-border rounded-md shadow-sm overflow-hidden">
       <StatusBar estado={reserva.estado} />
       <div className="flex flex-1 gap-4 p-5">
-        <img
-          src={reserva.imagen}
-          alt={reserva.espacio}
-          className="w-16 h-16 rounded-md object-cover flex-shrink-0"
-          loading="lazy"
-          decoding="async"
-        />
         <div className="flex flex-1 flex-col gap-2 min-w-0">
           <div className="flex flex-wrap items-start gap-2">
             <h3 className="font-display text-lg text-text leading-tight">{reserva.espacio}</h3>
@@ -234,6 +226,7 @@ function Modal({ titleId, onClose, children }: ModalProps) {
 
 interface CreateModalProps {
   espacios: EspacioOpcion[];
+  procesando: boolean;
   onClose: () => void;
   onConfirm: (
     reserva: Omit<Reserva, "id" | "codigo">,
@@ -241,7 +234,7 @@ interface CreateModalProps {
   ) => void;
 }
 
-function CreateModal({ espacios, onClose, onConfirm }: CreateModalProps) {
+function CreateModal({ espacios, procesando, onClose, onConfirm }: CreateModalProps) {
   const today = new Date().toISOString().split("T")[0];
   const defaultEspacio = espacios[0];
   const [form, setForm] = useState<CreateForm>({
@@ -292,9 +285,7 @@ function CreateModal({ espacios, onClose, onConfirm }: CreateModalProps) {
       {
         espacio: espacio.nombre,
         categoria: espacio.categoria || espacio.nombre.split(" ")[0],
-        imagen:
-          espacio.imagen ||
-          "https://images.unsplash.com/photo-1497366216548-37526070297c?w=300&h=200&fit=crop",
+
         fecha: form.fecha,
         fechaDisplay,
         hora: form.hora,
@@ -400,11 +391,13 @@ function CreateModal({ espacios, onClose, onConfirm }: CreateModalProps) {
         <div className="flex flex-col gap-2 mt-1">
           <button
             type="submit"
-            className="btn btn-primary w-full"
+            disabled={procesando}
+            aria-busy={procesando}
+            className="btn btn-primary w-full disabled:opacity-60 disabled:cursor-wait"
             data-cuelume-press="tick"
             data-cuelume-release="success"
           >
-            Confirmar reserva
+            {procesando ? "Creando reserva…" : "Confirmar reserva"}
           </button>
           <button
             type="button"
@@ -421,11 +414,12 @@ function CreateModal({ espacios, onClose, onConfirm }: CreateModalProps) {
 
 interface CancelModalProps {
   reserva: Reserva;
+  procesando: boolean;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-function CancelModal({ reserva, onClose, onConfirm }: CancelModalProps) {
+function CancelModal({ reserva, procesando, onClose, onConfirm }: CancelModalProps) {
   return (
     <Modal titleId="cancelar-reserva-titulo" onClose={onClose}>
       <h2 id="cancelar-reserva-titulo" className="font-display text-xl text-text mb-2">
@@ -450,9 +444,11 @@ function CancelModal({ reserva, onClose, onConfirm }: CancelModalProps) {
         </button>
         <button
           onClick={onConfirm}
-          className="btn btn-primary flex-1 bg-alert-red text-white hover:bg-alert-red/90"
+          disabled={procesando}
+          aria-busy={procesando}
+          className="btn btn-primary flex-1 bg-alert-red text-white hover:bg-alert-red/90 disabled:opacity-60 disabled:cursor-wait"
         >
-          Sí, cancelar
+          {procesando ? "Cancelando…" : "Sí, cancelar"}
         </button>
       </div>
     </Modal>
@@ -518,9 +514,7 @@ function mapearBackendReserva(
     id: String(b.id),
     espacio: espacioOpcion.nombre,
     categoria: espacioOpcion.categoria || espacioOpcion.nombre.split(" ")[0],
-    imagen:
-      espacioOpcion.imagen ||
-      "https://images.unsplash.com/photo-1622714384717-3f60c04d7c73?w=300&h=200&fit=crop",
+
     fecha: fechaIso,
     fechaDisplay,
     hora,
@@ -551,7 +545,7 @@ async function obtenerDatosReservas(): Promise<DatosReservas> {
         id: e.id,
         nombre: e.nombre,
         tarifaHr: e.tarifa_hora,
-        categoria: e.nombre.split(" ")[0],
+        categoria: categoriaDeEspacio(e.nombre, e.ubicacion),
       }))
     : [];
 
@@ -578,6 +572,8 @@ export default function Reservas() {
   const [showCreate, setShowCreate] = useState(false);
   const [cancelTarget, setCancelTarget] = useState<string | null>(null);
   const [blockTarget, setBlockTarget] = useState<string | null>(null);
+  // El BFF encola la mutación y el sondeo del job puede tardar hasta 30 s: sin esto se envía dos veces.
+  const [procesando, setProcesando] = useState(false);
 
   function aplicarDatos(datos: DatosReservas) {
     setEspaciosDisponibles(datos.espacios);
@@ -605,8 +601,9 @@ export default function Reservas() {
     _data: Omit<Reserva, "id" | "codigo">,
     payload?: { espacioId: number; fechaInicio: string; fechaFin: string },
   ) {
-    if (!payload) return;
+    if (!payload || procesando) return;
 
+    setProcesando(true);
     try {
       await crearReserva({
         espacio_id: payload.espacioId,
@@ -619,15 +616,18 @@ export default function Reservas() {
         title: "No se pudo crear la reserva",
         description: err instanceof Error ? err.message : undefined,
       });
+      setProcesando(false);
       return;
     }
 
     setShowCreate(false);
     aplicarDatos(await obtenerDatosReservas());
+    setProcesando(false);
   }
 
   // Bloquear por mantenimiento usa el mismo DELETE: el backend lo autoriza para admin/conserje.
   async function cancelarEnServidor(id: string) {
+    setProcesando(true);
     try {
       await cancelarReserva(Number(id));
       notify.success({ title: "Reserva cancelada" });
@@ -636,19 +636,21 @@ export default function Reservas() {
         title: "No se pudo cancelar la reserva",
         description: err instanceof Error ? err.message : undefined,
       });
+      setProcesando(false);
       return;
     }
     aplicarDatos(await obtenerDatosReservas());
+    setProcesando(false);
   }
 
   async function handleCancelConfirm() {
-    if (!cancelTarget) return;
+    if (!cancelTarget || procesando) return;
     await cancelarEnServidor(cancelTarget);
     setCancelTarget(null);
   }
 
   async function handleBlockConfirm() {
-    if (!blockTarget) return;
+    if (!blockTarget || procesando) return;
     await cancelarEnServidor(blockTarget);
     setBlockTarget(null);
   }
@@ -743,6 +745,7 @@ export default function Reservas() {
       {showCreate && espaciosDisponibles.length > 0 && (
         <CreateModal
           espacios={espaciosDisponibles}
+          procesando={procesando}
           onClose={() => setShowCreate(false)}
           onConfirm={handleCreateConfirm}
         />
@@ -750,6 +753,7 @@ export default function Reservas() {
       {cancelTargetReserva && (
         <CancelModal
           reserva={cancelTargetReserva}
+          procesando={procesando}
           onClose={() => setCancelTarget(null)}
           onConfirm={handleCancelConfirm}
         />
@@ -774,9 +778,11 @@ export default function Reservas() {
             </button>
             <button
               onClick={handleBlockConfirm}
-              className="btn btn-primary flex-1 bg-alert-yellow text-text hover:bg-alert-yellow/90"
+              disabled={procesando}
+              aria-busy={procesando}
+              className="btn btn-primary flex-1 bg-alert-yellow text-text hover:bg-alert-yellow/90 disabled:opacity-60 disabled:cursor-wait"
             >
-              Confirmar bloqueo
+              {procesando ? "Bloqueando…" : "Confirmar bloqueo"}
             </button>
           </div>
         </Modal>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth";
+import { categoriaDeEspacio } from "../utils/categoriaEspacio";
 import { listarEspacios, type BackendEspacio } from "../services/espaciosApi";
 
 interface Espacio {
@@ -10,11 +11,8 @@ interface Espacio {
   capacidad: number;
   tarifa: number;
   disponibleHoy: boolean;
-  imagen: string;
-  descripcion: string;
-  horario: string;
-  reglas: string[];
-  deposito: number;
+  descripcion: string | null;
+  ubicacion: string | null;
 }
 
 interface Filtros {
@@ -37,12 +35,7 @@ interface DetalleModalProps {
 
 function formatTarifa(tarifa: number): string {
   if (tarifa === 0) return "Gratis para residentes";
-  return `$${tarifa.toLocaleString("es-CL")} / reserva`;
-}
-
-function formatDeposito(deposito: number): string {
-  if (deposito === 0) return "Sin depósito";
-  return `$${deposito.toLocaleString("es-CL")}`;
+  return `$${tarifa.toLocaleString("es-CL")} / hora`;
 }
 
 function DetalleModal({ espacio, onClose }: DetalleModalProps) {
@@ -65,15 +58,8 @@ function DetalleModal({ espacio, onClose }: DetalleModalProps) {
     >
       {/* Panel */}
       <div className="relative z-10 bg-white rounded-lg shadow-2xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Image */}
-        <div className="relative">
-          <img
-            src={espacio.imagen}
-            alt={espacio.nombre}
-            className="w-full aspect-video object-cover rounded-t-lg"
-            loading="lazy"
-            decoding="async"
-          />
+        {/* Cabecera sin imagen: el backend no guarda fotos de los espacios */}
+        <div className="relative h-16 rounded-t-lg bg-slate-50 border-b border-border">
           <button
             ref={closeRef}
             onClick={handleClose}
@@ -119,66 +105,27 @@ function DetalleModal({ espacio, onClose }: DetalleModalProps) {
             <h2 id="modal-title" className="font-display text-2xl text-text leading-tight">
               {espacio.nombre}
             </h2>
-            <p className="text-muted text-sm mt-1">{espacio.descripcion}</p>
+            {espacio.descripcion && (
+              <p className="text-muted text-sm mt-1">{espacio.descripcion}</p>
+            )}
           </div>
 
-          {/* Horario */}
-          <div className="flex items-start gap-3">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="w-5 h-5 text-primary shrink-0 mt-1"
-              aria-hidden="true"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z"
-                clipRule="evenodd"
-              />
-            </svg>
+          {espacio.ubicacion && (
             <div>
-              <p className="text-xs font-semibold text-muted uppercase tracking-wide">Horario</p>
-              <p className="text-sm text-text">{espacio.horario}</p>
+              <p className="text-xs font-semibold text-muted uppercase tracking-wide">Ubicación</p>
+              <p className="text-sm text-text">{espacio.ubicacion}</p>
             </div>
-          </div>
+          )}
 
-          {/* Reglas */}
-          <div>
-            <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-2">
-              Reglas de uso
-            </p>
-            <ul className="space-y-2">
-              {espacio.reglas.map((regla) => (
-                <li key={regla} className="flex items-start gap-2 text-sm text-text">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    className="w-4 h-4 text-primary shrink-0 mt-1"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  {regla}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Tarifa + Depósito */}
+          {/* Tarifa + Capacidad */}
           <div className="bg-slate-50 rounded-md p-4 flex flex-wrap gap-6">
             <div>
               <p className="text-xs font-semibold text-muted uppercase tracking-wide">Tarifa</p>
               <p className="text-lg font-semibold text-text">{formatTarifa(espacio.tarifa)}</p>
             </div>
             <div>
-              <p className="text-xs font-semibold text-muted uppercase tracking-wide">Depósito</p>
-              <p className="text-lg font-semibold text-text">{formatDeposito(espacio.deposito)}</p>
+              <p className="text-xs font-semibold text-muted uppercase tracking-wide">Capacidad</p>
+              <p className="text-lg font-semibold text-text">{espacio.capacidad} personas</p>
             </div>
           </div>
 
@@ -210,15 +157,8 @@ function DetalleModal({ espacio, onClose }: DetalleModalProps) {
 function EspacioCard({ espacio, onVerDetalle, isAdmin }: EspacioCardProps) {
   return (
     <article className="bg-white rounded-md border border-border shadow-sm hover:shadow-md transition-shadow flex flex-col overflow-hidden">
-      {/* Image */}
-      <div className="relative">
-        <img
-          src={espacio.imagen}
-          alt={espacio.nombre}
-          className="w-full aspect-video object-cover rounded-t-md"
-          loading="lazy"
-          decoding="async"
-        />
+      {/* Cabecera sin imagen: el backend no guarda fotos de los espacios */}
+      <div className="relative h-12 bg-slate-50 border-b border-border">
         {/* Availability badge */}
         <span
           className={`absolute top-2.5 right-2.5 inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold ${
@@ -292,26 +232,8 @@ function EspacioCard({ espacio, onVerDetalle, isAdmin }: EspacioCardProps) {
   );
 }
 
-const IMAGENES_CATEGORIA: Record<string, string> = {
-  Quincho: "https://images.unsplash.com/photo-1622714384717-3f60c04d7c73?w=600&h=400&fit=crop",
-  Piscina: "https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=600&h=400&fit=crop",
-  Sala: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=400&fit=crop",
-  Gimnasio: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop",
-  Cancha: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=400&fit=crop",
-};
-
-function inferirCategoria(nombre: string, ubicacion?: string | null): string {
-  const n = `${nombre} ${ubicacion || ""}`.toLowerCase();
-  if (n.includes("quincho") || n.includes("parrilla") || n.includes("asador")) return "Quincho";
-  if (n.includes("piscina") || n.includes("alberca")) return "Piscina";
-  if (n.includes("gimnasio") || n.includes("gym")) return "Gimnasio";
-  if (n.includes("cancha") || n.includes("padel") || n.includes("tenis") || n.includes("futbol"))
-    return "Cancha";
-  return "Sala";
-}
-
 function mapearBackendEspacio(b: BackendEspacio): Espacio {
-  const categoria = inferirCategoria(b.nombre, b.ubicacion);
+  const categoria = categoriaDeEspacio(b.nombre, b.ubicacion);
   return {
     id: b.id,
     nombre: b.nombre,
@@ -319,17 +241,9 @@ function mapearBackendEspacio(b: BackendEspacio): Espacio {
     capacidad: b.capacidad,
     tarifa: b.tarifa_hora,
     disponibleHoy: b.estado === "activo",
-    imagen: IMAGENES_CATEGORIA[categoria] || IMAGENES_CATEGORIA.Sala,
-    descripcion:
-      b.descripcion ||
-      `Espacio común disponible para reserva de residentes${b.ubicacion ? ` en sector ${b.ubicacion}` : ""}.`,
-    horario: "Lunes a domingo, 09:00 – 22:00 hrs",
-    reglas: [
-      `Capacidad máxima: ${b.capacidad} personas.`,
-      "Dejar el espacio limpio y ordenado al finalizar la reserva.",
-      "Respetar el reglamento interno de copropiedad.",
-    ],
-    deposito: b.tarifa_hora > 0 ? b.tarifa_hora * 2 : 0,
+    // Solo datos del backend: sin horario, reglas ni depósito inventados.
+    descripcion: b.descripcion || null,
+    ubicacion: b.ubicacion || null,
   };
 }
 

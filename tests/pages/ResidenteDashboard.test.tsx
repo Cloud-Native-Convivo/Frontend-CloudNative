@@ -59,6 +59,44 @@ describe("ResidenteDashboard (Editorial Residencial)", () => {
     await screen.findByRole("heading", { name: /asignación pendiente/i });
     await waitFor(() => expect(actualizar).toHaveBeenCalledWith(expect.objectContaining({ condominioId: "42", unidad: "Torre A · Piso 2 · Unidad 201" })));
   });
+  it("si la asignación real es de otro condominio, actualiza también su nombre", async () => {
+    const actualizar = vi.fn();
+    vi.spyOn(condominiosApi, "obtenerSolicitudPropia").mockResolvedValue({
+      estado: "aprobada",
+      condominio_id: 1,
+      unidad: "Torre A · Piso 3 · Unidad 120",
+    });
+    vi.spyOn(condominiosApi, "obtenerCondominios").mockResolvedValue([
+      { id: 1, nombre: "Condominio Test" },
+      { id: 23, nombre: "E2E Casas" },
+    ]);
+    const usuario: User = {
+      nombre: "Ana",
+      unidad: "Casa 24",
+      role: "residente",
+      condominioId: "23",
+      condominioNombre: "E2E Casas",
+    };
+    render(
+      <AuthContext.Provider
+        value={{ user: usuario, role: "residente", setRole: () => {}, setUser: actualizar }}
+      >
+        <MemoryRouter>
+          <ResidenteDashboard />
+        </MemoryRouter>
+      </AuthContext.Provider>,
+    );
+    await waitFor(() =>
+      expect(actualizar).toHaveBeenCalledWith(
+        expect.objectContaining({
+          condominioId: "1",
+          condominioNombre: "Condominio Test",
+          unidad: "Torre A · Piso 3 · Unidad 120",
+        }),
+      ),
+    );
+  });
+
   it("renderiza la cabecera editorial con el saludo y metadata de unidad", async () => {
     renderResidenteDashboard();
 

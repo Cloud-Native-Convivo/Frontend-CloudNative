@@ -5,29 +5,17 @@ import { obtenerCondominios, solicitarAsignacion } from "../services/condominios
 import { completarSesion } from "../auth/sesion";
 import type { CognitoTokens } from "../auth/cognitoAuth";
 import type { CondominioItem, User } from "../types";
-import { inputClass } from "../components/registro/types";
+import {
+  componerUnidad,
+  inputClass,
+  validateUnit,
+  type StepUnitForm,
+} from "../components/registro/types";
+import { CamposUnidad } from "../components/registro/StepComponents";
 
 interface PendingAuth {
   tokens: CognitoTokens;
   usuario: User;
-}
-
-function validarFormulario(
-  condominioId: string,
-  torre: string,
-  piso: string,
-  numero: string,
-): Record<string, string> {
-  const nuevosErrores: Record<string, string> = {};
-  if (!condominioId) nuevosErrores.condominioId = "Selecciona tu condominio.";
-  if (!torre) nuevosErrores.torre = "Selecciona una torre.";
-  if (!piso) nuevosErrores.piso = "Selecciona un piso.";
-  if (!numero.trim()) {
-    nuevosErrores.numero = "Ingresa el número de unidad.";
-  } else if (!/^[a-zA-Z0-9\s\-°]+$/.test(numero.trim())) {
-    nuevosErrores.numero = "El número contiene caracteres no permitidos.";
-  }
-  return nuevosErrores;
 }
 
 interface FormularioUnidadProps {
@@ -36,23 +24,41 @@ interface FormularioUnidadProps {
 }
 
 function FormularioUnidad({ condominios, onSubmit }: FormularioUnidadProps) {
-  const [condominioId, setCondominioId] = useState("");
-  const [torre, setTorre] = useState("");
-  const [piso, setPiso] = useState("");
-  const [numero, setNumero] = useState("");
+  const [form, setForm] = useState<StepUnitForm>({
+    condominioId: "",
+    torre: "",
+    piso: "",
+    numero: "",
+  });
   const [errores, setErrores] = useState<Record<string, string>>({});
+
+  function handleCampo(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
+  }
+
+  function handleCondominio(e: React.ChangeEvent<HTMLSelectElement>) {
+    const tipo = condominios.find((c) => String(c.id) === e.target.value)?.tipo;
+    // Al cambiar de condominio, torre y piso del anterior ya no aplican.
+    setForm((f) => ({
+      ...f,
+      condominioId: e.target.value,
+      condominioTipo: tipo,
+      torre: "",
+      piso: "",
+    }));
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const nuevosErrores = validarFormulario(condominioId, torre, piso, numero);
+    const nuevosErrores = validateUnit(form);
     if (Object.keys(nuevosErrores).length > 0) {
       setErrores(nuevosErrores);
       return;
     }
 
-    const condoSeleccionado = condominios.find((c) => String(c.id) === String(condominioId));
-    const unidadCompuesta = `${torre} · Piso ${piso} · Unidad ${numero.trim()}`;
-    onSubmit(unidadCompuesta, condominioId, condoSeleccionado?.nombre);
+    const condoSeleccionado = condominios.find((c) => String(c.id) === form.condominioId);
+    onSubmit(componerUnidad(form), form.condominioId, condoSeleccionado?.nombre);
   }
 
   return (
@@ -63,8 +69,9 @@ function FormularioUnidad({ condominios, onSubmit }: FormularioUnidadProps) {
         </label>
         <select
           id="condominioId"
-          value={condominioId}
-          onChange={(e) => setCondominioId(e.target.value)}
+          name="condominioId"
+          value={form.condominioId}
+          onChange={handleCondominio}
           aria-label="Condominio"
           aria-invalid={!!errores.condominioId}
           aria-describedby={errores.condominioId ? "condominioId-error" : undefined}
@@ -88,91 +95,7 @@ function FormularioUnidad({ condominios, onSubmit }: FormularioUnidadProps) {
         )}
       </div>
 
-      <div>
-        <label htmlFor="torre" className="block text-xs font-semibold text-text mb-1">
-          Torre
-        </label>
-        <select
-          id="torre"
-          value={torre}
-          onChange={(e) => setTorre(e.target.value)}
-          aria-label="Torre"
-          aria-invalid={!!errores.torre}
-          aria-describedby={errores.torre ? "torre-error" : undefined}
-          className={inputClass(errores.torre)}
-        >
-          <option value="">Selecciona torre</option>
-          <option value="Torre A">Torre A</option>
-          <option value="Torre B">Torre B</option>
-          <option value="Torre C">Torre C</option>
-        </select>
-        {errores.torre && (
-          <p
-            id="torre-error"
-            role="alert"
-            className="text-xs text-alert-red mt-1 flex items-center gap-1"
-          >
-            <span aria-hidden="true">⚠</span> {errores.torre}
-          </p>
-        )}
-      </div>
-
-      <div>
-        <label htmlFor="piso" className="block text-xs font-semibold text-text mb-1">
-          Piso
-        </label>
-        <select
-          id="piso"
-          value={piso}
-          onChange={(e) => setPiso(e.target.value)}
-          aria-label="Piso"
-          aria-invalid={!!errores.piso}
-          aria-describedby={errores.piso ? "piso-error" : undefined}
-          className={inputClass(errores.piso)}
-        >
-          <option value="">Selecciona piso</option>
-          {Array.from({ length: 12 }, (_, i) => i + 1).map((p) => (
-            <option key={p} value={String(p)}>
-              {p}°
-            </option>
-          ))}
-        </select>
-        {errores.piso && (
-          <p
-            id="piso-error"
-            role="alert"
-            className="text-xs text-alert-red mt-1 flex items-center gap-1"
-          >
-            <span aria-hidden="true">⚠</span> {errores.piso}
-          </p>
-        )}
-      </div>
-
-      <div>
-        <label htmlFor="numero" className="block text-xs font-semibold text-text mb-1">
-          Número de unidad
-        </label>
-        <input
-          id="numero"
-          type="text"
-          value={numero}
-          onChange={(e) => setNumero(e.target.value)}
-          placeholder="Ej: 1204"
-          aria-label="Número de unidad"
-          aria-invalid={!!errores.numero}
-          aria-describedby={errores.numero ? "numero-error" : undefined}
-          className={inputClass(errores.numero)}
-        />
-        {errores.numero && (
-          <p
-            id="numero-error"
-            role="alert"
-            className="text-xs text-alert-red mt-1 flex items-center gap-1"
-          >
-            <span aria-hidden="true">⚠</span> {errores.numero}
-          </p>
-        )}
-      </div>
+      {form.condominioId && <CamposUnidad form={form} errors={errores} onChange={handleCampo} />}
 
       <button type="submit" className="btn btn-primary w-full mt-2">
         Guardar y continuar

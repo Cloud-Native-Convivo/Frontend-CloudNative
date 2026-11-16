@@ -44,4 +44,24 @@ describe("EspaciosComunes con datos reales", () => {
     expect(detalle).not.toHaveTextContent(/Depósito|Horario|Reglas de uso|Lunes a domingo/);
     expect(document.querySelector("img")).toBeNull();
   });
+
+  it("si falla la carga muestra el error, no 'sin espacios', y Reintentar recupera", async () => {
+    vi.spyOn(espaciosApi, "listarEspacios")
+      .mockRejectedValueOnce(new Error("HTTP 502"))
+      .mockResolvedValueOnce([
+        { id: 1, nombre: "Quincho Norte", capacidad: 10, tarifa_hora: 5000, estado: "activo" },
+      ]);
+
+    renderEspacios();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "No pudimos cargar los espacios comunes",
+    );
+    expect(screen.queryByText(/No hay espacios comunes disponibles/)).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Reintentar" }));
+
+    expect(await screen.findByText("Quincho Norte")).toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
 });

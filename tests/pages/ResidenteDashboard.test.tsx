@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { describe, expect, it, vi } from "vitest";
 import { AuthContext } from "@/hooks/useAuth";
@@ -6,6 +6,8 @@ import type { User } from "@/types";
 import ResidenteDashboard from "@/pages/ResidenteDashboard";
 import * as panelApi from "@/services/panelApi";
 import * as condominiosApi from "@/services/condominiosApi";
+import * as espaciosApi from "@/services/espaciosApi";
+import * as gastosApi from "@/services/gastosApi";
 
 function renderResidenteDashboard(user?: User | null) {
   const defaultUser: User = user ?? {
@@ -141,5 +143,25 @@ describe("ResidenteDashboard (Editorial Residencial)", () => {
     expect(screen.getByText(/Sin comunicados publicados/i)).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 2, name: /Accesos Directos/i })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { level: 2, name: /Actividad Reciente/i })).not.toBeInTheDocument();
+  });
+
+  it("si falla la carga del panel avisa del error y Reintentar lo quita", async () => {
+    vi.spyOn(espaciosApi, "listarEspacios").mockResolvedValue([]);
+    vi.spyOn(gastosApi, "obtenerResumenGastos").mockResolvedValue({
+      totalPendiente: 0,
+      alDia: true,
+      gastos: [],
+    });
+    vi.spyOn(panelApi, "obtenerPanel")
+      .mockRejectedValueOnce(new Error("HTTP 502"))
+      .mockResolvedValue({ reservas: [] } as unknown as Awaited<ReturnType<typeof panelApi.obtenerPanel>>);
+
+    renderResidenteDashboard();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("No pudimos cargar algunos datos");
+
+    fireEvent.click(screen.getByRole("button", { name: "Reintentar" }));
+
+    await waitFor(() => expect(screen.queryByRole("alert")).not.toBeInTheDocument());
   });
 });

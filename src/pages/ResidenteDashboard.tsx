@@ -279,6 +279,9 @@ export default function ResidenteDashboard() {
   );
   const [asignacionVerificada, setAsignacionVerificada] = useState(tieneAsignacionPrevia);
   const [kpis, setKpis] = useState<KpiCardData[]>(DEFAULT_KPIS);
+  // Si el panel o los gastos no cargan, los KPI por defecto ("Sin reservas") no son un dato real: se avisa.
+  const [errorDatos, setErrorDatos] = useState(false);
+  const [intento, setIntento] = useState(0);
 
   useEffect(() => {
     let activo = true;
@@ -326,13 +329,20 @@ export default function ResidenteDashboard() {
     let active = true;
     async function fetchDashboardData() {
       try {
+        let fallo = false;
+        const alFallar = () => {
+          fallo = true;
+          return null;
+        };
         const [panelData, espaciosData, gastosResumen] = await Promise.all([
-          obtenerPanel().catch(() => null),
+          obtenerPanel().catch(alFallar),
+          // Sin los nombres solo se pierde la etiqueta: cae a "Espacio #id", no es un dato inventado.
           listarEspacios().catch(() => []),
-          obtenerResumenGastos().catch(() => null),
+          obtenerResumenGastos().catch(alFallar),
         ]);
 
         if (!active) return;
+        setErrorDatos(fallo);
 
         const espaciosMap = new Map<number, string>();
         if (Array.isArray(espaciosData)) {
@@ -398,14 +408,14 @@ export default function ResidenteDashboard() {
           }),
         );
       } catch {
-        // Fallback elegante a datos estáticos
+        if (active) setErrorDatos(true);
       }
     }
     void fetchDashboardData();
     return () => {
       active = false;
     };
-  }, [asignacionVerificada, user?.condominioId, user?.unidad]);
+  }, [asignacionVerificada, user?.condominioId, user?.unidad, intento]);
 
   if (
     !asignacionVerificada ||
@@ -439,6 +449,21 @@ export default function ResidenteDashboard() {
         <div className="mx-auto flex max-w-page flex-col gap-10">
           {/* ── KPI Cards ── */}
           <section>
+            {errorDatos && (
+              <div
+                role="alert"
+                className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-stone-200/80 bg-white p-4 text-sm text-text"
+              >
+                <span>No pudimos cargar algunos datos de tu panel. Intenta de nuevo.</span>
+                <button
+                  type="button"
+                  onClick={() => setIntento((n) => n + 1)}
+                  className="btn btn-secondary btn-sm"
+                >
+                  Reintentar
+                </button>
+              </div>
+            )}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {kpis.map((card) => (
                 <KpiCard key={card.id} card={card} />

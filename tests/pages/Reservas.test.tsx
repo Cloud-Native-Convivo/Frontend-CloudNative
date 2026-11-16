@@ -122,4 +122,21 @@ describe("Reservas con datos reales", () => {
       expect(screen.queryByRole("button", { name: "Cancelando…" })).not.toBeInTheDocument(),
     );
   });
+
+  it("si falla la carga muestra el error, no una lista vacía, y Reintentar recupera", async () => {
+    vi.spyOn(espaciosApi, "listarEspacios").mockResolvedValue([]);
+    vi.spyOn(espaciosApi, "listarMisReservas")
+      .mockRejectedValueOnce(new Error("HTTP 502"))
+      .mockResolvedValueOnce([reservaEnDias(3)]);
+
+    renderReservas();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("No pudimos cargar tus reservas");
+    expect(screen.queryByText("No hay reservas en esta categoría")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Reintentar" }));
+
+    expect(await screen.findByText(/Confirmada/, { selector: "span" })).toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
 });

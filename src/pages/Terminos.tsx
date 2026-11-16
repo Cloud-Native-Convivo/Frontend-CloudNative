@@ -1,6 +1,42 @@
 import { Link } from "react-router";
 import { LegalLayout, Pendiente, type LegalSection } from "../components/legal/LegalLayout";
 
+// Cada afirmación debe seguir siendo cierta según la sección a la que enlaza.
+const ESENCIAL = [
+  {
+    texto: "Convivo está en desarrollo: solo parte de las pantallas usa datos reales.",
+    id: "estado",
+  },
+  { texto: "Convivo no procesa pagos en esta versión.", id: "estado" },
+  { texto: "Ingresas con Google y Convivo no guarda tu contraseña.", id: "cuenta" },
+  { texto: "Las reglas de reservas y gastos las fija tu comunidad.", id: "copropiedad" },
+  { texto: "Puedes pedir el cierre de tu cuenta cuando quieras.", id: "termino" },
+];
+
+const CONECTADO = ["Inicio de sesión", "Espacios comunes", "Reservas", "Gastos comunes"];
+
+const CUENTA = [
+  [
+    "Ingreso",
+    "Los residentes ingresan con su cuenta de Google. Convivo no conoce ni guarda tu contraseña de Google.",
+  ],
+  [
+    "Tu rol",
+    "Tu rol (residente, conserjería, administración o comité) lo asigna la administración de tu condominio.",
+  ],
+  [
+    "Tu responsabilidad",
+    "Eres responsable de lo que se haga desde tu cuenta. Si sospechas un acceso no autorizado, avísanos de inmediato.",
+  ],
+];
+
+const PROHIBIDO = [
+  "Acceder o intentar acceder a cuentas, datos o sistemas sin autorización.",
+  "Interferir con el funcionamiento de la plataforma o sobrecargarla a propósito.",
+  "Hacerte pasar por otra persona, residente o miembro de la administración.",
+  "Publicar contenido ilícito, injurioso, discriminatorio o que exponga datos de otras personas.",
+];
+
 const SECTIONS: LegalSection[] = [
   {
     id: "servicio",
@@ -17,31 +53,43 @@ const SECTIONS: LegalSection[] = [
     id: "estado",
     title: "Estado actual de la plataforma",
     body: (
-      <p>
-        Convivo está en desarrollo. El inicio de sesión, los espacios comunes, las reservas y los
-        gastos comunes se conectan a un servidor real. El resto de las pantallas muestra datos de
-        ejemplo y no debe usarse para tomar decisiones. Convivo no procesa pagos en esta versión.
-      </p>
+      <>
+        <p>
+          Convivo está en desarrollo. Las pantallas con datos de ejemplo no deben usarse para tomar
+          decisiones.
+        </p>
+        <div className="!mt-8 grid gap-x-10 gap-y-6 sm:grid-cols-2">
+          <div className="border-t border-border pt-4">
+            <h3 className="m-0 font-display text-xl font-normal text-text">
+              Conectado a un servidor real
+            </h3>
+            <ul className="m-0 mt-3 space-y-1 p-0">
+              {CONECTADO.map((c) => (
+                <li key={c}>{c}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="border-t border-border pt-4">
+            <h3 className="m-0 font-display text-xl font-normal text-text">Datos de ejemplo</h3>
+            <p className="m-0 mt-3">El resto de las pantallas.</p>
+          </div>
+        </div>
+        <p>Convivo no procesa pagos en esta versión.</p>
+      </>
     ),
   },
   {
     id: "cuenta",
     title: "Tu cuenta",
     body: (
-      <ul>
-        <li>
-          Los residentes ingresan con su cuenta de Google. Convivo no conoce ni guarda tu contraseña
-          de Google.
-        </li>
-        <li>
-          Tu rol (residente, conserjería, administración o comité) lo asigna la administración de tu
-          condominio.
-        </li>
-        <li>
-          Eres responsable de lo que se haga desde tu cuenta. Si sospechas un acceso no autorizado,
-          avísanos de inmediato.
-        </li>
-      </ul>
+      <dl className="m-0 grid gap-x-10 gap-y-6 md:grid-cols-3">
+        {CUENTA.map(([etiqueta, texto]) => (
+          <div key={etiqueta} className="border-t border-border pt-4">
+            <dt className="font-display text-xl text-text">{etiqueta}</dt>
+            <dd className="m-0 mt-1 text-base text-muted">{texto}</dd>
+          </div>
+        ))}
+      </dl>
     ),
   },
   {
@@ -50,15 +98,13 @@ const SECTIONS: LegalSection[] = [
     body: (
       <>
         <p>Usa Convivo solo para la vida de tu comunidad. No está permitido:</p>
-        <ul>
-          <li>Acceder o intentar acceder a cuentas, datos o sistemas sin autorización.</li>
-          <li>Interferir con el funcionamiento de la plataforma o sobrecargarla a propósito.</li>
-          <li>Hacerte pasar por otra persona, residente o miembro de la administración.</li>
-          <li>
-            Publicar contenido ilícito, injurioso, discriminatorio o que exponga datos de otras
-            personas.
-          </li>
-        </ul>
+        <div className="!mt-6 border-t border-border">
+          {PROHIBIDO.map((regla) => (
+            <p key={regla} className="m-0 border-b border-border py-4">
+              {regla}
+            </p>
+          ))}
+        </div>
         <p>
           Algunas de estas conductas son delitos según la Ley 21.459 sobre delitos informáticos.
         </p>
@@ -167,13 +213,10 @@ export default function Terminos() {
       intro={
         <p className="m-0">
           Estas son las reglas para usar Convivo. Cómo tratamos tus datos personales se explica en
-          la{" "}
-          <Link to="/privacidad" className="text-primary">
-            Política de privacidad
-          </Link>
-          .
+          la <Link to="/privacidad">Política de privacidad</Link>.
         </p>
       }
+      esencial={ESENCIAL}
       sections={SECTIONS}
     />
   );

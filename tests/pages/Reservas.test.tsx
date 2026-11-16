@@ -123,6 +123,35 @@ describe("Reservas con datos reales", () => {
     );
   });
 
+  it("destaca la próxima reserva y manda lo cancelado al historial", async () => {
+    vi.spyOn(espaciosApi, "listarEspacios").mockResolvedValue([]);
+    vi.spyOn(espaciosApi, "listarMisReservas").mockResolvedValue([
+      { ...reservaEnDias(9), id: 8, estado: "cancelada" },
+      reservaEnDias(5),
+    ]);
+
+    renderReservas();
+
+    expect(await screen.findByRole("heading", { name: "Próximas" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Anteriores y canceladas" })).toBeInTheDocument();
+    expect(screen.getByText("Próxima reserva")).toBeInTheDocument();
+    expect(screen.getByText(/^En \d días, /)).toBeInTheDocument();
+    // La cancelada no cuenta como próxima aunque sea más lejana: solo hay un botón Cancelar.
+    expect(screen.getAllByRole("button", { name: "Cancelar" })).toHaveLength(1);
+  });
+
+  it("sin reservas vigentes el hero lo dice y no inventa una fecha", async () => {
+    vi.spyOn(espaciosApi, "listarEspacios").mockResolvedValue([]);
+    vi.spyOn(espaciosApi, "listarMisReservas").mockResolvedValue([
+      { ...reservaEnDias(4), estado: "cancelada" },
+    ]);
+
+    renderReservas();
+
+    expect(await screen.findByText("Sin reservas próximas")).toBeInTheDocument();
+    expect(screen.queryByText(/^En \d días/)).not.toBeInTheDocument();
+  });
+
   it("si falla la carga muestra el error, no una lista vacía, y Reintentar recupera", async () => {
     vi.spyOn(espaciosApi, "listarEspacios").mockResolvedValue([]);
     vi.spyOn(espaciosApi, "listarMisReservas")

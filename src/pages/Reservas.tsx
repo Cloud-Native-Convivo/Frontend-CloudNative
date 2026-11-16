@@ -72,40 +72,68 @@ function isCancelable(reserva: Reserva): boolean {
   return diffMs > 24 * 60 * 60 * 1000;
 }
 
-function StatusBadge({ estado }: { estado: Reserva["estado"] }) {
-  if (estado === "confirmada") {
-    return (
-      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-        <span aria-hidden="true">✓</span> Confirmada
-      </span>
-    );
-  }
-  if (estado === "pendiente") {
-    return (
-      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-text">
-        <span aria-hidden="true">⏳</span> Pendiente
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-muted">
-      <span aria-hidden="true">✗</span> Cancelada
-    </span>
-  );
+const DIAS_CORTOS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+const MESES_CORTOS = [
+  "ene",
+  "feb",
+  "mar",
+  "abr",
+  "may",
+  "jun",
+  "jul",
+  "ago",
+  "sep",
+  "oct",
+  "nov",
+  "dic",
+];
+
+/** Parte la fecha AAAA-MM-DD sin pasar por zonas horarias (evita el desfase de un día). */
+function partesFecha(fecha: string) {
+  const [anio, mes, dia] = fecha.split("-").map(Number);
+  return {
+    dia,
+    mes: MESES_CORTOS[mes - 1] ?? "",
+    semana: DIAS_CORTOS[new Date(anio, mes - 1, dia).getDay()] ?? "",
+    anio,
+  };
 }
 
-function StatusBar({ estado }: { estado: Reserva["estado"] }) {
-  const colorClass =
-    estado === "confirmada"
-      ? "bg-green-600"
-      : estado === "pendiente"
-        ? "bg-alert-yellow"
-        : "bg-gray-300";
+function inicioMs(reserva: Reserva): number {
+  const [anio, mes, dia] = reserva.fecha.split("-").map(Number);
+  const [h, min] = reserva.hora.split(":").map(Number);
+  return new Date(anio, mes - 1, dia, h, min).getTime();
+}
+
+function horaFin(reserva: Reserva): string {
+  const fin = parseInt(reserva.hora.split(":")[0]) + reserva.duracionHrs;
+  return `${fin.toString().padStart(2, "0")}:00`;
+}
+
+/** Reserva vigente y futura: la que todavía puede ocurrir. */
+function esProxima(reserva: Reserva): boolean {
+  return reserva.estado !== "cancelada" && inicioMs(reserva) >= Date.now();
+}
+
+function cuentaRegresiva(reserva: Reserva): string {
+  const dias = Math.floor((inicioMs(reserva) - Date.now()) / (24 * 60 * 60 * 1000));
+  if (dias <= 0) return "Hoy";
+  if (dias === 1) return "Mañana";
+  return `En ${dias} días`;
+}
+
+/** El estado va siempre como texto además del indicador: el color solo no alcanza. */
+function EstadoReserva({ estado }: { estado: Reserva["estado"] }) {
+  const config = {
+    confirmada: { texto: "Confirmada", punto: "bg-primary" },
+    pendiente: { texto: "Pendiente", punto: "bg-alert-yellow" },
+    cancelada: { texto: "Cancelada", punto: "bg-muted" },
+  }[estado];
   return (
-    <div
-      className={`w-1 self-stretch rounded-l-md flex-shrink-0 ${colorClass}`}
-      aria-hidden="true"
-    />
+    <span className="inline-flex items-center gap-2 text-sm font-semibold text-text">
+      <span aria-hidden="true" className={`h-2 w-2 rounded-full ${config.punto}`} />
+      {config.texto}
+    </span>
   );
 }
 
@@ -115,48 +143,73 @@ interface ReservaCardProps {
   onBlock?: (id: string) => void;
 }
 
+/** Color del talón según estado: la fecha es lo primero que se lee y ya dice si la reserva está firme. */
+const TALON_POR_ESTADO: Record<Reserva["estado"], string> = {
+  confirmada: "bg-accent text-white",
+  pendiente: "bg-alert-yellow text-text",
+  cancelada: "bg-border text-text",
+};
+
+/**
+ * Una reserva como un ticket: talón con la fecha a la izquierda, línea de corte punteada con
+ * muescas y el detalle a la derecha. Es el mismo motivo del comprobante de gastos.
+ */
 function ReservaCard({ reserva, onCancel, onBlock }: ReservaCardProps) {
   const cancelable = isCancelable(reserva);
-  const endHour = parseInt(reserva.hora.split(":")[0]) + reserva.duracionHrs;
-  const endTime = `${endHour.toString().padStart(2, "0")}:00`;
+  const { dia, mes, semana } = partesFecha(reserva.fecha);
 
   return (
-    <div className="flex bg-white border border-border rounded-md shadow-sm overflow-hidden">
-      <StatusBar estado={reserva.estado} />
-      <div className="flex flex-1 gap-4 p-5">
-        <div className="flex flex-1 flex-col gap-2 min-w-0">
-          <div className="flex flex-wrap items-start gap-2">
-            <h3 className="font-display text-lg text-text leading-tight">{reserva.espacio}</h3>
-            <span className="px-2 py-1 bg-gray-100 text-muted text-xs rounded-full">
-              {reserva.categoria}
-            </span>
+    <article className="flex overflow-hidden rounded-md bg-white shadow-sm">
+      <div
+        className={`flex w-28 shrink-0 flex-col items-center justify-center gap-1 px-2 py-6 ${TALON_POR_ESTADO[reserva.estado]}`}
+      >
+        <span className="text-sm font-medium">{semana}</span>
+        <span className="font-display text-5xl leading-none">{dia}</span>
+        <span className="text-sm font-medium">{mes}</span>
+      </div>
+
+      <div aria-hidden="true" className="relative w-0 border-l-2 border-dashed border-muted">
+        <span className="absolute -left-3 -top-3 h-6 w-6 rounded-full bg-gray-50" />
+        <span className="absolute -bottom-3 -left-3 h-6 w-6 rounded-full bg-gray-50" />
+      </div>
+
+      <div className="flex min-w-0 flex-1 flex-col gap-3 p-6">
+        <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-1">
+          <div className="min-w-0">
+            <h3 className="m-0 font-display text-2xl font-normal leading-tight text-text">
+              {reserva.espacio}
+            </h3>
+            <p className="m-0 mt-1 text-sm text-muted">{reserva.categoria}</p>
           </div>
-          <p className="text-sm text-muted">
-            {reserva.fechaDisplay} · {reserva.hora} – {endTime} hrs
+          <p className="m-0 font-display text-2xl text-text">
+            {formatPrecio(reserva.precio * reserva.duracionHrs)}
           </p>
-          <div className="flex flex-wrap items-center gap-3 mt-1">
-            <span className="font-medium text-text">
-              {formatPrecio(reserva.precio * reserva.duracionHrs)}
-            </span>
-            <StatusBadge estado={reserva.estado} />
-          </div>
-          <p className="text-xs text-muted">Código: {reserva.codigo}</p>
-          <div className="flex flex-wrap gap-2 mt-2">
-            {reserva.estado !== "cancelada" && (
-              <button
-                onClick={() => cancelable && onCancel(reserva.id)}
-                disabled={!cancelable}
-                title={!cancelable ? "No cancelable (menos de 24 hrs de anticipación)" : undefined}
-                className={`px-3 py-2 rounded-md text-sm font-medium border transition-colors ${
-                  cancelable
-                    ? "border-alert-red text-alert-red hover:bg-red-50"
-                    : "border-border text-muted cursor-not-allowed opacity-50"
-                }`}
-              >
-                Cancelar
-              </button>
-            )}
-            {onBlock && reserva.estado !== "cancelada" && (
+        </div>
+
+        <p className="m-0 text-base text-text">
+          {reserva.hora} a {horaFin(reserva)} hrs
+        </p>
+
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <EstadoReserva estado={reserva.estado} />
+          <p className="m-0 font-mono text-xs text-muted">{reserva.codigo}</p>
+        </div>
+
+        {reserva.estado !== "cancelada" && (
+          <div className="mt-1 flex flex-wrap gap-2">
+            <button
+              onClick={() => cancelable && onCancel(reserva.id)}
+              disabled={!cancelable}
+              title={!cancelable ? "No cancelable (menos de 24 hrs de anticipación)" : undefined}
+              className={`min-h-11 rounded-md border px-4 text-sm font-medium transition-colors ${
+                cancelable
+                  ? "border-alert-red text-alert-red hover:bg-red-50"
+                  : "cursor-not-allowed border-border text-muted opacity-50"
+              }`}
+            >
+              Cancelar
+            </button>
+            {onBlock && (
               <button
                 onClick={() => onBlock(reserva.id)}
                 className="btn btn-secondary btn-sm border-alert-yellow hover:bg-yellow-50"
@@ -164,10 +217,60 @@ function ReservaCard({ reserva, onCancel, onBlock }: ReservaCardProps) {
                 Bloquear por mantenimiento
               </button>
             )}
-            <button className="btn btn-secondary btn-sm">Ver detalle</button>
           </div>
-        </div>
+        )}
       </div>
+    </article>
+  );
+}
+
+/** Fila compacta para lo que ya pasó o se canceló: sin acciones, para no competir con lo próximo. */
+function HistorialFila({ reserva }: { reserva: Reserva }) {
+  const { dia, mes, semana, anio } = partesFecha(reserva.fecha);
+  return (
+    <li className="grid grid-cols-[auto_1fr_auto] items-center gap-x-6 gap-y-1 border-b border-border py-4">
+      <p className="m-0 w-24 text-sm text-muted">
+        {semana} {dia} {mes} {anio}
+      </p>
+      <div className="min-w-0">
+        <p className="m-0 font-display text-xl text-text">{reserva.espacio}</p>
+        <p className="m-0 text-sm text-muted">
+          {reserva.hora} a {horaFin(reserva)} hrs ·{" "}
+          {formatPrecio(reserva.precio * reserva.duracionHrs)}
+        </p>
+      </div>
+      <EstadoReserva estado={reserva.estado} />
+    </li>
+  );
+}
+
+/** Lo primero del hero: la fecha de la próxima reserva a escala de portada, o su ausencia dicha sin rodeos. */
+function ProximaReserva({ reserva }: { reserva: Reserva | null }) {
+  const contenedor =
+    "border-t-2 border-dashed border-white/30 pt-8 lg:border-l-2 lg:border-t-0 lg:pl-12 lg:pt-0";
+  if (!reserva) {
+    return (
+      <div className={contenedor}>
+        <p className="m-0 text-sm text-white/70">Próxima reserva</p>
+        <p className="m-0 mt-2 font-display text-4xl text-white">Sin reservas próximas</p>
+        <p className="m-0 mt-2 text-base text-white/70">Elige un espacio y reserva en minutos.</p>
+      </div>
+    );
+  }
+  const { dia, mes, semana } = partesFecha(reserva.fecha);
+  return (
+    <div className={contenedor}>
+      <p className="m-0 text-sm text-white/70">Próxima reserva</p>
+      <p className="m-0 flex items-end gap-5 text-white">
+        <span className="font-display text-[clamp(96px,12vw,160px)] leading-none">{dia}</span>
+        <span className="pb-3 text-2xl font-medium">
+          <span className="block text-primary-on-dark">{mes}</span>
+          {semana}
+        </span>
+      </p>
+      <p className="m-0 mt-3 text-lg text-white">
+        {cuentaRegresiva(reserva)}, {reserva.hora} a {horaFin(reserva)} hrs
+      </p>
     </div>
   );
 }
@@ -672,106 +775,139 @@ export default function Reservas() {
     setBlockTarget(null);
   }
 
+  const porInicio = (a: Reserva, b: Reserva) => inicioMs(a) - inicioMs(b);
+  const proximas = filtered.filter(esProxima).sort(porInicio);
+  const historial = filtered.filter((r) => !esProxima(r)).sort((a, b) => porInicio(b, a));
+  const proxima = reservas.filter(esProxima).sort(porInicio)[0] ?? null;
+  const conteo = (tab: FilterTab) =>
+    tab === "todas" ? reservas.length : reservas.filter((r) => r.estado === tab).length;
+
+  const accionesTarjeta = {
+    onCancel: (id: string) => setCancelTarget(id),
+    onBlock: isAdmin ? (id: string) => setBlockTarget(id) : undefined,
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Dark header */}
-      <header className="bg-text px-6 py-8">
-        <div className="max-w-content mx-auto flex items-start justify-between gap-4">
+      <header className="bg-text pt-14 pb-16">
+        <div className="mx-auto grid max-w-page items-end gap-12 px-6 lg:grid-cols-[1.1fr_1fr]">
           <div>
-            <h1 className="font-display text-3xl text-white">
-              {isAdmin ? "Reservas del condominio" : "Mis Reservas"}
+            <h1 className="m-0 font-display text-[clamp(40px,6vw,72px)] font-normal leading-none text-white">
+              {isAdmin ? "Reservas del condominio" : "Mis reservas"}
             </h1>
-            <p className="text-white/60 mt-1">
+            <p className="m-0 mt-4 text-lg text-white/70">
               {isAdmin ? "Gestión y bloqueo por mantenimiento" : (user?.condominioNombre ?? "")}
             </p>
+            {!isAdmin && (
+              <div className="mt-8 flex flex-wrap gap-3">
+                <button
+                  onClick={() => setShowCreate(true)}
+                  disabled={espaciosDisponibles.length === 0}
+                  className="btn btn-primary"
+                >
+                  + Nueva reserva
+                </button>
+                <Link
+                  to="/espacios"
+                  className="btn btn-secondary border-white/30 bg-transparent text-white hover:bg-white/10"
+                >
+                  Explorar espacios comunes
+                </Link>
+              </div>
+            )}
           </div>
-          {!isAdmin && (
-            <button
-              onClick={() => setShowCreate(true)}
-              disabled={espaciosDisponibles.length === 0}
-              className="btn btn-primary shrink-0"
-            >
-              + Nueva reserva
-            </button>
-          )}
+          {!loading && !errorCarga && <ProximaReserva reserva={proxima} />}
         </div>
       </header>
 
-      <main className="max-w-content mx-auto px-6 py-6">
-        {/* Filter tabs */}
-        <div className="flex gap-2 flex-wrap mb-6">
+      <main className="mx-auto max-w-page px-6 pt-10 pb-20">
+        <div className="mb-8 flex flex-wrap gap-2">
           {TABS.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`inline-flex min-h-11 items-center gap-2 rounded-md px-4 text-sm font-medium transition-colors ${
                 activeTab === tab.key
-                  ? "bg-primary text-white"
-                  : "border border-border text-muted hover:text-text hover:border-primary"
+                  ? "bg-text text-white"
+                  : "border border-muted text-text hover:bg-white"
               }`}
             >
               {tab.label}
+              <span className="tabular-nums opacity-80">{conteo(tab.key)}</span>
             </button>
           ))}
         </div>
 
-        {/* Reservations list */}
-        <div className="flex flex-col gap-4">
-          {loading ? (
-            <div className="text-center py-16 text-muted">
-              <div
-                role="status"
-                aria-label="Cargando reservas"
-                className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"
-              />
-              <p className="font-medium text-text">Cargando reservas desde el servidor...</p>
-            </div>
-          ) : errorCarga ? (
-            <div role="alert" className="text-center py-16 text-muted">
-              <p className="font-medium text-text">No pudimos cargar tus reservas</p>
-              <p className="text-sm mt-1">Revisa tu conexión e intenta de nuevo.</p>
-              <button
-                type="button"
-                onClick={() => {
-                  setLoading(true);
-                  void recargar();
-                }}
-                className="btn btn-primary mt-4"
-              >
-                Reintentar
-              </button>
-            </div>
-          ) : filtered.length === 0 ? (
-            <div className="text-center py-16 text-muted">
-              <p className="text-4xl mb-3">📅</p>
-              <p className="font-medium text-text">No hay reservas en esta categoría</p>
-              <p className="text-sm mt-1">Crea una nueva reserva para comenzar.</p>
-            </div>
-          ) : (
-            filtered.map((reserva) => (
-              <ReservaCard
-                key={reserva.id}
-                reserva={reserva}
-                onCancel={(id) => setCancelTarget(id)}
-                onBlock={isAdmin ? (id) => setBlockTarget(id) : undefined}
-              />
-            ))
-          )}
-        </div>
+        {loading ? (
+          <div className="py-16 text-center text-muted">
+            <div
+              role="status"
+              aria-label="Cargando reservas"
+              className="mx-auto mb-3 h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent"
+            />
+            <p className="font-medium text-text">Cargando reservas desde el servidor...</p>
+          </div>
+        ) : errorCarga ? (
+          <div role="alert" className="py-16 text-center text-muted">
+            <p className="font-medium text-text">No pudimos cargar tus reservas</p>
+            <p className="mt-1 text-sm">Revisa tu conexión e intenta de nuevo.</p>
+            <button
+              type="button"
+              onClick={() => {
+                setLoading(true);
+                void recargar();
+              }}
+              className="btn btn-primary mt-4"
+            >
+              Reintentar
+            </button>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="py-16 text-center text-muted">
+            <p className="font-display text-3xl text-text">No hay reservas en esta categoría</p>
+            <p className="mt-2 text-base">Crea una nueva reserva para comenzar.</p>
+          </div>
+        ) : activeTab === "todas" ? (
+          <div className="flex flex-col gap-14">
+            {proximas.length > 0 && (
+              <section aria-labelledby="proximas-titulo">
+                <h2
+                  id="proximas-titulo"
+                  className="m-0 mb-6 font-display text-3xl font-normal text-text"
+                >
+                  Próximas
+                </h2>
+                <div className="grid gap-6 lg:grid-cols-2">
+                  {proximas.map((reserva) => (
+                    <ReservaCard key={reserva.id} reserva={reserva} {...accionesTarjeta} />
+                  ))}
+                </div>
+              </section>
+            )}
+            {historial.length > 0 && (
+              <section aria-labelledby="historial-titulo">
+                <h2
+                  id="historial-titulo"
+                  className="m-0 mb-2 font-display text-3xl font-normal text-text"
+                >
+                  Anteriores y canceladas
+                </h2>
+                <ul className="m-0 list-none p-0">
+                  {historial.map((reserva) => (
+                    <HistorialFila key={reserva.id} reserva={reserva} />
+                  ))}
+                </ul>
+              </section>
+            )}
+          </div>
+        ) : (
+          <div className="grid gap-6 lg:grid-cols-2">
+            {[...filtered].sort(porInicio).map((reserva) => (
+              <ReservaCard key={reserva.id} reserva={reserva} {...accionesTarjeta} />
+            ))}
+          </div>
+        )}
       </main>
-
-      {/* CTA strip */}
-      <div className="bg-text mt-12">
-        <div className="max-w-content mx-auto px-6 py-6 flex items-center justify-between gap-4">
-          <p className="text-white/80 text-sm">¿Buscas un espacio disponible?</p>
-          <Link
-            to="/espacios"
-            className="text-white font-medium text-sm hover:text-primary transition-colors flex items-center gap-1"
-          >
-            Explorar espacios comunes
-          </Link>
-        </div>
-      </div>
 
       {/* Modals */}
       {showCreate && espaciosDisponibles.length > 0 && (

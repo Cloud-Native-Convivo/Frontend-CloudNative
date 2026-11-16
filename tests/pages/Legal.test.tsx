@@ -36,11 +36,14 @@ describe.each([
   });
 });
 
-describe("Privacidad, lo esencial", () => {
+describe.each([
+  ["Privacidad", Privacidad],
+  ["Terminos", Terminos],
+])("%s, lo esencial", (_, Page) => {
   it("cada afirmación clave enlaza a la sección que la respalda y dice su número", () => {
     const { container } = render(
       <MemoryRouter>
-        <Privacidad />
+        <Page />
       </MemoryRouter>,
     );
     const esencial = screen.getByRole("region", { name: "Lo esencial" });

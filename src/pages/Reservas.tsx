@@ -535,10 +535,7 @@ interface DatosReservas {
  * Sin setState adentro, para que el efecto de carga no actualice estado de forma síncrona.
  */
 async function obtenerDatosReservas(): Promise<DatosReservas> {
-  const [espaciosData, reservasData] = await Promise.all([
-    listarEspacios().catch(() => []),
-    listarMisReservas().catch(() => []),
-  ]);
+  const [espaciosData, reservasData] = await Promise.all([listarEspacios(), listarMisReservas()]);
 
   const espacios: EspacioOpcion[] = Array.isArray(espaciosData)
     ? espaciosData.map((e) => ({
@@ -568,6 +565,8 @@ export default function Reservas() {
   const [espaciosDisponibles, setEspaciosDisponibles] = useState<EspacioOpcion[]>([]);
   const [reservas, setReservas] = useState<Reserva[]>([]);
   const [loading, setLoading] = useState(true);
+  // Un fallo de red no es "no hay reservas": se muestra aparte, con reintento.
+  const [errorCarga, setErrorCarga] = useState(false);
   const [activeTab, setActiveTab] = useState<FilterTab>("todas");
   const [showCreate, setShowCreate] = useState(false);
   const [cancelTarget, setCancelTarget] = useState<string | null>(null);
@@ -578,14 +577,32 @@ export default function Reservas() {
   function aplicarDatos(datos: DatosReservas) {
     setEspaciosDisponibles(datos.espacios);
     setReservas(datos.reservas);
+    setErrorCarga(false);
     setLoading(false);
+  }
+
+  async function recargar() {
+    try {
+      aplicarDatos(await obtenerDatosReservas());
+    } catch {
+      setErrorCarga(true);
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
     let active = true;
-    void obtenerDatosReservas().then((datos) => {
-      if (active) aplicarDatos(datos);
-    });
+    obtenerDatosReservas().then(
+      (datos) => {
+        if (active) aplicarDatos(datos);
+      },
+      () => {
+        if (active) {
+          setErrorCarga(true);
+          setLoading(false);
+        }
+      },
+    );
     return () => {
       active = false;
     };
@@ -621,7 +638,7 @@ export default function Reservas() {
     }
 
     setShowCreate(false);
-    aplicarDatos(await obtenerDatosReservas());
+    await recargar();
     setProcesando(false);
   }
 
@@ -639,7 +656,7 @@ export default function Reservas() {
       setProcesando(false);
       return;
     }
-    aplicarDatos(await obtenerDatosReservas());
+    await recargar();
     setProcesando(false);
   }
 
@@ -708,6 +725,21 @@ export default function Reservas() {
                 className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3"
               />
               <p className="font-medium text-text">Cargando reservas desde el servidor...</p>
+            </div>
+          ) : errorCarga ? (
+            <div role="alert" className="text-center py-16 text-muted">
+              <p className="font-medium text-text">No pudimos cargar tus reservas</p>
+              <p className="text-sm mt-1">Revisa tu conexión e intenta de nuevo.</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setLoading(true);
+                  void recargar();
+                }}
+                className="btn btn-primary mt-4"
+              >
+                Reintentar
+              </button>
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-16 text-muted">

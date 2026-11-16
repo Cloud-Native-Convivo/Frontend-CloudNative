@@ -253,6 +253,9 @@ export default function EspaciosComunes() {
 
   const [espacios, setEspacios] = useState<Espacio[]>([]);
   const [loading, setLoading] = useState(true);
+  // Un fallo de red no es "no hay espacios": se muestra aparte, con reintento.
+  const [errorCarga, setErrorCarga] = useState(false);
+  const [intento, setIntento] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -260,11 +263,13 @@ export default function EspaciosComunes() {
       .then((data) => {
         if (active) {
           setEspacios(Array.isArray(data) ? data.map(mapearBackendEspacio) : []);
+          setErrorCarga(false);
         }
       })
       .catch(() => {
         if (active) {
           setEspacios([]);
+          setErrorCarga(true);
         }
       })
       .finally(() => {
@@ -275,7 +280,7 @@ export default function EspaciosComunes() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [intento]);
 
   const [filtros, setFiltros] = useState<Filtros>({
     busqueda: "",
@@ -400,6 +405,24 @@ export default function EspaciosComunes() {
             <p className="font-display text-lg text-text">
               Cargando espacios comunes desde el servidor...
             </p>
+          </div>
+        ) : errorCarga ? (
+          <div
+            role="alert"
+            className="flex flex-col items-center justify-center py-24 text-center gap-2"
+          >
+            <p className="font-display text-xl text-text">No pudimos cargar los espacios comunes</p>
+            <p className="text-muted text-sm">Revisa tu conexión e intenta de nuevo.</p>
+            <button
+              type="button"
+              onClick={() => {
+                setLoading(true);
+                setIntento((n) => n + 1);
+              }}
+              className="btn btn-primary mt-3"
+            >
+              Reintentar
+            </button>
           </div>
         ) : espaciosFiltrados.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center gap-4">

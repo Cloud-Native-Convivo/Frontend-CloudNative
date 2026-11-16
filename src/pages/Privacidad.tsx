@@ -64,6 +64,28 @@ const PROVEEDORES = [
   },
 ];
 
+const DERECHOS = [
+  ["Acceso", "Saber qué datos tenemos y cómo los usamos."],
+  ["Rectificación", "Corregir datos inexactos o incompletos."],
+  ["Supresión", "Pedir que eliminemos tus datos."],
+  ["Oposición", "Oponerte a un tratamiento determinado."],
+  ["Portabilidad", "Recibir tus datos en un formato de uso común."],
+  ["Bloqueo", "Suspender temporalmente un tratamiento mientras se resuelve tu solicitud."],
+  [
+    "No ser objeto de decisiones automatizadas",
+    "Que te afecten de forma significativa. Convivo no toma decisiones de ese tipo.",
+  ],
+];
+
+// Cada afirmación debe seguir siendo cierta según la sección a la que enlaza.
+const ESENCIAL = [
+  { texto: "No vendemos ni arrendamos tus datos.", id: "terceros" },
+  { texto: "No tratamos datos sensibles ni hacemos perfiles comerciales.", id: "datos" },
+  { texto: "Sin cookies de analítica, publicidad ni seguimiento.", id: "navegador" },
+  { texto: "Tus proveedores están fuera de Chile.", id: "terceros" },
+  { texto: "Puedes ejercer tus derechos sin costo.", id: "derechos" },
+];
+
 const SECTIONS: LegalSection[] = [
   {
     id: "responsable",
@@ -93,40 +115,30 @@ const SECTIONS: LegalSection[] = [
           No pedimos datos que no usemos. No tratamos datos sensibles (salud, origen étnico,
           biometría, entre otros) ni hacemos perfiles con fines comerciales.
         </p>
-        <div className="overflow-x-auto rounded-md border border-border">
-          <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-            <caption className="sr-only">
-              Datos tratados, origen, finalidad y base de licitud
-            </caption>
-            <thead className="bg-slate-50">
-              <tr>
-                {["Dato", "Origen", "Finalidad", "Base de licitud"].map((h) => (
-                  <th
-                    key={h}
-                    scope="col"
-                    className="border-b border-border px-4 py-3 font-semibold"
-                  >
-                    {h}
-                  </th>
+        {/* Una ficha por dato: cada uno se lee de corrido, sin cruzar columnas de una tabla ancha. */}
+        <div className="!mt-8 border-t border-border">
+          {TRATAMIENTOS.map((t) => (
+            <article
+              key={t.dato}
+              className="grid gap-4 border-b border-border py-6 xl:grid-cols-[1fr_2fr] xl:gap-10"
+            >
+              <h3 className="m-0 font-display text-xl font-normal leading-snug text-text">
+                {t.dato}
+              </h3>
+              <dl className="m-0 grid gap-4 sm:grid-cols-3">
+                {[
+                  ["Origen", t.origen],
+                  ["Finalidad", t.finalidad],
+                  ["Base de licitud", t.base],
+                ].map(([etiqueta, valor]) => (
+                  <div key={etiqueta}>
+                    <dt className="text-sm font-semibold text-muted">{etiqueta}</dt>
+                    <dd className="m-0 mt-1 text-base leading-normal text-text">{valor}</dd>
+                  </div>
                 ))}
-              </tr>
-            </thead>
-            <tbody>
-              {TRATAMIENTOS.map((t) => (
-                <tr
-                  key={t.dato}
-                  className="align-top [&:not(:last-child)]:border-b [&:not(:last-child)]:border-border"
-                >
-                  <th scope="row" className="px-4 py-3 font-medium">
-                    {t.dato}
-                  </th>
-                  <td className="px-4 py-3 text-muted">{t.origen}</td>
-                  <td className="px-4 py-3 text-muted">{t.finalidad}</td>
-                  <td className="px-4 py-3 text-muted">{t.base}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+              </dl>
+            </article>
+          ))}
         </div>
       </>
     ),
@@ -155,13 +167,18 @@ const SECTIONS: LegalSection[] = [
           servicio por encargo nuestro, y con la administración de tu condominio en lo que le
           corresponde.
         </p>
-        <ul>
+        <dl className="m-0 !mt-8 border-t border-border">
           {PROVEEDORES.map((p) => (
-            <li key={p.nombre}>
-              <strong>{p.nombre}</strong>: {p.rol}. Ubicación: {p.lugar}.
-            </li>
+            <div
+              key={p.nombre}
+              className="grid gap-1 border-b border-border py-4 md:grid-cols-[14rem_1fr_auto] md:items-baseline md:gap-6"
+            >
+              <dt className="font-display text-xl text-text">{p.nombre}</dt>
+              <dd className="m-0 text-base text-text">{p.rol}</dd>
+              <dd className="m-0 text-sm text-muted">{p.lugar}</dd>
+            </div>
           ))}
-        </ul>
+        </dl>
         <p>
           Todos estos proveedores están fuera de Chile, lo que constituye una transferencia
           internacional de datos. La respaldamos con{" "}
@@ -227,31 +244,14 @@ const SECTIONS: LegalSection[] = [
     body: (
       <>
         <p>Respecto de tus datos personales puedes ejercer, sin costo, los derechos de:</p>
-        <ul>
-          <li>
-            <strong>Acceso</strong>: saber qué datos tenemos y cómo los usamos.
-          </li>
-          <li>
-            <strong>Rectificación</strong>: corregir datos inexactos o incompletos.
-          </li>
-          <li>
-            <strong>Supresión</strong>: pedir que eliminemos tus datos.
-          </li>
-          <li>
-            <strong>Oposición</strong>: oponerte a un tratamiento determinado.
-          </li>
-          <li>
-            <strong>Portabilidad</strong>: recibir tus datos en un formato de uso común.
-          </li>
-          <li>
-            <strong>Bloqueo</strong>: suspender temporalmente un tratamiento mientras se resuelve tu
-            solicitud.
-          </li>
-          <li>
-            <strong>No ser objeto de decisiones automatizadas</strong> que te afecten de forma
-            significativa. Convivo no toma decisiones de ese tipo.
-          </li>
-        </ul>
+        <dl className="m-0 !mt-8 grid gap-x-10 gap-y-6 sm:grid-cols-2">
+          {DERECHOS.map(([derecho, descripcion]) => (
+            <div key={derecho} className="border-t border-border pt-4">
+              <dt className="font-display text-xl text-text">{derecho}</dt>
+              <dd className="m-0 mt-1 text-base text-muted">{descripcion}</dd>
+            </div>
+          ))}
+        </dl>
         <p>
           Escríbenos a <Pendiente>correo de privacidad</Pendiente> indicando qué derecho quieres
           ejercer. Si se trata de datos del condominio, lo coordinamos con la administración.
@@ -309,12 +309,10 @@ export default function Privacidad() {
         <p className="m-0">
           Esta política explica qué datos personales trata Convivo, para qué, con quién los
           compartimos y cómo ejercer tus derechos. Las reglas de uso de la plataforma están en los{" "}
-          <Link to="/terminos" className="text-primary">
-            Términos de uso
-          </Link>
-          .
+          <Link to="/terminos">Términos de uso</Link>.
         </p>
       }
+      esencial={ESENCIAL}
       sections={SECTIONS}
     />
   );

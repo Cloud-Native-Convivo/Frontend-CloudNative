@@ -17,7 +17,11 @@ function renderResidenteDashboard(user?: User | null) {
     condominioId: "condo-aromos-1",
   };
   if (defaultUser.condominioId) {
-    vi.spyOn(condominiosApi, "obtenerSolicitudPropia").mockResolvedValue({ estado: "aprobada", condominio_id: 1, unidad: defaultUser.unidad });
+    vi.spyOn(condominiosApi, "obtenerSolicitudPropia").mockResolvedValue({
+      estado: "aprobada",
+      condominio_id: 1,
+      unidad: defaultUser.unidad,
+    });
   }
 
   return render(
@@ -44,7 +48,10 @@ describe("ResidenteDashboard (Editorial Residencial)", () => {
     const panel = vi.spyOn(panelApi, "obtenerPanel");
     renderResidenteDashboard({ nombre: "Ana", unidad: "Sin unidad asignada", role: "residente" });
     expect(screen.getByRole("heading", { name: /asignación pendiente/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /elegir condominio/i })).toHaveAttribute("href", "/completar-registro");
+    expect(screen.getByRole("link", { name: /elegir condominio/i })).toHaveAttribute(
+      "href",
+      "/completar-registro",
+    );
     expect(screen.queryByText(/Quincho Los Aromos/i)).not.toBeInTheDocument();
     expect(panel).not.toHaveBeenCalled();
     panel.mockRestore();
@@ -52,14 +59,31 @@ describe("ResidenteDashboard (Editorial Residencial)", () => {
 
   it("activa el panel tras confirmación de asignación del servidor", async () => {
     const actualizar = vi.fn();
-    vi.spyOn(condominiosApi, "obtenerSolicitudPropia").mockResolvedValue({ estado: "aprobada", condominio_id: 42, unidad: "Torre A · Piso 2 · Unidad 201" });
+    vi.spyOn(condominiosApi, "obtenerSolicitudPropia").mockResolvedValue({
+      estado: "aprobada",
+      condominio_id: 42,
+      unidad: "Torre A · Piso 2 · Unidad 201",
+    });
     render(
-      <AuthContext.Provider value={{ user: { nombre: "Ana", unidad: "Sin unidad asignada", role: "residente" }, role: "residente", setRole: () => {}, setUser: actualizar }}>
-        <MemoryRouter><ResidenteDashboard /></MemoryRouter>
+      <AuthContext.Provider
+        value={{
+          user: { nombre: "Ana", unidad: "Sin unidad asignada", role: "residente" },
+          role: "residente",
+          setRole: () => {},
+          setUser: actualizar,
+        }}
+      >
+        <MemoryRouter>
+          <ResidenteDashboard />
+        </MemoryRouter>
       </AuthContext.Provider>,
     );
     await screen.findByRole("heading", { name: /asignación pendiente/i });
-    await waitFor(() => expect(actualizar).toHaveBeenCalledWith(expect.objectContaining({ condominioId: "42", unidad: "Torre A · Piso 2 · Unidad 201" })));
+    await waitFor(() =>
+      expect(actualizar).toHaveBeenCalledWith(
+        expect.objectContaining({ condominioId: "42", unidad: "Torre A · Piso 2 · Unidad 201" }),
+      ),
+    );
   });
   it("si la asignación real es de otro condominio, actualiza también su nombre", async () => {
     const actualizar = vi.fn();
@@ -99,16 +123,23 @@ describe("ResidenteDashboard (Editorial Residencial)", () => {
     );
   });
 
-  it("renderiza la cabecera editorial con el saludo y metadata de unidad", async () => {
+  it("renderiza la cabecera editorial con el saludo y la placa de la unidad", async () => {
     renderResidenteDashboard();
 
-    await screen.findByRole("heading", { level: 1, name: /Buenos días, Alejandra/i });
+    await screen.findByRole("heading", { level: 1, name: "Hola, Alejandra" });
 
-    expect(screen.getByText(/FOLIO RESIDENCIAL ACTIVO/i)).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 1, name: /Buenos días, Alejandra/i })).toBeInTheDocument();
-    expect(screen.getByText(/Torre A · Depto 402B/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Reservar espacio/i })).toHaveAttribute("href", "/espacios");
-    expect(screen.getByRole("link", { name: /Revisar gastos/i })).toHaveAttribute("href", "/gastos");
+    expect(screen.getByText("Tu unidad")).toBeInTheDocument();
+    expect(screen.getByText("Torre A · Depto 402B")).toBeInTheDocument();
+    // Sin "Buenos días" fijo ni rótulos inventados: el saludo no depende de la hora.
+    expect(screen.queryByText(/FOLIO RESIDENCIAL|Buenos días|24\/7/i)).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Reservar espacio/i })).toHaveAttribute(
+      "href",
+      "/espacios",
+    );
+    expect(screen.getByRole("link", { name: /Revisar gastos/i })).toHaveAttribute(
+      "href",
+      "/gastos",
+    );
   });
 
   it("renderiza las tarjetas de KPIs con sus valores y enlaces de micro-acción", async () => {
@@ -117,7 +148,10 @@ describe("ResidenteDashboard (Editorial Residencial)", () => {
 
     expect(screen.getByText(/Próxima Reserva/i)).toBeInTheDocument();
     expect(screen.getByText(/Sin reservas/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Ver reservas/i })).toHaveAttribute("href", "/reservas");
+    expect(screen.getByRole("link", { name: /Ver reservas/i })).toHaveAttribute(
+      "href",
+      "/reservas",
+    );
 
     expect(screen.getAllByText(/Gastos Comunes/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/Sin información/i)).toBeInTheDocument();
@@ -141,8 +175,12 @@ describe("ResidenteDashboard (Editorial Residencial)", () => {
     await screen.findByRole("heading", { level: 2, name: /Gaceta & Comunicados/i });
 
     expect(screen.getByText(/Sin comunicados publicados/i)).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 2, name: /Accesos Directos/i })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { level: 2, name: /Actividad Reciente/i })).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 2, name: /Accesos Directos/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { level: 2, name: /Actividad Reciente/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("si falla la carga del panel avisa del error y Reintentar lo quita", async () => {
@@ -154,7 +192,9 @@ describe("ResidenteDashboard (Editorial Residencial)", () => {
     });
     vi.spyOn(panelApi, "obtenerPanel")
       .mockRejectedValueOnce(new Error("HTTP 502"))
-      .mockResolvedValue({ reservas: [] } as unknown as Awaited<ReturnType<typeof panelApi.obtenerPanel>>);
+      .mockResolvedValue({ reservas: [] } as unknown as Awaited<
+        ReturnType<typeof panelApi.obtenerPanel>
+      >);
 
     renderResidenteDashboard();
 

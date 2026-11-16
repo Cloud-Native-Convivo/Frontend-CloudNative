@@ -271,6 +271,16 @@ function ProximaReserva({ reserva }: { reserva: Reserva | null }) {
       <p className="m-0 mt-3 text-lg text-white">
         {cuentaRegresiva(reserva)}, {reserva.hora} a {horaFin(reserva)} hrs
       </p>
+      {/* Una pendiente de pago expira a los 15 minutos: no se presenta igual que una confirmada. */}
+      <p className="m-0 mt-3 inline-flex items-center gap-2 text-sm font-semibold text-white">
+        <span
+          aria-hidden="true"
+          className={`h-2 w-2 rounded-full ${
+            reserva.estado === "pendiente" ? "bg-alert-yellow" : "bg-primary-on-dark"
+          }`}
+        />
+        {reserva.estado === "pendiente" ? "Pendiente de pago" : "Confirmada"}
+      </p>
     </div>
   );
 }

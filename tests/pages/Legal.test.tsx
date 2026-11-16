@@ -16,7 +16,9 @@ describe.each([
     );
     expect(screen.getByRole("heading", { level: 1, name: titulo })).toBeInTheDocument();
 
-    const links = within(screen.getByRole("navigation", { name: "Contenido" })).getAllByRole("link");
+    const links = within(screen.getByRole("navigation", { name: "Contenido" })).getAllByRole(
+      "link",
+    );
     expect(links.length).toBeGreaterThan(0);
     for (const link of links) {
       const id = link.getAttribute("href")!.slice(1);
@@ -31,5 +33,26 @@ describe.each([
       </MemoryRouter>,
     );
     expect(screen.getByRole("note")).toHaveTextContent("Borrador pendiente de revisión legal");
+  });
+});
+
+describe("Privacidad, lo esencial", () => {
+  it("cada afirmación clave enlaza a la sección que la respalda y dice su número", () => {
+    const { container } = render(
+      <MemoryRouter>
+        <Privacidad />
+      </MemoryRouter>,
+    );
+    const esencial = screen.getByRole("region", { name: "Lo esencial" });
+    const links = within(esencial).getAllByRole("link");
+    expect(links.length).toBeGreaterThan(0);
+    for (const link of links) {
+      const id = link.getAttribute("href")!.slice(1);
+      const seccion = container.querySelector(`section#${id}`);
+      expect(seccion).not.toBeNull();
+      // El número que muestra el enlace es el del título real de la sección.
+      const numero = seccion!.querySelector("h2")!.firstElementChild!.textContent;
+      expect(link).toHaveTextContent(`Sección ${numero}`);
+    }
   });
 });

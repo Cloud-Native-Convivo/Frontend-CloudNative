@@ -87,8 +87,8 @@ export default function Gastos() {
           description: `Procesando comprobante de ${mesObjetivo} en segundo plano.`,
         },
         success: {
-          title: "¡Comprobante listo!",
-          description: "Tu PDF se ha descargado y enviamos una copia a tu correo.",
+          title: "Comprobante listo",
+          description: "Tu PDF se descargó.",
         },
         error: {
           title: "Error al generar comprobante",
@@ -101,26 +101,41 @@ export default function Gastos() {
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="bg-text pt-14 pb-28">
-        <div className="mx-auto max-w-page px-6">
-          <h1 className="m-0 font-display text-[clamp(32px,4vw,48px)] font-normal leading-tight text-white">
-            Gastos comunes
-          </h1>
-          {isAdmin ? (
-            <>
-              <p className="m-0 mt-3 max-w-content text-lg text-white/70">
-                Gestiona los gastos comunes de todas las unidades. Edita montos, categorías y revisa
-                el estado de deuda del condominio.
-              </p>
-              {gastosEstado === "error" && (
-                <p role="alert" className="m-0 mt-6 text-base font-semibold text-white">
-                  No pudimos cargar los gastos del condominio. Intenta más tarde.
+        <div
+          className={`mx-auto grid max-w-page items-end gap-12 px-6 ${
+            isAdmin ? "" : "lg:grid-cols-[1.1fr_1fr]"
+          }`}
+        >
+          <div>
+            <h1 className="m-0 font-display text-[clamp(40px,6vw,72px)] font-normal leading-none text-white">
+              Gastos comunes
+            </h1>
+            {isAdmin ? (
+              <>
+                <p className="m-0 mt-4 max-w-content text-lg text-white/70">
+                  Gestiona los gastos comunes de todas las unidades. Edita montos, categorías y
+                  revisa el estado de deuda del condominio.
                 </p>
-              )}
-            </>
-          ) : (
+                {gastosEstado === "error" && (
+                  <p role="alert" className="m-0 mt-6 text-base font-semibold text-white">
+                    No pudimos cargar los gastos del condominio. Intenta más tarde.
+                  </p>
+                )}
+              </>
+            ) : (
+              <>
+                {user?.unidad && (
+                  <p className="m-0 mt-4 text-lg text-white/70">Unidad {user.unidad}</p>
+                )}
+                {user?.condominioNombre && (
+                  <p className="m-0 mt-1 text-lg text-primary-on-dark">{user.condominioNombre}</p>
+                )}
+              </>
+            )}
+          </div>
+          {!isAdmin && (
             <SituacionResidenteCard
               estado={gastosEstado}
-              unidad={user?.unidad ? `Unidad ${user.unidad}` : undefined}
               monto={resumen ? resumen.totalPendiente : undefined}
               vencimiento={resumen?.proximoVencimiento}
             />

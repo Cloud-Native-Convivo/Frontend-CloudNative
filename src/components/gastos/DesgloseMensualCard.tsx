@@ -53,7 +53,12 @@ export function DesgloseMensualCard({
       </div>
 
       {periodos.length === 0 ? (
-        <p className="m-0 mt-6 text-base text-muted">Sin gastos registrados.</p>
+        <div className="mt-6 border-t border-dotted border-muted pt-6">
+          <p className="m-0 font-display text-2xl text-text">Sin gastos registrados.</p>
+          <p className="m-0 mt-2 text-base text-muted">
+            Aquí verás cada cobro de tu unidad, con su concepto y su peso en el total del mes.
+          </p>
+        </div>
       ) : (
         <>
           <div aria-hidden="true" className="mt-8 flex h-16 gap-1">

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AuthContext } from "@/hooks/useAuth";
@@ -138,6 +138,22 @@ describe("Reservas con datos reales", () => {
     expect(screen.getByText(/^En \d días, /)).toBeInTheDocument();
     // La cancelada no cuenta como próxima aunque sea más lejana: solo hay un botón Cancelar.
     expect(screen.getAllByRole("button", { name: "Cancelar" })).toHaveLength(1);
+  });
+
+  it("el hero de la próxima reserva dice si está confirmada o pendiente de pago", async () => {
+    vi.spyOn(espaciosApi, "listarEspacios").mockResolvedValue([]);
+    const listar = vi.spyOn(espaciosApi, "listarMisReservas");
+
+    listar.mockResolvedValue([{ ...reservaEnDias(3), estado: "pendiente" }]);
+    const { unmount } = renderReservas();
+    const hero = (await screen.findByText("Próxima reserva")).parentElement as HTMLElement;
+    expect(within(hero).getByText("Pendiente de pago")).toBeInTheDocument();
+    unmount();
+
+    listar.mockResolvedValue([{ ...reservaEnDias(3), estado: "confirmada" }]);
+    renderReservas();
+    const hero2 = (await screen.findByText("Próxima reserva")).parentElement as HTMLElement;
+    expect(within(hero2).getByText("Confirmada")).toBeInTheDocument();
   });
 
   it("sin reservas vigentes el hero lo dice y no inventa una fecha", async () => {

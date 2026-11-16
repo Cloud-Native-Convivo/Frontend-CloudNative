@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AuthContext } from "@/hooks/useAuth";
@@ -43,6 +43,29 @@ describe("EspaciosComunes con datos reales", () => {
     expect(detalle).toHaveTextContent("10 personas");
     expect(detalle).not.toHaveTextContent(/Depósito|Horario|Reglas de uso|Lunes a domingo/);
     expect(document.querySelector("img")).toBeNull();
+  });
+
+  it("el directorio cuenta los espacios por categoría real y filtra al elegir una", async () => {
+    vi.spyOn(espaciosApi, "listarEspacios").mockResolvedValue([
+      { id: 1, nombre: "Quincho Norte", capacidad: 10, tarifa_hora: 5000, estado: "activo" },
+      { id: 2, nombre: "Quincho Sur", capacidad: 12, tarifa_hora: 5000, estado: "activo" },
+      { id: 3, nombre: "Sala de eventos", capacidad: 40, tarifa_hora: 0, estado: "inactivo" },
+    ]);
+
+    renderEspacios();
+
+    const directorio = await screen.findByRole("navigation", { name: "Categorías de espacios" });
+    expect(within(directorio).getByRole("button", { name: /Todos/ })).toHaveTextContent("3");
+    expect(within(directorio).getByRole("button", { name: /Quincho/ })).toHaveTextContent("2");
+    // Solo aparecen categorías con espacios: no hay Piscina ni Cancha.
+    expect(within(directorio).queryByRole("button", { name: /Piscina|Cancha/ })).toBeNull();
+
+    fireEvent.click(within(directorio).getByRole("button", { name: /Sala/ }));
+
+    expect(screen.getByRole("heading", { name: "Sala de eventos" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Quincho Norte" })).toBeNull();
+    expect(screen.getByText("No disponible")).toBeInTheDocument();
+    expect(screen.getByText("Gratis")).toBeInTheDocument();
   });
 
   it("si falla la carga muestra el error, no 'sin espacios', y Reintentar recupera", async () => {
